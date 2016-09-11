@@ -15,7 +15,6 @@ import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by shengtianyang on 16/2/22.
- *
  */
 public abstract class BaseActivity extends AppCompatActivity {
 
@@ -29,6 +28,14 @@ public abstract class BaseActivity extends AppCompatActivity {
         initData(savedInstanceState);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (this.mSubscription != null) {
+            this.mSubscription.unsubscribe();
+        }
+    }
+
     protected void add(Subscription s) {
         if (this.mSubscription == null) {
             this.mSubscription = new CompositeSubscription();
@@ -37,11 +44,15 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (this.mSubscription != null) {
-            this.mSubscription.unsubscribe();
-        }
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, 0);
+    }
+
+    @Override
+    public void startActivityForResult(Intent intent, int requestCode, Bundle options) {
+        super.startActivityForResult(intent, requestCode, options);
+        overridePendingTransition(0, 0);
     }
 
     /**

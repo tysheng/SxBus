@@ -2,13 +2,11 @@ package tysheng.sxbus.ui;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.KeyEvent;
+import android.support.v7.widget.SearchView;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 
@@ -16,10 +14,7 @@ import java.util.ArrayList;
 
 import butterknife.BindString;
 import butterknife.BindView;
-import butterknife.OnClick;
 import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.SearchAdapter;
@@ -27,10 +22,11 @@ import tysheng.sxbus.base.BaseFragment;
 import tysheng.sxbus.bean.BusLinesSimple;
 import tysheng.sxbus.bean.Star;
 import tysheng.sxbus.bean.Stars;
-import tysheng.sxbus.net.BusService;
-import tysheng.sxbus.net.RetrofitHelper;
+import tysheng.sxbus.net.BusRetrofit;
+import tysheng.sxbus.net.HttpUtil;
 import tysheng.sxbus.utils.KeyboardUtil;
 import tysheng.sxbus.utils.LogUtil;
+import tysheng.sxbus.utils.SnackBarUtil;
 import tysheng.sxbus.utils.fastcache.FastCache;
 
 /**
@@ -38,14 +34,17 @@ import tysheng.sxbus.utils.fastcache.FastCache;
  * Date: 16/8/10 22:52.
  */
 public class SearchFragment extends BaseFragment {
-    @BindView(R.id.editText)
-    EditText mEditText;
+
     @BindString(R.string.recent)
     String mRecent;
     @BindString(R.string.result)
     String mResult;
+    @BindString(R.string.search_error)
+    String searchError;
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
+    @BindView(R.id.searchView)
+    SearchView mSearchView;
     private Stars mStars;
 
     private SearchAdapter mAdapter;
@@ -57,7 +56,7 @@ public class SearchFragment extends BaseFragment {
 
     @Override
     protected int getLayoutId() {
-        return R.layout.fragment_bus_simple;
+        return R.layout.fragment_search;
     }
 
     @Override
@@ -94,16 +93,20 @@ public class SearchFragment extends BaseFragment {
                 }
             }
         });
-        mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    search();
-                    return true;
-                }
+            public boolean onQueryTextSubmit(String query) {
+                LogUtil.d(query);
+                search(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
                 return false;
             }
         });
+        mSearchView.onActionViewExpanded();
 
     }
 
@@ -135,11 +138,7 @@ public class SearchFragment extends BaseFragment {
     }
 
     private void getBusSimple(int number) {
-        RetrofitHelper.get()
-                .create(BusService.class)
-                .getBusLinesSimple(number)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
+        add(HttpUtil.convert(BusRetrofit.get().numberToSearch(number))
                 .subscribe(new Subscriber<BusLinesSimple>() {
                     @Override
                     public void onCompleted() {
@@ -149,26 +148,25 @@ public class SearchFragment extends BaseFragment {
                     @Override
                     public void onError(Throwable e) {
                         LogUtil.d("search   " + e.getMessage());
+                        SnackBarUtil.show(mSearchView, searchError);
 
                     }
 
                     @Override
                     public void onNext(BusLinesSimple busLinesSimple) {
+                        LogUtil.d(JSON.toJSONString(busLinesSimple));
                         mAdapter.setNewData(busLinesSimple.result.result);
                     }
-                });
+                }));
     }
 
-
-    @OnClick(R.id.search)
-    public void onClick() {
-        search();
-    }
-
-    private void search() {
+    private void search(String s) {
         KeyboardUtil.hide(mActivity);
-        int number = Integer.valueOf(mEditText.getText().toString());
+        int number;
+        number = Integer.valueOf(s);
+
         getBusSimple(number);
     }
+
 
 }

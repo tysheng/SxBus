@@ -13,12 +13,13 @@ import tysheng.sxbus.App;
 /**
  * Created by shengtianyang on 16/3/19.
  */
-public class RetrofitHelper {
+public class BusRetrofit {
 
     private static volatile Retrofit retrofit = null;
-    private static final int TIME_MAX = 6;
+    private static final int TIME_MAX = 10;
+    private static BusService sService = null;
 
-    public static void init(String url) {
+    public static void init() {
         final File baseDir = App.get().getCacheDir();
         Cache cache = null;
         if (baseDir != null) {
@@ -36,21 +37,23 @@ public class RetrofitHelper {
         retrofit = new Retrofit.Builder()
                 .client(client)
                 .addConverterFactory(FastJsonConverterFactory.create())
-                .baseUrl(url)
+                .baseUrl(BusService.BASE_URL)
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
 
     }
 
 
-    public static Retrofit get(){
-        if (retrofit == null) {
-            synchronized (RetrofitHelper.class){
-                if (retrofit==null)
-                    init(BusService.BASE_URL);
+    public static BusService get() {
+        if (sService == null) {
+            synchronized (BusRetrofit.class) {
+                if (sService == null) {
+                    init();
+                }
+                sService = retrofit.create(BusService.class);
             }
         }
-        return retrofit;
+        return sService;
     }
 }
 

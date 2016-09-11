@@ -10,6 +10,9 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.alibaba.fastjson.JSON;
+
+import butterknife.BindString;
 import butterknife.BindView;
 import rx.Observable;
 import rx.Subscriber;
@@ -23,8 +26,7 @@ import tysheng.sxbus.base.BaseActivity;
 import tysheng.sxbus.bean.BusLine;
 import tysheng.sxbus.bean.BusLineResult;
 import tysheng.sxbus.bean.BusLines;
-import tysheng.sxbus.net.BusService;
-import tysheng.sxbus.net.RetrofitHelper;
+import tysheng.sxbus.net.BusRetrofit;
 import tysheng.sxbus.utils.LogUtil;
 import tysheng.sxbus.utils.SnackBarUtil;
 
@@ -40,7 +42,8 @@ public class RunningActivity extends BaseActivity {
     CoordinatorLayout mCoordinatorLayout;
     @BindView(R.id.swipeRefreshLayout)
     SwipeRefreshLayout mSwipeRefreshLayout;
-
+    @BindString(R.string.running_error)
+    String runningError;
 
     private String id;
     private RunningAdapter mRunningAdapter;
@@ -73,9 +76,7 @@ public class RunningActivity extends BaseActivity {
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                add(RetrofitHelper.get()
-                        .create(BusService.class)
-                        .getBusLines(id)
+                add(BusRetrofit.get().getBusLines(id)
                         .map(new Func1<BusLines, Boolean>() {
                             @Override
                             public Boolean call(BusLines busLines) {
@@ -86,19 +87,18 @@ public class RunningActivity extends BaseActivity {
                         .concatMap(new Func1<Boolean, Observable<BusLine>>() {
                             @Override
                             public Observable<BusLine> call(Boolean aBoolean) {
-                                return RetrofitHelper.get()
-                                        .create(BusService.class)
-                                        .getBusLine(id);
+                                return BusRetrofit.get()
+                                        .getRunningBus(id);
                             }
                         })
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
                         .doAfterTerminate(new Action0() {
                             @Override
                             public void call() {
                                 mSwipeRefreshLayout.setRefreshing(false);
                             }
                         })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Subscriber<BusLine>() {
                             @Override
                             public void onCompleted() {
@@ -108,11 +108,12 @@ public class RunningActivity extends BaseActivity {
                             @Override
                             public void onError(Throwable e) {
                                 LogUtil.d("222" + e.getMessage());
-                                SnackBarUtil.show(mCoordinatorLayout,"无法获取到车辆信息", Snackbar.LENGTH_LONG);
+                                SnackBarUtil.show(mCoordinatorLayout,runningError , Snackbar.LENGTH_LONG);
                             }
 
                             @Override
                             public void onNext(BusLine busLine) {
+                                LogUtil.d(JSON.toJSONString(busLine));
                                 for (BusLineResult result : busLine.result) {
                                     int station = result.stationSeqNum - 1;
                                     if (station < mBusLines.result.stations.size())
@@ -126,11 +127,7 @@ public class RunningActivity extends BaseActivity {
 
     }
 
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(0,0);
-    }
+
 
     @Override
     public int getLayoutId() {

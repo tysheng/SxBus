@@ -7,10 +7,13 @@ import android.util.Log;
  * Date: 16/8/11 23:15.
  */
 public class LogUtil {
+    private static boolean debug = true;
     public static void d(String msg){
+        if (debug)
         Log.d("sty",msg);
     }
     public static void d(int msg){
+        if (debug)
         Log.d("sty",String.valueOf(msg));
     }
 }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SxBus</string>
+    <string name="app_name">车来哉</string>
     <string name="menu_search">查询</string>
     <string name="menu_collect">出行</string>
     <string name="menu_more">更多</string>
@@ -7,4 +7,8 @@
     <string name="result">搜索结果</string>
     <string name="clear_search">清空搜索记录</string>
     <string name="search_hint">请输入公交线路名称</string>
+    <string name="search_error">搜索遇到了点问题</string>
+    <string name="running_error">无法获取到车辆信息</string>
+    <string name="going_to">正在前往</string>
+
 </resources>
