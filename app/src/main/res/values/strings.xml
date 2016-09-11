@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">SxBus</string>
+    <string name="menu_search">查询</string>
+    <string name="menu_collect">出行</string>
+    <string name="menu_more">更多</string>
+    <string name="recent">最近搜索</string>
+    <string name="result">搜索结果</string>
+    <string name="clear_search">清空搜索记录</string>
+    <string name="search_hint">请输入公交线路名称</string>
+</resources>

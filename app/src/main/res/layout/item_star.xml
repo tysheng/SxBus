@@ -1,0 +1,38 @@
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:layout_marginBottom="20dp"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:attr/selectableItemBackground"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:id="@+id/number"
+            android:gravity="center"
+            tools:text="9lu"/>
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            tools:text="asd" />
+
+        <ImageView
+            android:id="@+id/star"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:padding="16dp"
+            android:src="@drawable/collect_yes" />
+
+    </LinearLayout>
+</android.support.v7.widget.CardView>
+
+
+
