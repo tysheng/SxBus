@@ -9,6 +9,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 
@@ -44,20 +45,30 @@ public class RunningActivity extends BaseActivity {
     SwipeRefreshLayout mSwipeRefreshLayout;
     @BindString(R.string.running_error)
     String runningError;
+    @BindView(R.id.title)
+    TextView mTitle;
 
-    private String id;
+    private String id, title;
     private RunningAdapter mRunningAdapter;
     private BusLines mBusLines;
 
-    public static Intent newIntent(Context context, String id) {
+    @Override
+    public int getLayoutId() {
+        return R.layout.activity_running;
+    }
+
+    public static Intent newIntent(Context context, String id, String title) {
         Intent intent = new Intent(context, RunningActivity.class);
         intent.putExtra("id", id);
+        intent.putExtra("title", title);
         return intent;
     }
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
         id = getIntent().getStringExtra("id");
+        title = getIntent().getStringExtra("title");
+        mTitle.setText(title);
         mRunningAdapter = new RunningAdapter(null);
         mRecyclerView.setAdapter(mRunningAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -108,7 +119,7 @@ public class RunningActivity extends BaseActivity {
                             @Override
                             public void onError(Throwable e) {
                                 LogUtil.d("222" + e.getMessage());
-                                SnackBarUtil.show(mCoordinatorLayout,runningError , Snackbar.LENGTH_LONG);
+                                SnackBarUtil.show(mCoordinatorLayout, runningError, Snackbar.LENGTH_LONG);
                             }
 
                             @Override
@@ -126,12 +137,4 @@ public class RunningActivity extends BaseActivity {
         });
 
     }
-
-
-
-    @Override
-    public int getLayoutId() {
-        return R.layout.activity_running;
-    }
-
 }

@@ -81,12 +81,14 @@ public class SearchFragment extends BaseFragment {
             public void SimpleOnItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 switch (view.getId()) {
                     case R.id.textView:
-                        startActivity(RunningActivity.newIntent(getContext(), mAdapter.getItem(i).id));
+                        startActivity(RunningActivity.newIntent(getContext(), mAdapter.getItem(i).id
+                                , mAdapter.getItem(i).lineName + " 前往 " + mAdapter.getItem(i).endStationName)
+                        );
                         break;
                     case R.id.star:
                         addToStar(mAdapter.getItem(i));
                         ImageView imageView = (ImageView) view;
-                        imageView.setImageResource(R.drawable.collect_yes);
+                        imageView.setImageResource(R.drawable.star_yes);
                         break;
                     default:
                         break;

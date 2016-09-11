@@ -1,6 +1,5 @@
 package tysheng.sxbus.ui;
 
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -26,8 +25,7 @@ import tysheng.sxbus.utils.fastcache.FastCache;
  */
 
 public class StarFragment extends BaseFragment {
-    @BindView(R.id.swipeRefreshLayout)
-    SwipeRefreshLayout mSwipeRefreshLayout;
+
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
     private Stars mStars;
@@ -40,7 +38,7 @@ public class StarFragment extends BaseFragment {
 
     @Override
     protected int getLayoutId() {
-        return R.layout.fragment_list;
+        return R.layout.fragment_star;
     }
 
     @Override
@@ -51,26 +49,20 @@ public class StarFragment extends BaseFragment {
 
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
-//        mRecyclerView.addItemDecoration(new RecycleViewDivider(mActivity));
         mRecyclerView.addOnItemTouchListener(new OnItemChildClickListener() {
             @Override
             public void SimpleOnItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 switch (view.getId()) {
                     case R.id.textView:
-                        startActivity(RunningActivity.newIntent(getContext(), mAdapter.getItem(i).id));
+                        startActivity(RunningActivity.newIntent(getContext(), mAdapter.getItem(i).id,
+                                mAdapter.getItem(i).lineName + " 前往 " + mAdapter.getItem(i).endStationName));
                         break;
                     case R.id.star:
                         mAdapter.remove(i);
+                        saveStars();
                     default:
                         break;
                 }
-            }
-        });
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getCache();
-                mAdapter.setNewData(mStars.result);
             }
         });
     }
@@ -78,6 +70,10 @@ public class StarFragment extends BaseFragment {
     @Override
     public void onStop() {
         super.onStop();
+        saveStars();
+    }
+
+    private void saveStars() {
         if (mStars != null && mStars.result.size() != 0)
             FastCache.putAsync(Constant.STAR, mStars)
                     .subscribe(new Subscriber<Boolean>() {
@@ -108,7 +104,6 @@ public class StarFragment extends BaseFragment {
             mStars = new Stars();
             mStars.result = new ArrayList<>();
         }
-        mSwipeRefreshLayout.setRefreshing(false);
     }
 
 }

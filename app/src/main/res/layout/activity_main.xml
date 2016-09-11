@@ -18,8 +18,8 @@
             android:layout_height="60dp"
             android:layout_gravity="bottom"
             app:bb_behavior="shifting"
+            app:bb_showShadow="false"
             app:bb_tabXmlResource="@xml/bottombar_menu" />
-
 
 </android.support.design.widget.CoordinatorLayout>
 

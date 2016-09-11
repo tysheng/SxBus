@@ -19,7 +19,7 @@
     android:layout_height="match_parent"
     android:id="@+id/star"
     android:padding="8dp"
-    android:src="@drawable/collect_no"/>
+    android:src="@drawable/star_no"/>
 
 </LinearLayout>
 
