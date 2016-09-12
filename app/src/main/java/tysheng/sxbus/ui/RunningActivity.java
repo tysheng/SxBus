@@ -105,7 +105,8 @@ public class RunningActivity extends BaseActivity {
                         .doAfterTerminate(new Action0() {
                             @Override
                             public void call() {
-                                mSwipeRefreshLayout.setRefreshing(false);
+                                if (mSwipeRefreshLayout.isRefreshing())
+                                    mSwipeRefreshLayout.setRefreshing(false);
                             }
                         })
                         .subscribeOn(Schedulers.io())

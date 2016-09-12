@@ -24,10 +24,6 @@ public class MoreFragment extends BaseFragment {
     @BindView(R.id.donate)
     LinearLayout mDonate;
 
-    public static MoreFragment newInstance() {
-        return new MoreFragment();
-    }
-
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_more;

@@ -12,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.baidu.mobstat.StatService;
+
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import rx.Subscription;
@@ -50,7 +52,17 @@ public abstract class BaseFragment extends Fragment {
 
         this.mSubscription.add(s);
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        StatService.onResume(this);
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        StatService.onPause(this);
+    }
     protected void addFragment(@Nullable FragmentManager manager, @NonNull Fragment from, @NonNull Fragment to, @IdRes int id, String tag, String backStackTag){
         doAddFragment(manager, from, to, id, tag, backStackTag);
     }

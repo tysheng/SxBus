@@ -7,16 +7,12 @@ import android.view.View;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 
-import java.util.ArrayList;
-
 import butterknife.BindView;
-import rx.Subscriber;
-import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.StarAdapter;
 import tysheng.sxbus.base.BaseFragment;
 import tysheng.sxbus.bean.Stars;
-import tysheng.sxbus.utils.fastcache.FastCache;
+import tysheng.sxbus.presenter.StarUtil;
 
 /**
  * 收藏
@@ -31,11 +27,6 @@ public class StarFragment extends BaseFragment {
     private Stars mStars;
     private StarAdapter mAdapter;
 
-    public static StarFragment newInstance() {
-        return new StarFragment();
-    }
-
-
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_star;
@@ -43,8 +34,7 @@ public class StarFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-        getCache();
-
+        mStars = StarUtil.initStars(mStars);
         mAdapter = new StarAdapter(mStars.result);
 
         mRecyclerView.setAdapter(mAdapter);
@@ -59,7 +49,7 @@ public class StarFragment extends BaseFragment {
                         break;
                     case R.id.star:
                         mAdapter.remove(i);
-                        saveStars();
+                        StarUtil.onStopSave(mStars);
                     default:
                         break;
                 }
@@ -70,40 +60,7 @@ public class StarFragment extends BaseFragment {
     @Override
     public void onStop() {
         super.onStop();
-        saveStars();
-    }
-
-    private void saveStars() {
-        if (mStars != null && mStars.result.size() != 0)
-            FastCache.putAsync(Constant.STAR, mStars)
-                    .subscribe(new Subscriber<Boolean>() {
-                        @Override
-                        public void onCompleted() {
-
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-
-                        }
-
-                        @Override
-                        public void onNext(Boolean aBoolean) {
-
-                        }
-                    });
-    }
-
-    private void getCache() {
-        try {
-            mStars = FastCache.get(Constant.STAR, Stars.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (mStars == null) {
-            mStars = new Stars();
-            mStars.result = new ArrayList<>();
-        }
+        StarUtil.onStopSave(mStars);
     }
 
 }

@@ -1,5 +1,6 @@
 package tysheng.sxbus.ui;
 
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -10,24 +11,20 @@ import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 
-import java.util.ArrayList;
-
 import butterknife.BindString;
 import butterknife.BindView;
 import rx.Subscriber;
-import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.SearchAdapter;
 import tysheng.sxbus.base.BaseFragment;
 import tysheng.sxbus.bean.BusLinesSimple;
-import tysheng.sxbus.bean.Star;
 import tysheng.sxbus.bean.Stars;
 import tysheng.sxbus.net.BusRetrofit;
 import tysheng.sxbus.net.HttpUtil;
+import tysheng.sxbus.presenter.StarUtil;
 import tysheng.sxbus.utils.KeyboardUtil;
 import tysheng.sxbus.utils.LogUtil;
 import tysheng.sxbus.utils.SnackBarUtil;
-import tysheng.sxbus.utils.fastcache.FastCache;
 
 /**
  * Created by Sty
@@ -43,16 +40,12 @@ public class SearchFragment extends BaseFragment {
     String searchError;
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
+    @BindView(R.id.coordinatorLayout)
+    CoordinatorLayout mCoordinatorLayout;
     @BindView(R.id.searchView)
     SearchView mSearchView;
     private Stars mStars;
-
     private SearchAdapter mAdapter;
-
-    public static SearchFragment newInstance() {
-        return new SearchFragment();
-    }
-
 
     @Override
     protected int getLayoutId() {
@@ -61,18 +54,8 @@ public class SearchFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-        try {
-            mStars = FastCache.get(Constant.STAR, Stars.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (mStars == null) {
-            mStars = new Stars();
-            mStars.result = new ArrayList<>();
-        }
-
-
-        mAdapter = new SearchAdapter(null);
+        mStars = StarUtil.initStars(mStars);
+        mAdapter = new SearchAdapter(mStars.result);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
 
@@ -86,7 +69,7 @@ public class SearchFragment extends BaseFragment {
                         );
                         break;
                     case R.id.star:
-                        addToStar(mAdapter.getItem(i));
+                        mStars.result.add(mAdapter.getItem(i));
                         ImageView imageView = (ImageView) view;
                         imageView.setImageResource(R.drawable.star_yes);
                         break;
@@ -112,31 +95,10 @@ public class SearchFragment extends BaseFragment {
 
     }
 
-    private void addToStar(Star star) {
-        mStars.result.add(star);
-    }
-
     @Override
     public void onStop() {
         super.onStop();
-        if (mStars != null && mStars.result.size() != 0)
-            FastCache.putAsync(Constant.STAR, mStars)
-                    .subscribe(new Subscriber<Boolean>() {
-                        @Override
-                        public void onCompleted() {
-
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-
-                        }
-
-                        @Override
-                        public void onNext(Boolean aBoolean) {
-
-                        }
-                    });
+        StarUtil.onStopSave(mStars);
     }
 
     private void getBusSimple(int number) {
@@ -150,7 +112,7 @@ public class SearchFragment extends BaseFragment {
                     @Override
                     public void onError(Throwable e) {
                         LogUtil.d("search   " + e.getMessage());
-                        SnackBarUtil.show(mSearchView, searchError);
+                        SnackBarUtil.show(mCoordinatorLayout, searchError);
 
                     }
 
@@ -169,6 +131,5 @@ public class SearchFragment extends BaseFragment {
 
         getBusSimple(number);
     }
-
 
 }
