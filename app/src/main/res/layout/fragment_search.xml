@@ -2,14 +2,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:layout_height="match_parent">
 
 
     <android.support.v7.widget.SearchView
         android:id="@+id/searchView"
         android:layout_width="match_parent"
         android:layout_height="70dp"
+        android:layout_marginTop="10dp"
         android:iconifiedByDefault="true"
         android:imeOptions="actionSearch"
         android:inputType="number"
@@ -23,7 +23,7 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="70dp" />
+        android:layout_marginTop="80dp" />
 
 </android.support.design.widget.CoordinatorLayout>
 

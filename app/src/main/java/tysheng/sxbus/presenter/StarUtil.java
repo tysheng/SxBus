@@ -12,7 +12,6 @@ import tysheng.sxbus.utils.fastcache.FastCache;
  * Date: 16/9/12 09:47.
  */
 public class StarUtil {
-
     public static void onStopSave(Stars mStars) {
         if (mStars != null && mStars.result.size() != 0)
             FastCache.putAsync(Constant.STAR, mStars)

@@ -1,74 +1,99 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:orientation="vertical">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_marginTop="5dp"
-    android:orientation="vertical" android:layout_height="match_parent">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:paddingLeft="30dp"
-        android:gravity="left|center_vertical"
-        android:textSize="14sp"
-        android:textColor="@color/blue"
-        android:text="更多" />
+    android:layout_height="match_parent">
 
     <LinearLayout
-        android:id="@+id/feedback"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="vertical"
-        android:paddingLeft="30dp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-
-            android:gravity="left|center_vertical"
-            android:textSize="17sp"
-            android:text="反馈" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:gravity="left"
-            android:textColor="@color/grey_700"
-            android:text="以邮件的形式反馈" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/donate"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="match_parent"
         android:layout_marginTop="10dp"
-        android:orientation="vertical"
-        android:paddingLeft="30dp">
-<View
-    android:layout_width="match_parent"
-    android:layout_height="0.5dp"
-    android:background="@color/grey"/>
+        android:paddingLeft="30dp"
+        android:orientation="vertical">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="30dp"
-
             android:gravity="left|center_vertical"
-            android:textSize="17sp"
-            android:text="捐赠" />
+        android:id="@+id/more"
+            android:text="更多"
+            android:textColor="@color/blue"
+            android:textSize="14sp" />
 
-        <TextView
+        <LinearLayout
+            android:id="@+id/feedback"
             android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:gravity="left"
-            android:textColor="@color/grey_700"
-            android:text="以支付宝的形式捐赠" />
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+           >
 
-</LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:gravity="left|center_vertical"
+                android:text="反馈"
+                android:textSize="17sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:gravity="left"
+                android:text="以邮件的形式反馈"
+                android:textColor="@color/grey_700" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/donate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical"
+           >
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/grey" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:gravity="left|center_vertical"
+                android:text="捐赠"
+                android:textSize="17sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:gravity="left"
+                android:text="以支付宝转账的形式捐赠"
+                android:textColor="@color/grey_700" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/add_wechat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/grey" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:gravity="left|center_vertical"
+                android:text="联系"
+                android:textSize="17sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:gravity="left"
+                android:text="添加我的微信号"
+                android:textColor="@color/grey_700" />
+        </LinearLayout>
+    </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
 
 
