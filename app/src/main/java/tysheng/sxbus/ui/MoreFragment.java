@@ -6,6 +6,11 @@ import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
+import com.baidu.autoupdatesdk.AppUpdateInfo;
+import com.baidu.autoupdatesdk.AppUpdateInfoForInstall;
+import com.baidu.autoupdatesdk.BDAutoUpdateSDK;
+import com.baidu.autoupdatesdk.CPCheckUpdateCallback;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import tysheng.sxbus.App;
@@ -30,7 +35,7 @@ public class MoreFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-mMore.setText("版本: "+SystemUtil.getVersionName());
+        mMore.setText("版本: " + SystemUtil.getVersionName());
     }
 
 
@@ -46,8 +51,25 @@ mMore.setText("版本: "+SystemUtil.getVersionName());
         c.setPrimaryClip(ClipData.newPlainText("wechat", "353491983"));//设置Clipboard 的内容
     }
 
+    public void checkVersionByBaidu() {
+        BDAutoUpdateSDK.cpUpdateCheck(mActivity, new CPCheckUpdateCallback() {
+            @Override
+            public void onCheckUpdateCallback(AppUpdateInfo appUpdateInfo, AppUpdateInfoForInstall appUpdateInfoForInstall) {
+                if (appUpdateInfo != null && appUpdateInfo.getAppVersionCode() > SystemUtil.getVersionCode()) {
+                    BDAutoUpdateSDK.uiUpdateAction(mActivity,
+                            new com.baidu.autoupdatesdk.UICheckUpdateCallback() {
+                                @Override
+                                public void onCheckComplete() {
+                                }
+                            });
+                } else {
+                    SnackBarUtil.show(getView(), "当前版本已是最新版");
+                }
+            }
+        });
+    }
 
-    @OnClick({R.id.feedback, R.id.donate, R.id.add_wechat})
+    @OnClick({R.id.feedback, R.id.donate, R.id.add_wechat, R.id.check_update})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.feedback:
@@ -64,7 +86,9 @@ mMore.setText("版本: "+SystemUtil.getVersionName());
             case R.id.add_wechat:
                 showMsg("微信号已复制到剪贴板");
                 break;
-
+            case R.id.check_update:
+                checkVersionByBaidu();
+                break;
         }
     }
 

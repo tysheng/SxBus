@@ -23,6 +23,7 @@ public class StarAdapter extends BaseQuickAdapter<Star> {
         holder.setText(R.id.textView, result.startStationName + " - " + result.endStationName)
                 .setText(R.id.number, result.lineName)
                 .addOnClickListener(R.id.textView)
+                .addOnClickListener(R.id.number)
                 .addOnClickListener(R.id.star);
     }
 

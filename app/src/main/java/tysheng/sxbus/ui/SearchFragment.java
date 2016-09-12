@@ -72,6 +72,7 @@ public class SearchFragment extends BaseFragment {
                         mStars.result.add(mAdapter.getItem(i));
                         ImageView imageView = (ImageView) view;
                         imageView.setImageResource(R.drawable.star_yes);
+                        StarUtil.onStopSave(mStars);
                         break;
                     default:
                         break;
@@ -93,12 +94,6 @@ public class SearchFragment extends BaseFragment {
         });
         mSearchView.onActionViewExpanded();
 
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        StarUtil.onStopSave(mStars);
     }
 
     private void getBusSimple(int number) {
@@ -128,7 +123,6 @@ public class SearchFragment extends BaseFragment {
         KeyboardUtil.hide(mActivity);
         int number;
         number = Integer.valueOf(s);
-
         getBusSimple(number);
     }
 

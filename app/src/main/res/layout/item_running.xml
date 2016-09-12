@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:id="@+id/going"
-        android:visibility="invisible"
+        tools:visibility="visible"
         android:drawableRight="@drawable/arrow_right"
         android:gravity="center_vertical|right"
         android:text="@string/going_to"

@@ -43,6 +43,7 @@ public class StarFragment extends BaseFragment {
             @Override
             public void SimpleOnItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 switch (view.getId()) {
+                    case R.id.number:
                     case R.id.textView:
                         startActivity(RunningActivity.newIntent(getContext(), mAdapter.getItem(i).id,
                                 mAdapter.getItem(i).lineName + " 前往 " + mAdapter.getItem(i).endStationName));
@@ -55,12 +56,6 @@ public class StarFragment extends BaseFragment {
                 }
             }
         });
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        StarUtil.onStopSave(mStars);
     }
 
 }

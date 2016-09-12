@@ -30,6 +30,30 @@
         <activity android:name=".ui.RunningActivity" />
 
 
+        <!--百度更新-->
+        <meta-data
+            android:name="BDAPPID"
+            android:value="8620005" />
+        <meta-data
+            android:name="BDAPPKEY"
+            android:value="Mrujsko6nD11OX7XixGmRfE50fBrTmgG" />
+        <activity
+            android:name="com.baidu.autoupdatesdk.ConfirmDialoigActivity"
+            android:exported="false"
+            android:screenOrientation="sensor"
+            android:theme="@style/bdp_update_dialog_style_fullscreen" />
+        <receiver
+            android:name="com.baidu.autoupdatesdk.receiver.BDBroadcastReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.baidu.autoupdatesdk.ACTION_NEW_UPDATE" />
+                <action android:name="com.baidu.autoupdatesdk.ACTION_DOWNLOAD_COMPLETE" />
+                <action android:name="com.baidu.autoupdatesdk.ACTION_NEW_AS" />
+                <action android:name="com.baidu.autoupdatesdk.ACTION_AS_DOWNLOAD_COMPLETE" />
+            </intent-filter>
+        </receiver>
+        <!--百度更新-->
+
         <meta-data
             android:name="BaiduMobAd_STAT_ID"
             android:value="298b176693" />
