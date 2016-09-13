@@ -5,6 +5,7 @@ import android.content.Context;
 import com.alibaba.fastjson.JSON;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Collection;
 
@@ -49,14 +50,18 @@ public class FastCache {
      * @param context context.
      * @param maxSize the maximum size in bytes.
      */
-    public static synchronized void init(Context context, long maxSize) throws Exception {
+    public static synchronized void init(Context context, long maxSize) {
         if (cacheDir == null)
             cacheDir = new File(context.getCacheDir() + File.separator + cacheFileName);
 
         if (!cacheDir.exists()) {
             cacheDir.mkdir();
         }
-        cache = SimpleDiskCache.open(cacheDir, 1, maxSize);
+        try {
+            cache = SimpleDiskCache.open(cacheDir, 1, maxSize);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -65,8 +70,14 @@ public class FastCache {
      * @param key the key string.
      * @return true if object with given key exists.
      */
-    public static boolean contains(final String key) throws Exception {
-        return cache.contains(key);
+    public static boolean contains(final String key) {
+        boolean contain = false;
+        try {
+            contain = cache.contains(key);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return contain;
     }
 
     /**
@@ -77,9 +88,13 @@ public class FastCache {
      * @param key    the key string.
      * @param object the object to be stored.
      */
-    public static void put(final String key, final Object object) throws Exception {
+    public static void put(final String key, final Object object) {
         String json = toJson(object);
-        cache.put(key, json);
+        try {
+            cache.put(key, json);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -115,12 +130,16 @@ public class FastCache {
      * @param classOfT the class type of the expected return object.
      * @return the object of the given type if it exists.
      */
-    public static <T> T get(final String key, final Class<T> classOfT) throws Exception {
+    public static <T> T get(final String key, final Class<T> classOfT) {
+        String json;
+        T value = null;
+        try {
+            json = cache.getString(key).getString();
+            value = fromJson(json, classOfT);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        String json = cache.getString(key).getString();
-        T value = fromJson(json, classOfT);
-        if (value == null)
-            throw new NullPointerException();
         return value;
     }
 
@@ -132,12 +151,17 @@ public class FastCache {
      * @param typeOfT the type of the expected return object.
      * @return the object of the given type if it exists.
      */
-    public static <T> T get(final String key, final Type typeOfT) throws Exception {
+    public static <T> T get(final String key, final Type typeOfT) {
 
-        String json = cache.getString(key).getString();
-        T value = fromJson(json, typeOfT);
-        if (value == null)
-            throw new NullPointerException();
+        String json;
+        T value = null;
+        try {
+            json = cache.getString(key).getString();
+            value = fromJson(json, typeOfT);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return value;
     }
 
@@ -200,9 +224,12 @@ public class FastCache {
      *
      * @param key the key string.
      */
-    public static void delete(final String key) throws Exception {
-
-        cache.delete(key);
+    public static void delete(final String key) {
+        try {
+            cache.delete(key);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -233,11 +260,16 @@ public class FastCache {
     /**
      * Clears the cache. Deletes all the stored key-value pairs synchronously.
      */
-    public static void clear(Context context) throws Exception {
+    public static void clear(Context context) {
+        long maxSize;
+        try {
+            maxSize = cache.getMaxSize();
+            cache.destroy();
+            init(context, maxSize);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        long maxSize = cache.getMaxSize();
-        cache.destroy();
-        init(context, maxSize);
     }
 
     /**
@@ -265,9 +297,14 @@ public class FastCache {
     /**
      * Returns the number of bytes being used currently by the cache.
      */
-    static long bytesUsed() throws Exception {
-
-        return cache.bytesUsed();
+    static long bytesUsed() {
+        long bytes = 0;
+        try {
+            bytes = cache.bytesUsed();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bytes;
     }
 
 }

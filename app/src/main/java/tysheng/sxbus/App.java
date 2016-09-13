@@ -8,22 +8,17 @@ public class App extends Application {
 
     private static App instance;
 
+    public static App get() {
+        return instance;
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
         instance = this;
-        try {
-            FastCache.init(this, 1024 * 50); //in bytes
-        } catch (Exception e) {
-            //failure
-        }
-    }
 
-    public static App get() {
-        return instance;
+        FastCache.init(this, 1024 * 50); //in bytes
     }
-
 
 
 }

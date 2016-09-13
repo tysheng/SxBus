@@ -11,8 +11,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSON;
-
 import butterknife.BindString;
 import butterknife.BindView;
 import rx.Observable;
@@ -52,16 +50,16 @@ public class RunningActivity extends BaseActivity {
     private RunningAdapter mRunningAdapter;
     private BusLines mBusLines;
 
-    @Override
-    public int getLayoutId() {
-        return R.layout.activity_running;
-    }
-
     public static Intent newIntent(Context context, String id, String title) {
         Intent intent = new Intent(context, RunningActivity.class);
         intent.putExtra("id", id);
         intent.putExtra("title", title);
         return intent;
+    }
+
+    @Override
+    public int getLayoutId() {
+        return R.layout.activity_running;
     }
 
     @Override
@@ -125,7 +123,7 @@ public class RunningActivity extends BaseActivity {
 
                             @Override
                             public void onNext(BusLine busLine) {
-                                LogUtil.d(JSON.toJSONString(busLine));
+//                                LogUtil.d(JSON.toJSONString(busLine));
                                 for (BusLineResult result : busLine.result) {
                                     int station = result.stationSeqNum - 1;
                                     if (station < mBusLines.result.stations.size())

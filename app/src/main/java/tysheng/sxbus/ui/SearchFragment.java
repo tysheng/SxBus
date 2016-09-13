@@ -7,7 +7,6 @@ import android.support.v7.widget.SearchView;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 
@@ -54,7 +53,7 @@ public class SearchFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-        mStars = StarUtil.initStars(mStars);
+        mStars = StarUtil.initStars();
         mAdapter = new SearchAdapter(mStars.result);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
@@ -93,7 +92,7 @@ public class SearchFragment extends BaseFragment {
             }
         });
         mSearchView.onActionViewExpanded();
-
+        mSearchView.clearFocus();
     }
 
     private void getBusSimple(int number) {
@@ -113,7 +112,6 @@ public class SearchFragment extends BaseFragment {
 
                     @Override
                     public void onNext(BusLinesSimple busLinesSimple) {
-                        LogUtil.d(JSON.toJSONString(busLinesSimple));
                         mAdapter.setNewData(busLinesSimple.result.result);
                     }
                 }));

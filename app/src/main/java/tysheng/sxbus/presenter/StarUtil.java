@@ -34,12 +34,8 @@ public class StarUtil {
 
     }
 
-    public static Stars initStars(Stars mStars) {
-        try {
-            mStars = FastCache.get(Constant.STAR, Stars.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public static Stars initStars() {
+        Stars mStars = FastCache.get(Constant.STAR, Stars.class);
         if (mStars == null) {
             mStars = new Stars();
             mStars.result = new ArrayList<>();
