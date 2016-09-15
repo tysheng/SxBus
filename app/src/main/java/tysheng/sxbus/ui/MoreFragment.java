@@ -3,6 +3,7 @@ package tysheng.sxbus.ui;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
@@ -35,7 +36,7 @@ public class MoreFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-        mMore.setText("版本: " + SystemUtil.getVersionName());
+        mMore.setText(TextUtils.concat("版本: ", SystemUtil.getVersionName()));
     }
 
 
@@ -69,7 +70,13 @@ public class MoreFragment extends BaseFragment {
         });
     }
 
-    @OnClick({R.id.feedback, R.id.donate, R.id.add_wechat, R.id.check_update})
+    private void chooseCity() {
+        SnackBarUtil.show(getView(), "功能暂未开放");
+//        ChooseCityFragment f = new ChooseCityFragment();
+//        f.show(getFragmentManager(),"");
+    }
+
+    @OnClick({R.id.feedback, R.id.donate, R.id.add_wechat, R.id.check_update, R.id.chooseCity})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.feedback:
@@ -89,7 +96,11 @@ public class MoreFragment extends BaseFragment {
             case R.id.check_update:
                 checkVersionByBaidu();
                 break;
+            case R.id.chooseCity:
+                chooseCity();
+                break;
         }
     }
+
 
 }

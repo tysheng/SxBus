@@ -15,16 +15,16 @@ import tysheng.sxbus.App;
  */
 public class BusRetrofit {
 
-    private static volatile Retrofit retrofit = null;
     private static final int TIME_MAX = 10;
-    private static BusService sService = null;
+    public static BusService sService = null;
+    private static volatile Retrofit retrofit = null;
 
     public static void init() {
         final File baseDir = App.get().getCacheDir();
         Cache cache = null;
         if (baseDir != null) {
-            final File cacheDir = new File(baseDir, "HttpResponseCache");
-            cache = new Cache(cacheDir, 10 * 1024 * 1024);
+            final File cacheDir = new File(baseDir, "HttpCache");
+            cache = new Cache(cacheDir, 100 * 1024 * 1024);
         }
         //设置缓存 10M
         OkHttpClient.Builder builder = new OkHttpClient.Builder();

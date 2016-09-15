@@ -77,7 +77,7 @@ public class RunningActivity extends BaseActivity {
                 refresh();
             }
         });
-
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         refresh();
     }
 
