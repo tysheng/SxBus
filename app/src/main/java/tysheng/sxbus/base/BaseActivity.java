@@ -7,9 +7,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 
 import com.baidu.mobstat.StatService;
+import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
 import butterknife.ButterKnife;
 import rx.Subscription;
@@ -18,7 +18,7 @@ import rx.subscriptions.CompositeSubscription;
 /**
  * Created by shengtianyang on 16/2/22.
  */
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends RxAppCompatActivity {
 
     private CompositeSubscription mSubscription;
 

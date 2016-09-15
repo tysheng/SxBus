@@ -7,10 +7,10 @@ android {
 
     defaultConfig {
         applicationId "tysheng.sxbus"
-        minSdkVersion 16
+        minSdkVersion 14
         targetSdkVersion 24
-        versionCode 3
-        versionName "1.2.beta"
+        versionCode 4
+        versionName "1.2"
         resConfigs "zh"
     }
     buildTypes {
@@ -46,4 +46,6 @@ dependencies {
     compile files('src/main/jniLibs/need_lib.jar')
     compile files('src/main/jniLibs/patchupdate.jar')
     compile 'com.tbruyelle.rxpermissions:rxpermissions:0.7.0@aar'
+    compile 'com.trello:rxlifecycle-components:0.7.0'
+    compile 'com.trello:rxlifecycle:0.7.0'
 }

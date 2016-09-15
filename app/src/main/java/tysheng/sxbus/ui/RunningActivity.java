@@ -11,6 +11,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
+import com.trello.rxlifecycle.android.ActivityEvent;
+
 import butterknife.BindString;
 import butterknife.BindView;
 import rx.Observable;
@@ -85,7 +87,8 @@ public class RunningActivity extends BaseActivity {
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                add(BusRetrofit.get().getBusLines(id)
+                BusRetrofit.get().getBusLines(id)
+                        .compose(RunningActivity.this.<BusLines>bindUntilEvent(ActivityEvent.DESTROY))
                         .map(new Func1<BusLines, Boolean>() {
                             @Override
                             public Boolean call(BusLines busLines) {
@@ -117,7 +120,7 @@ public class RunningActivity extends BaseActivity {
 
                             @Override
                             public void onError(Throwable e) {
-                                LogUtil.d("222" + e.getMessage());
+                                LogUtil.d("running" + e.getMessage());
                                 SnackBarUtil.show(mCoordinatorLayout, runningError, Snackbar.LENGTH_LONG);
                             }
 
@@ -131,7 +134,7 @@ public class RunningActivity extends BaseActivity {
                                 }
                                 mRunningAdapter.setNewData(mBusLines.result.stations);
                             }
-                        }));
+                        });
             }
         });
 

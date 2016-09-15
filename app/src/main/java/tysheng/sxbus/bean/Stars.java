@@ -7,8 +7,6 @@ import java.util.List;
  * Date: 16/9/10 19:48.
  */
 public class Stars {
-
-
         public PageParam pageParam;
         /**
          * id : 1
@@ -20,7 +18,4 @@ public class Stars {
          */
 
         public List<Star> result;
-
-
-
 }

@@ -2,7 +2,6 @@ package tysheng.sxbus.net;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func0;
 import rx.schedulers.Schedulers;
 
 /**
@@ -23,12 +22,8 @@ public class HttpUtil {
         return (Observable.Transformer<T, T>) sTransformer;
     }
 
-    public static <T> Observable<T> convert(final Observable<T> observable) {
-        return Observable.defer(new Func0<Observable<T>>() {
-            @Override
-            public Observable<T> call() {
-                return observable.compose(HttpUtil.<T>applySchedulers());
-            }
-        });
+    public static <T> Observable<T> convert(Observable<T> observable) {
+        return observable.observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io());
     }
 }

@@ -22,14 +22,13 @@ public class RunningAdapter extends BaseQuickAdapter<BusLinesResult.StationsEnti
     public RunningAdapter(List<BusLinesResult.StationsEntity> data) {
         super(R.layout.item_running, data);
     }
-    protected int color = Color.parseColor("#2196F3");
 
     @Override
     protected void convert(BaseViewHolder holder, BusLinesResult.StationsEntity result) {
         TextView textView = holder.getView(R.id.textView);
         TextView going = holder.getView(R.id.going);
         if (TextUtils.equals("a", result.updateTime) ){
-            textView.setTextColor(color);
+            textView.setTextColor(mContext.getResources().getColor(R.color.colorPrimary));
             going.setVisibility(View.VISIBLE);
         }else{
             going.setVisibility(View.INVISIBLE);

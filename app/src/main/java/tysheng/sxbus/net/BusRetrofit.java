@@ -1,10 +1,14 @@
 package tysheng.sxbus.net;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.fastjson.FastJsonConverterFactory;
@@ -15,7 +19,7 @@ import tysheng.sxbus.App;
  */
 public class BusRetrofit {
 
-    private static final int TIME_MAX = 10;
+    private static final int TIME_MAX = 12;
     public static BusService sService = null;
     private static volatile Retrofit retrofit = null;
 
@@ -31,8 +35,21 @@ public class BusRetrofit {
         builder.readTimeout(TIME_MAX, TimeUnit.SECONDS);
         builder.connectTimeout(TIME_MAX, TimeUnit.SECONDS);
         builder.writeTimeout(TIME_MAX, TimeUnit.SECONDS);
-        OkHttpClient client = builder.cache(cache).build();
 
+        Interceptor interceptor = new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request request = chain.request();
+                request.newBuilder()
+//                        .cacheControl(CacheControl.FORCE_NETWORK)
+                        .build();
+                Response response = chain.proceed(request);
+
+                return response;
+            }
+        };
+        builder.addInterceptor(interceptor);
+        OkHttpClient client = builder.cache(cache).build();
 
         retrofit = new Retrofit.Builder()
                 .client(client)

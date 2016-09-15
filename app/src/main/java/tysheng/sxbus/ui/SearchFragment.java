@@ -9,17 +9,19 @@ import android.widget.ImageView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
+import com.trello.rxlifecycle.android.FragmentEvent;
 
 import butterknife.BindString;
 import butterknife.BindView;
 import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.SearchAdapter;
 import tysheng.sxbus.base.BaseFragment;
 import tysheng.sxbus.bean.BusLinesSimple;
 import tysheng.sxbus.bean.Stars;
 import tysheng.sxbus.net.BusRetrofit;
-import tysheng.sxbus.net.HttpUtil;
 import tysheng.sxbus.presenter.StarUtil;
 import tysheng.sxbus.utils.KeyboardUtil;
 import tysheng.sxbus.utils.LogUtil;
@@ -96,7 +98,10 @@ public class SearchFragment extends BaseFragment {
     }
 
     private void getBusSimple(int number) {
-        add(HttpUtil.convert(BusRetrofit.get().numberToSearch(number))
+        BusRetrofit.get().numberToSearch(number)
+                .compose(this.<BusLinesSimple>bindUntilEvent(FragmentEvent.DESTROY))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
                 .subscribe(new Subscriber<BusLinesSimple>() {
                     @Override
                     public void onCompleted() {
@@ -112,9 +117,10 @@ public class SearchFragment extends BaseFragment {
 
                     @Override
                     public void onNext(BusLinesSimple busLinesSimple) {
+                        LogUtil.d(busLinesSimple.status.code);
                         mAdapter.setNewData(busLinesSimple.result.result);
                     }
-                }));
+                });
     }
 
     private void search(String s) {

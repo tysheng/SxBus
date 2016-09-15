@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.baidu.mobstat.StatService;
+import com.trello.rxlifecycle.components.support.RxFragment;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -22,7 +23,7 @@ import rx.subscriptions.CompositeSubscription;
 /**
  * Created by shengtianyang on 16/2/22.
  */
-public abstract class BaseFragment extends Fragment {
+public abstract class BaseFragment extends RxFragment {
     protected View mRootView;
     protected Activity mActivity;
     private CompositeSubscription mSubscription;
