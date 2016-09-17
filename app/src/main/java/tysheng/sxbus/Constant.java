@@ -6,5 +6,5 @@ package tysheng.sxbus;
  */
 public interface Constant {
     String STAR = "STAR";
-    String SEARCH = "Search";
+    String RECENT = "Search";
 }

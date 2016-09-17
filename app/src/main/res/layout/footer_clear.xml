@@ -1,11 +1,15 @@
-<TextView android:id="@+id/recyclerView"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="45dp"
-    android:text="@string/clear_search"
-    android:gravity="center"
-    android:textSize="18sp"
-    xmlns:android="http://schemas.android.com/apk/res/android" />
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-
-
-
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_marginTop="10dp"
+        android:background="?selectableItemBackground"
+        android:gravity="center"
+        android:text="@string/clear_search"
+        android:textColor="@color/grey_700" />
+</LinearLayout>

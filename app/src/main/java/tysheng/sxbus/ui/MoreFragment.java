@@ -80,7 +80,8 @@ public class MoreFragment extends BaseFragment {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.feedback:
-                showAlipayFail("邮箱已复制到剪贴板");
+                SystemUtil.sendEmail(getActivity());
+//                showAlipayFail("邮箱已复制到剪贴板");
                 break;
             case R.id.donate:
                 if (AlipayZeroSdk.hasInstalledAlipayClient(App.get())) {

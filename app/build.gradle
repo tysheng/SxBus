@@ -9,8 +9,8 @@ android {
         applicationId "tysheng.sxbus"
         minSdkVersion 14
         targetSdkVersion 24
-        versionCode 4
-        versionName "1.2"
+        versionCode 6
+        versionName "1.4.dev"
         resConfigs "zh"
     }
     buildTypes {
@@ -38,7 +38,7 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'org.ligboy.retrofit2:converter-fastjson-android:2.1.0'
     compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
-    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:v2.1.1'
+    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:v2.1.4'
     compile 'com.roughike:bottom-bar:2.0.2'
     compile 'com.jakewharton:disklrucache:2.0.2'
     compile files('src/main/jniLibs/Baidu_Mtj_3.7.4.5.jar')

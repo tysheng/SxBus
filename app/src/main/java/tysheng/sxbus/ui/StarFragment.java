@@ -10,6 +10,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 
 import butterknife.BindView;
+import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.StarAdapter;
 import tysheng.sxbus.base.BaseFragment;
@@ -36,7 +37,7 @@ public class StarFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-        mStars = StarUtil.initStars();
+        mStars = StarUtil.initStars(Constant.STAR);
         mAdapter = new StarAdapter(mStars.result);
         View view = LayoutInflater.from(mActivity).inflate(R.layout.empty_layout, (ViewGroup) mRecyclerView.getParent(), false);
         mAdapter.setEmptyView(view);
@@ -53,7 +54,7 @@ public class StarFragment extends BaseFragment {
                         break;
                     case R.id.star:
                         mAdapter.remove(i);
-                        StarUtil.onStopSave(mStars);
+                        StarUtil.saveStars(Constant.STAR, mStars);
                     default:
                         break;
                 }

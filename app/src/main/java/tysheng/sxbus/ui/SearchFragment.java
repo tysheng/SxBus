@@ -4,7 +4,9 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -16,6 +18,7 @@ import butterknife.BindView;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.SearchAdapter;
 import tysheng.sxbus.base.BaseFragment;
@@ -55,8 +58,24 @@ public class SearchFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-        mStars = StarUtil.initStars();
+        mStars = StarUtil.initStars(Constant.RECENT);
+        if (mStars.result.size() > 6) {
+            mStars.result = mStars.result.subList(0, 6);
+        }
         mAdapter = new SearchAdapter(mStars.result);
+        if (mStars.result != null && mStars.result.size() != 0) {
+            View view = LayoutInflater.from(mActivity).inflate(R.layout.footer_clear, (ViewGroup) getView(), false);
+            mAdapter.addFooterView(view);
+            (view.findViewById(R.id.textView)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mAdapter.removeAllFooterView();
+                    mStars.result.clear();
+                    StarUtil.saveStars(Constant.RECENT, mStars);
+                    mAdapter.notifyDataSetChanged();
+                }
+            });
+        }
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
 
@@ -68,12 +87,14 @@ public class SearchFragment extends BaseFragment {
                         startActivity(RunningActivity.newIntent(getContext(), mAdapter.getItem(i).id
                                 , mAdapter.getItem(i).lineName + " 前往 " + mAdapter.getItem(i).endStationName)
                         );
+                        mStars.result.add(0, mAdapter.getItem(i));
+                        StarUtil.saveStars(Constant.RECENT, mStars);
                         break;
                     case R.id.star:
                         mStars.result.add(mAdapter.getItem(i));
                         ImageView imageView = (ImageView) view;
                         imageView.setImageResource(R.drawable.star_yes);
-                        StarUtil.onStopSave(mStars);
+                        StarUtil.saveStars(Constant.STAR, mStars);
                         break;
                     default:
                         break;
@@ -98,6 +119,8 @@ public class SearchFragment extends BaseFragment {
     }
 
     private void getBusSimple(int number) {
+        if (mAdapter.getFooterLayoutCount() != 0)
+            mAdapter.removeAllFooterView();
         BusRetrofit.get().numberToSearch(number)
                 .compose(this.<BusLinesSimple>bindUntilEvent(FragmentEvent.DESTROY))
                 .observeOn(AndroidSchedulers.mainThread())

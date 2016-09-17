@@ -46,6 +46,7 @@ public abstract class BaseFragment extends RxFragment {
         return mRootView;
     }
 
+
     protected void add(Subscription s) {
         if (this.mSubscription == null) {
             this.mSubscription = new CompositeSubscription();

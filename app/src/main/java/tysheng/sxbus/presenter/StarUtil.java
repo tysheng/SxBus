@@ -3,7 +3,6 @@ package tysheng.sxbus.presenter;
 import java.util.ArrayList;
 
 import rx.Subscriber;
-import tysheng.sxbus.Constant;
 import tysheng.sxbus.bean.Stars;
 import tysheng.sxbus.utils.fastcache.FastCache;
 
@@ -12,9 +11,9 @@ import tysheng.sxbus.utils.fastcache.FastCache;
  * Date: 16/9/12 09:47.
  */
 public class StarUtil {
-    public static void onStopSave(Stars mStars) {
-        if (mStars != null && mStars.result.size() != 0)
-            FastCache.putAsync(Constant.STAR, mStars)
+    public static void saveStars(String tag, Stars mStars) {
+        if (mStars != null && mStars.result != null)
+            FastCache.putAsync(tag, mStars)
                     .subscribe(new Subscriber<Boolean>() {
                         @Override
                         public void onCompleted() {
@@ -34,8 +33,8 @@ public class StarUtil {
 
     }
 
-    public static Stars initStars() {
-        Stars mStars = FastCache.get(Constant.STAR, Stars.class);
+    public static Stars initStars(String tag) {
+        Stars mStars = FastCache.get(tag, Stars.class);
         if (mStars == null) {
             mStars = new Stars();
             mStars.result = new ArrayList<>();
