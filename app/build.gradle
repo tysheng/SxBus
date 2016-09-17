@@ -9,8 +9,8 @@ android {
         applicationId "tysheng.sxbus"
         minSdkVersion 14
         targetSdkVersion 24
-        versionCode 6
-        versionName "1.4.dev"
+        versionCode 7
+        versionName "1.4"
         resConfigs "zh"
     }
     buildTypes {

@@ -32,17 +32,8 @@ public class BusLinesResult {
          * updateTime : Dec 19, 2013 10:26:18 PM
          */
 
-        public List<StationsEntity> stations;
+        public List<Stations> stations;
 
 
-        public static class StationsEntity {
-            public String id;
-            public int area;
-            public double lat;
-            public double lng;
-            public String state;
-            public String stationName;
-            public String updateTime;
-        }
 
 }

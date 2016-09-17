@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
@@ -17,10 +18,10 @@ import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import tysheng.sxbus.App;
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.ChooseCityAdapter;
 import tysheng.sxbus.bean.CitySection;
-import tysheng.sxbus.utils.LogUtil;
 import tysheng.sxbus.utils.SPHelper;
 
 /**
@@ -61,9 +62,11 @@ public class ChooseCityFragment extends DialogFragment {
         recyclerView.addOnItemTouchListener(new OnItemChildClickListener() {
             @Override
             public void SimpleOnItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
+
                 if (view.getId() == R.id.textView) {
-                    helper.put("city", names[i]);
-                    LogUtil.d("name" + names[i]);
+//                    helper.put("city", names[i]);
+//                    LogUtil.d("name" + names[i]);
+                    Toast.makeText(App.get(), "功能暂未开放", Toast.LENGTH_SHORT).show();
                     dismiss();
                 }
             }

@@ -20,6 +20,7 @@ import tysheng.sxbus.base.BaseFragment;
 import tysheng.sxbus.utils.AlipayZeroSdk;
 import tysheng.sxbus.utils.SnackBarUtil;
 import tysheng.sxbus.utils.SystemUtil;
+import tysheng.sxbus.view.ChooseCityFragment;
 
 /**
  * Created by Sty
@@ -71,10 +72,11 @@ public class MoreFragment extends BaseFragment {
     }
 
     private void chooseCity() {
-        SnackBarUtil.show(getView(), "功能暂未开放");
-//        ChooseCityFragment f = new ChooseCityFragment();
-//        f.show(getFragmentManager(),"");
+//        SnackBarUtil.show(getView(), "功能暂未开放");
+        ChooseCityFragment f = new ChooseCityFragment();
+        f.show(getFragmentManager(), "");
     }
+
 
     @OnClick({R.id.feedback, R.id.donate, R.id.add_wechat, R.id.check_update, R.id.chooseCity})
     public void onClick(View view) {

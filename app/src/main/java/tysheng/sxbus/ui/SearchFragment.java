@@ -1,5 +1,6 @@
 package tysheng.sxbus.ui;
 
+import android.app.ProgressDialog;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -9,26 +10,29 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.trello.rxlifecycle.android.FragmentEvent;
 
+import java.util.concurrent.TimeUnit;
+
 import butterknife.BindString;
 import butterknife.BindView;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import rx.functions.Action0;
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.SearchAdapter;
 import tysheng.sxbus.base.BaseFragment;
 import tysheng.sxbus.bean.BusLinesSimple;
 import tysheng.sxbus.bean.Stars;
+import tysheng.sxbus.bean.Status;
 import tysheng.sxbus.net.BusRetrofit;
 import tysheng.sxbus.presenter.StarUtil;
-import tysheng.sxbus.utils.KeyboardUtil;
 import tysheng.sxbus.utils.LogUtil;
+import tysheng.sxbus.utils.RxHelper;
 import tysheng.sxbus.utils.SnackBarUtil;
+import tysheng.sxbus.utils.StySubscriber;
 
 /**
  * Created by Sty
@@ -50,6 +54,7 @@ public class SearchFragment extends BaseFragment {
     SearchView mSearchView;
     private Stars mStars;
     private SearchAdapter mAdapter;
+    private ProgressDialog mDialog;
 
     @Override
     protected int getLayoutId() {
@@ -118,17 +123,38 @@ public class SearchFragment extends BaseFragment {
         mSearchView.clearFocus();
     }
 
-    private void getBusSimple(int number) {
+    private void getBusSimple(final int number) {
         if (mAdapter.getFooterLayoutCount() != 0)
             mAdapter.removeAllFooterView();
-        BusRetrofit.get().numberToSearch(number)
-                .compose(this.<BusLinesSimple>bindUntilEvent(FragmentEvent.DESTROY))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<BusLinesSimple>() {
-                    @Override
-                    public void onCompleted() {
+        if (mDialog == null) {
+            mDialog = new ProgressDialog(mActivity);
+            mDialog.setMessage("正在搜索...");
+        }
 
+        mDialog.show();
+        BusRetrofit.get().numberToSearch(number)
+                .delay(100, TimeUnit.MILLISECONDS)
+                .doAfterTerminate(new Action0() {
+                    @Override
+                    public void call() {
+                        mDialog.dismiss();
+                    }
+                })
+                .compose(this.<BusLinesSimple>bindUntilEvent(FragmentEvent.DESTROY))
+                .compose(RxHelper.<BusLinesSimple>ioToMain())
+                .subscribe(new StySubscriber<BusLinesSimple>() {
+                    @Override
+                    public void next(BusLinesSimple s) {
+                        Status status = JSON.parseObject(s.status, Status.class);
+                        LogUtil.d(status.code);
+
+                        if (status.code == 20306) {
+                            SnackBarUtil.show(mCoordinatorLayout, "查询的公交线路不存在");
+                        } else if (status.code == 0) {
+                            Stars stars = JSON.parseObject(s.result, Stars.class);
+                            mAdapter.setNewData(stars.result);
+                        } else
+                            onError(null);
                     }
 
                     @Override
@@ -137,20 +163,12 @@ public class SearchFragment extends BaseFragment {
                         SnackBarUtil.show(mCoordinatorLayout, searchError);
 
                     }
-
-                    @Override
-                    public void onNext(BusLinesSimple busLinesSimple) {
-                        LogUtil.d(busLinesSimple.status.code);
-                        mAdapter.setNewData(busLinesSimple.result.result);
-                    }
                 });
     }
 
     private void search(String s) {
-        KeyboardUtil.hide(mActivity);
-        int number;
-        number = Integer.valueOf(s);
-        getBusSimple(number);
+        mSearchView.clearFocus();
+        getBusSimple(Integer.valueOf(s));
     }
 
 }

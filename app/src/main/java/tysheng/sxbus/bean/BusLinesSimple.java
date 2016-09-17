@@ -10,11 +10,11 @@ public class BusLinesSimple  {
      * code : 0
      */
 
-    public Status status;
+    public String status;
     /**
      * pageParam : {"offset":0,"len":20,"totalNum":7}
      */
 
-    public Stars result;
+    public String result;
 
 }
