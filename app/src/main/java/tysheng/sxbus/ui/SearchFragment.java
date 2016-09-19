@@ -5,6 +5,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.trello.rxlifecycle.android.FragmentEvent;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindString;
@@ -25,6 +27,7 @@ import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.SearchAdapter;
 import tysheng.sxbus.base.BaseFragment;
 import tysheng.sxbus.bean.BusLinesSimple;
+import tysheng.sxbus.bean.Star;
 import tysheng.sxbus.bean.Stars;
 import tysheng.sxbus.bean.Status;
 import tysheng.sxbus.net.BusRetrofit;
@@ -52,7 +55,7 @@ public class SearchFragment extends BaseFragment {
     CoordinatorLayout mCoordinatorLayout;
     @BindView(R.id.searchView)
     SearchView mSearchView;
-    private Stars mStars;
+    private List<Star> mRecentList, mStarList;
     private SearchAdapter mAdapter;
     private ProgressDialog mDialog;
 
@@ -63,20 +66,22 @@ public class SearchFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-        mStars = StarUtil.initStars(Constant.RECENT);
-        if (mStars.result.size() > 6) {
-            mStars.result = mStars.result.subList(0, 6);
+        mRecentList = StarUtil.initStarList(Constant.RECENT);
+        if (mRecentList.size() > 6) {
+            mRecentList = mRecentList.subList(0, 6);
         }
-        mAdapter = new SearchAdapter(mStars.result);
-        if (mStars.result != null && mStars.result.size() != 0) {
+        mStarList = StarUtil.initStarList(Constant.STAR);
+
+        mAdapter = new SearchAdapter(mRecentList);
+        if (mRecentList != null && mRecentList.size() != 0) {
             View view = LayoutInflater.from(mActivity).inflate(R.layout.footer_clear, (ViewGroup) getView(), false);
             mAdapter.addFooterView(view);
             (view.findViewById(R.id.textView)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mAdapter.removeAllFooterView();
-                    mStars.result.clear();
-                    StarUtil.saveStars(Constant.RECENT, mStars);
+                    mRecentList.clear();
+                    StarUtil.saveStarList(Constant.RECENT, mRecentList);
                     mAdapter.notifyDataSetChanged();
                 }
             });
@@ -92,14 +97,12 @@ public class SearchFragment extends BaseFragment {
                         startActivity(RunningActivity.newIntent(getContext(), mAdapter.getItem(i).id
                                 , mAdapter.getItem(i).lineName + " 前往 " + mAdapter.getItem(i).endStationName)
                         );
-                        mStars.result.add(0, mAdapter.getItem(i));
-                        StarUtil.saveStars(Constant.RECENT, mStars);
+                        save(Constant.RECENT, mRecentList, i);
                         break;
                     case R.id.star:
-                        mStars.result.add(mAdapter.getItem(i));
                         ImageView imageView = (ImageView) view;
                         imageView.setImageResource(R.drawable.star_yes);
-                        StarUtil.saveStars(Constant.STAR, mStars);
+                        save(Constant.STAR, mStarList, i);
                         break;
                     default:
                         break;
@@ -120,6 +123,19 @@ public class SearchFragment extends BaseFragment {
         });
         mSearchView.onActionViewExpanded();
         mSearchView.clearFocus();
+    }
+
+    private void save(String tag, List<Star> list, int i) {
+        boolean flag = true;
+        for (Star star : list) {
+            if (TextUtils.equals(star.id, mAdapter.getItem(i).id)) {
+                flag = false;
+            }
+        }
+        if (flag) {
+            list.add(0, mAdapter.getItem(i));
+            StarUtil.saveStarList(tag, list);
+        }
     }
 
     private void getBusSimple(int number) {

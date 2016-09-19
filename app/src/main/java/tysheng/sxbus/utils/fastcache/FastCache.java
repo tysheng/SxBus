@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.List;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -35,6 +36,10 @@ public class FastCache {
 
     private static <T> T fromJson(String json, Class<T> classOfT) {
         return JSON.parseObject(json, classOfT);
+    }
+
+    private static <T> List<T> fromJsonArray(String json, Class<T> classOfT) {
+        return JSON.parseArray(json, classOfT);
     }
 
     private static <T> T fromJson(String json, Type typeOfT) {
@@ -97,6 +102,7 @@ public class FastCache {
         }
     }
 
+
     /**
      * Put an object into FastCache with the given key asynchronously. Previously
      * stored object with the same
@@ -143,6 +149,28 @@ public class FastCache {
         return value;
     }
 
+    /**
+     * FastJson Array
+     *
+     * @param key
+     * @param classOfT
+     * @param <T>
+     * @return
+     */
+    public static <T> List<T> getArray(final String key, final Class<T> classOfT) {
+        String json;
+        List<T> value = null;
+        try {
+            json = cache.getString(key).getString();
+            value = fromJsonArray(json, classOfT);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return value;
+    }
+
+
 
     /**
      * Get an object from FastCache with the given key. This a blocking IO operation.
@@ -181,6 +209,29 @@ public class FastCache {
             public void call(Subscriber<? super T> subscriber) {
                 try {
                     T t = FastCache.get(key, classOfT);
+                    subscriber.onNext(t);
+                    subscriber.onCompleted();
+                } catch (Exception exception) {
+                    subscriber.onError(exception);
+                }
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
+
+    /**
+     * FastJson Array
+     *
+     * @param key
+     * @param classOfT
+     * @param <T>
+     * @return
+     */
+    public static <T> Observable<List<T>> getArrayAsync(final String key, final Class<T> classOfT) {
+        return Observable.create(new Observable.OnSubscribe<List<T>>() {
+            @Override
+            public void call(Subscriber<? super List<T>> subscriber) {
+                try {
+                    List<T> t = FastCache.getArray(key, classOfT);
                     subscriber.onNext(t);
                     subscriber.onCompleted();
                 } catch (Exception exception) {
