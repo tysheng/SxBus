@@ -4,7 +4,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
@@ -39,10 +38,10 @@ public class StarFragment extends BaseFragment {
     protected void initData() {
         mStars = StarUtil.initStars(Constant.STAR);
         mAdapter = new StarAdapter(mStars.result);
-        View view = LayoutInflater.from(mActivity).inflate(R.layout.empty_layout, (ViewGroup) mRecyclerView.getParent(), false);
-        mAdapter.setEmptyView(view);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
+        View view = LayoutInflater.from(mActivity).inflate(R.layout.empty_layout, mRecyclerView, false);
+        mAdapter.setEmptyView(view);
         mRecyclerView.addOnItemTouchListener(new OnItemChildClickListener() {
             @Override
             public void SimpleOnItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {

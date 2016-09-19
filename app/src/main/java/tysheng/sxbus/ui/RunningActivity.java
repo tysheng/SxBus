@@ -17,10 +17,8 @@ import butterknife.BindString;
 import butterknife.BindView;
 import rx.Observable;
 import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
 import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.RunningAdapter;
 import tysheng.sxbus.base.BaseActivity;
@@ -29,6 +27,7 @@ import tysheng.sxbus.bean.BusLineResult;
 import tysheng.sxbus.bean.BusLines;
 import tysheng.sxbus.net.BusRetrofit;
 import tysheng.sxbus.utils.LogUtil;
+import tysheng.sxbus.utils.RxHelper;
 import tysheng.sxbus.utils.SnackBarUtil;
 
 /**
@@ -72,7 +71,6 @@ public class RunningActivity extends BaseActivity {
         mRunningAdapter = new RunningAdapter(null);
         mRecyclerView.setAdapter(mRunningAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -80,63 +78,66 @@ public class RunningActivity extends BaseActivity {
             }
         });
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
-        refresh();
-    }
-
-    private void refresh() {
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                BusRetrofit.get().getBusLines(id)
-                        .compose(RunningActivity.this.<BusLines>bindUntilEvent(ActivityEvent.DESTROY))
-                        .map(new Func1<BusLines, Boolean>() {
+                mSwipeRefreshLayout.setRefreshing(true);
+                refresh();
+            }
+        });
+    }
+
+    private void refresh() {
+        BusRetrofit.get().getBusLines(id)
+                .compose(RunningActivity.this.<BusLines>bindUntilEvent(ActivityEvent.DESTROY))
+                .doAfterTerminate(new Action0() {
+                    @Override
+                    public void call() {
+                        mSwipeRefreshLayout.post(new Runnable() {
                             @Override
-                            public Boolean call(BusLines busLines) {
-                                mBusLines = busLines;
-                                return true;
-                            }
-                        })
-                        .concatMap(new Func1<Boolean, Observable<BusLine>>() {
-                            @Override
-                            public Observable<BusLine> call(Boolean aBoolean) {
-                                return BusRetrofit.get()
-                                        .getRunningBus(id);
-                            }
-                        })
-                        .doAfterTerminate(new Action0() {
-                            @Override
-                            public void call() {
+                            public void run() {
                                 if (mSwipeRefreshLayout.isRefreshing())
                                     mSwipeRefreshLayout.setRefreshing(false);
                             }
-                        })
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Subscriber<BusLine>() {
-                            @Override
-                            public void onCompleted() {
-
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                LogUtil.d("running" + e.getMessage());
-                                SnackBarUtil.show(mCoordinatorLayout, runningError, Snackbar.LENGTH_LONG);
-                            }
-
-                            @Override
-                            public void onNext(BusLine busLine) {
-//                                LogUtil.d(JSON.toJSONString(busLine));
-                                for (BusLineResult result : busLine.result) {
-                                    int station = result.stationSeqNum - 1;
-                                    if (station < mBusLines.result.stations.size())
-                                        mBusLines.result.stations.get(station).updateTime = "a";
-                                }
-                                mRunningAdapter.setNewData(mBusLines.result.stations);
-                            }
                         });
-            }
-        });
+                    }
+                })
+                .map(new Func1<BusLines, Boolean>() {
+                    @Override
+                    public Boolean call(BusLines busLines) {
+                        mBusLines = busLines;
+                        return true;
+                    }
+                })
+                .concatMap(new Func1<Boolean, Observable<BusLine>>() {
+                    @Override
+                    public Observable<BusLine> call(Boolean aBoolean) {
+                        return BusRetrofit.get()
+                                .getRunningBus(id);
+                    }
+                })
+                .compose(RxHelper.<BusLine>ioToMain())
+                .subscribe(new Subscriber<BusLine>() {
+                    @Override
+                    public void onCompleted() {
 
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        LogUtil.d("running" + e.getMessage());
+                        SnackBarUtil.show(mCoordinatorLayout, runningError, Snackbar.LENGTH_LONG);
+                    }
+
+                    @Override
+                    public void onNext(BusLine busLine) {
+                        for (BusLineResult result : busLine.result) {
+                            int station = result.stationSeqNum - 1;
+                            if (station < mBusLines.result.stations.size())
+                                mBusLines.result.stations.get(station).updateTime = "a";
+                        }
+                        mRunningAdapter.setNewData(mBusLines.result.stations);
+                    }
+                });
     }
 }

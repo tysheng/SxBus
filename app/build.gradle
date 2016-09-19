@@ -9,8 +9,8 @@ android {
         applicationId "tysheng.sxbus"
         minSdkVersion 14
         targetSdkVersion 24
-        versionCode 7
-        versionName "1.4"
+        versionCode 8
+        versionName "1.4.dev"
         resConfigs "zh"
     }
     buildTypes {
@@ -18,6 +18,10 @@ android {
             minifyEnabled true
             shrinkResources true
             zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

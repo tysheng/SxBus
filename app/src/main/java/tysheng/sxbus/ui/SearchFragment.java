@@ -109,8 +109,7 @@ public class SearchFragment extends BaseFragment {
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                LogUtil.d(query);
-                search(query);
+                getBusSimple(Integer.valueOf(query));
                 return true;
             }
 
@@ -123,17 +122,11 @@ public class SearchFragment extends BaseFragment {
         mSearchView.clearFocus();
     }
 
-    private void getBusSimple(final int number) {
-        if (mAdapter.getFooterLayoutCount() != 0)
-            mAdapter.removeAllFooterView();
-        if (mDialog == null) {
-            mDialog = new ProgressDialog(mActivity);
-            mDialog.setMessage("正在搜索...");
-        }
-
-        mDialog.show();
-        BusRetrofit.get().numberToSearch(number)
-                .delay(100, TimeUnit.MILLISECONDS)
+    private void getBusSimple(int number) {
+        LogUtil.d(System.currentTimeMillis() + "  1st");
+        BusRetrofit.get()
+                .numberToSearch(number)
+                .delay(200, TimeUnit.MILLISECONDS)
                 .doAfterTerminate(new Action0() {
                     @Override
                     public void call() {
@@ -144,7 +137,21 @@ public class SearchFragment extends BaseFragment {
                 .compose(RxHelper.<BusLinesSimple>ioToMain())
                 .subscribe(new StySubscriber<BusLinesSimple>() {
                     @Override
+                    public void onStart() {
+                        LogUtil.d(System.currentTimeMillis() + "  2nd");
+                        mSearchView.clearFocus();
+                        if (mAdapter.getFooterLayoutCount() != 0)
+                            mAdapter.removeAllFooterView();
+                        if (mDialog == null) {
+                            mDialog = new ProgressDialog(mActivity);
+                            mDialog.setMessage("正在搜索...");
+                        }
+                        mDialog.show();
+                    }
+
+                    @Override
                     public void next(BusLinesSimple s) {
+                        LogUtil.d(System.currentTimeMillis() + "  3rd");
                         Status status = JSON.parseObject(s.status, Status.class);
                         LogUtil.d(status.code);
 
@@ -166,9 +173,5 @@ public class SearchFragment extends BaseFragment {
                 });
     }
 
-    private void search(String s) {
-        mSearchView.clearFocus();
-        getBusSimple(Integer.valueOf(s));
-    }
 
 }

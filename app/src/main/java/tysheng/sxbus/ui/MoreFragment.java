@@ -72,7 +72,6 @@ public class MoreFragment extends BaseFragment {
     }
 
     private void chooseCity() {
-//        SnackBarUtil.show(getView(), "功能暂未开放");
         ChooseCityFragment f = new ChooseCityFragment();
         f.show(getFragmentManager(), "");
     }
@@ -83,7 +82,6 @@ public class MoreFragment extends BaseFragment {
         switch (view.getId()) {
             case R.id.feedback:
                 SystemUtil.sendEmail(getActivity());
-//                showAlipayFail("邮箱已复制到剪贴板");
                 break;
             case R.id.donate:
                 if (AlipayZeroSdk.hasInstalledAlipayClient(App.get())) {
