@@ -123,7 +123,6 @@ public class SearchFragment extends BaseFragment {
     }
 
     private void getBusSimple(int number) {
-        LogUtil.d(System.currentTimeMillis() + "  1st");
         BusRetrofit.get()
                 .numberToSearch(number)
                 .delay(200, TimeUnit.MILLISECONDS)
@@ -138,7 +137,6 @@ public class SearchFragment extends BaseFragment {
                 .subscribe(new StySubscriber<BusLinesSimple>() {
                     @Override
                     public void onStart() {
-                        LogUtil.d(System.currentTimeMillis() + "  2nd");
                         mSearchView.clearFocus();
                         if (mAdapter.getFooterLayoutCount() != 0)
                             mAdapter.removeAllFooterView();
@@ -151,9 +149,7 @@ public class SearchFragment extends BaseFragment {
 
                     @Override
                     public void next(BusLinesSimple s) {
-                        LogUtil.d(System.currentTimeMillis() + "  3rd");
                         Status status = JSON.parseObject(s.status, Status.class);
-                        LogUtil.d(status.code);
 
                         if (status.code == 20306) {
                             SnackBarUtil.show(mCoordinatorLayout, "查询的公交线路不存在");
@@ -163,7 +159,6 @@ public class SearchFragment extends BaseFragment {
                         } else
                             onError(null);
                     }
-
                     @Override
                     public void onError(Throwable e) {
                         LogUtil.d("search   " + e.getMessage());

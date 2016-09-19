@@ -16,9 +16,8 @@ import com.trello.rxlifecycle.android.ActivityEvent;
 import butterknife.BindString;
 import butterknife.BindView;
 import rx.Observable;
-import rx.Subscriber;
 import rx.functions.Action0;
-import rx.functions.Func1;
+import rx.functions.Func2;
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.RunningAdapter;
 import tysheng.sxbus.base.BaseActivity;
@@ -29,6 +28,7 @@ import tysheng.sxbus.net.BusRetrofit;
 import tysheng.sxbus.utils.LogUtil;
 import tysheng.sxbus.utils.RxHelper;
 import tysheng.sxbus.utils.SnackBarUtil;
+import tysheng.sxbus.utils.StySubscriber;
 
 /**
  * 查看 车在哪
@@ -49,7 +49,6 @@ public class RunningActivity extends BaseActivity {
 
     private String id, title;
     private RunningAdapter mRunningAdapter;
-    private BusLines mBusLines;
 
     public static Intent newIntent(Context context, String id, String title) {
         Intent intent = new Intent(context, RunningActivity.class);
@@ -88,8 +87,19 @@ public class RunningActivity extends BaseActivity {
     }
 
     private void refresh() {
-        BusRetrofit.get().getBusLines(id)
-                .compose(RunningActivity.this.<BusLines>bindUntilEvent(ActivityEvent.DESTROY))
+        Observable
+                .zip(BusRetrofit.get().getBusLines(id), BusRetrofit.get().getRunningBus(id),
+                        new Func2<BusLines, BusLine, BusLines>() {
+                            @Override
+                            public BusLines call(BusLines busLines, BusLine busLine) {
+                                for (BusLineResult result : busLine.result) {
+                                    int station = result.stationSeqNum - 1;
+                                    if (station < busLines.result.stations.size())
+                                        busLines.result.stations.get(station).updateTime = "a";
+                                }
+                                return busLines;
+                            }
+                        })
                 .doAfterTerminate(new Action0() {
                     @Override
                     public void call() {
@@ -102,41 +112,18 @@ public class RunningActivity extends BaseActivity {
                         });
                     }
                 })
-                .map(new Func1<BusLines, Boolean>() {
+                .compose(RunningActivity.this.<BusLines>bindUntilEvent(ActivityEvent.DESTROY))
+                .compose(RxHelper.<BusLines>ioToMain())
+                .subscribe(new StySubscriber<BusLines>() {
                     @Override
-                    public Boolean call(BusLines busLines) {
-                        mBusLines = busLines;
-                        return true;
-                    }
-                })
-                .concatMap(new Func1<Boolean, Observable<BusLine>>() {
-                    @Override
-                    public Observable<BusLine> call(Boolean aBoolean) {
-                        return BusRetrofit.get()
-                                .getRunningBus(id);
-                    }
-                })
-                .compose(RxHelper.<BusLine>ioToMain())
-                .subscribe(new Subscriber<BusLine>() {
-                    @Override
-                    public void onCompleted() {
-
+                    public void next(BusLines busLines) {
+                        mRunningAdapter.setNewData(busLines.result.stations);
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         LogUtil.d("running" + e.getMessage());
                         SnackBarUtil.show(mCoordinatorLayout, runningError, Snackbar.LENGTH_LONG);
-                    }
-
-                    @Override
-                    public void onNext(BusLine busLine) {
-                        for (BusLineResult result : busLine.result) {
-                            int station = result.stationSeqNum - 1;
-                            if (station < mBusLines.result.stations.size())
-                                mBusLines.result.stations.get(station).updateTime = "a";
-                        }
-                        mRunningAdapter.setNewData(mBusLines.result.stations);
                     }
                 });
     }
