@@ -26,7 +26,7 @@ import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.SearchAdapter;
 import tysheng.sxbus.base.BaseFragment;
-import tysheng.sxbus.bean.BusLinesSimple;
+import tysheng.sxbus.bean.CallBack;
 import tysheng.sxbus.bean.Star;
 import tysheng.sxbus.bean.Stars;
 import tysheng.sxbus.bean.Status;
@@ -81,8 +81,8 @@ public class SearchFragment extends BaseFragment {
                 public void onClick(View v) {
                     mAdapter.removeAllFooterView();
                     mRecentList.clear();
-                    StarUtil.saveStarList(Constant.RECENT, mRecentList);
                     mAdapter.notifyDataSetChanged();
+                    StarUtil.saveStarList(Constant.RECENT, mRecentList);
                 }
             });
         }
@@ -112,7 +112,7 @@ public class SearchFragment extends BaseFragment {
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                getBusSimple(Integer.valueOf(query));
+                getBusSimple(query);
                 return true;
             }
 
@@ -138,7 +138,7 @@ public class SearchFragment extends BaseFragment {
         }
     }
 
-    private void getBusSimple(int number) {
+    private void getBusSimple(String number) {
         BusRetrofit.get()
                 .numberToSearch(number)
                 .delay(200, TimeUnit.MILLISECONDS)
@@ -148,9 +148,9 @@ public class SearchFragment extends BaseFragment {
                         mDialog.dismiss();
                     }
                 })
-                .compose(this.<BusLinesSimple>bindUntilEvent(FragmentEvent.DESTROY))
-                .compose(RxHelper.<BusLinesSimple>ioToMain())
-                .subscribe(new StySubscriber<BusLinesSimple>() {
+                .compose(this.<CallBack>bindUntilEvent(FragmentEvent.DESTROY))
+                .compose(RxHelper.<CallBack>ioToMain())
+                .subscribe(new StySubscriber<CallBack>() {
                     @Override
                     public void onStart() {
                         mSearchView.clearFocus();
@@ -164,7 +164,7 @@ public class SearchFragment extends BaseFragment {
                     }
 
                     @Override
-                    public void next(BusLinesSimple s) {
+                    public void next(CallBack s) {
                         Status status = JSON.parseObject(s.status, Status.class);
 
                         if (status.code == 20306) {

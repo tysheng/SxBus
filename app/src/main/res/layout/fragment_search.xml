@@ -20,7 +20,6 @@
             android:layout_gravity="bottom"
             android:background="@color/white"
             android:imeOptions="actionSearch"
-            android:inputType="number"
             app:iconifiedByDefault="false"
             app:queryBackground="@color/white"
             app:queryHint="@string/search_hint" />

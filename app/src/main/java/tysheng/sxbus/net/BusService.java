@@ -3,9 +3,7 @@ package tysheng.sxbus.net;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import rx.Observable;
-import tysheng.sxbus.bean.BusLine;
-import tysheng.sxbus.bean.BusLines;
-import tysheng.sxbus.bean.BusLinesSimple;
+import tysheng.sxbus.bean.CallBack;
 import tysheng.sxbus.bean.HttpAdd;
 
 /**
@@ -22,11 +20,11 @@ public interface BusService {
     Observable<HttpAdd> getAddress(@Path("code") String code);
 
     @GET("buslines/simple/" + MAIL_CODE + "/{number}/0/20")
-    Observable<BusLinesSimple> numberToSearch(@Path("number") int number);
+    Observable<CallBack> numberToSearch(@Path("number") String number);
 
     @GET("buslines/" + MAIL_CODE + "/{code}")
-    Observable<BusLines> getBusLines(@Path("code") String code);
+    Observable<CallBack> getBusLines(@Path("code") String code);
 
     @GET("buses/busline/" + MAIL_CODE + "/{code}")
-    Observable<BusLine> getRunningBus(@Path("code") String code);
+    Observable<CallBack> getRunningBus(@Path("code") String code);
 }

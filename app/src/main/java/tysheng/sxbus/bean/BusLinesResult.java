@@ -1,7 +1,5 @@
 package tysheng.sxbus.bean;
 
-import java.util.List;
-
 /**
  * Created by Sty
  * Date: 16/9/10 19:49.
@@ -9,19 +7,19 @@ import java.util.List;
 public class BusLinesResult {
 
         public String id;
-        public int area;
-        public String localLineId;
+        //        public int area;
+//        public String localLineId;
         public String endStationName;
         public String lineName;
-        public String linePoints;
+        //        public String linePoints;
         public String startStationName;
-        public String state;
+        //        public String state;
         public String stationList;
         public String ticketPrice;
         public String operationTime;
         public String owner;
-        public String updateTime;
-        public String descrip;
+//        public String updateTime;
+//        public String descrip;
         /**
          * id : 589
          * area : 330600
@@ -32,7 +30,7 @@ public class BusLinesResult {
          * updateTime : Dec 19, 2013 10:26:18 PM
          */
 
-        public List<Stations> stations;
+        public String stations;
 
 
 

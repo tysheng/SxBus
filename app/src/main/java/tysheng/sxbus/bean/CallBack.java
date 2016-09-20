@@ -4,7 +4,7 @@ package tysheng.sxbus.bean;
  * Created by Sty
  * Date: 16/8/10 21:44.
  */
-public class BusLinesSimple  {
+public class CallBack {
 
     /**
      * code : 0

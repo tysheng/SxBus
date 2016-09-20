@@ -11,6 +11,14 @@
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 
+    <!-- 这个权限用于进行网络定位-->
+    <!--<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>-->
+    <!--&lt;!&ndash; 这个权限用于访问GPS定位&ndash;&gt;-->
+    <!--<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>-->
+    <!--&lt;!&ndash; SD卡读取权限，用户写入离线定位数据&ndash;&gt;-->
+    <!--<uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>-->
+
+
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -34,6 +42,13 @@
             android:name=".ui.RunningActivity"
             android:configChanges="screenSize|orientation" />
 
+        <!--百度定位-->
+        <!--<service android:name="com.baidu.location.f" android:enabled="true" android:process=":remote">-->
+        <!--</service>-->
+        <!--<meta-data-->
+        <!--android:name="com.baidu.lbsapi.API_KEY"-->
+        <!--android:value="dReiwsMG8S0emok8OmDia1t1japfMzWs" />-->
+        <!--百度定位-->
 
         <!--百度更新-->
         <meta-data
