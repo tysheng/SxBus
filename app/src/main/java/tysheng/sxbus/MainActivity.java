@@ -58,22 +58,22 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener {
     public void onTabSelected(@IdRes int tabId) {
         switch (tabId) {
             case R.id.menu_search:
-                mManager.beginTransaction()
-                        .replace(R.id.frameLayout, Fragment.instantiate(MainActivity.this, SearchFragment.class.getName()))
-                        .commit();
+                replaceFragment(Fragment.instantiate(this, SearchFragment.class.getName()));
                 break;
             case R.id.menu_star:
-                mManager.beginTransaction()
-                        .replace(R.id.frameLayout, Fragment.instantiate(MainActivity.this, StarFragment.class.getName()))
-                        .commit();
+                replaceFragment(Fragment.instantiate(this, StarFragment.class.getName()));
                 break;
             case R.id.menu_more:
-                mManager.beginTransaction()
-                        .replace(R.id.frameLayout, Fragment.instantiate(MainActivity.this, MoreFragment.class.getName()))
-                        .commit();
+                replaceFragment(Fragment.instantiate(this, MoreFragment.class.getName()));
             default:
                 break;
         }
+    }
+
+    private void replaceFragment(Fragment fragment) {
+        mManager.beginTransaction()
+                .replace(R.id.frameLayout, fragment)
+                .commit();
     }
 
     @Override
