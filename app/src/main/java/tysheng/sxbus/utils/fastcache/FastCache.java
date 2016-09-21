@@ -6,8 +6,7 @@ import com.alibaba.fastjson.JSON;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
@@ -26,6 +25,8 @@ public class FastCache {
 
     private static String cacheFileName = "FastCache";
 
+    private static int version = 1;
+
     /**
      * FastJson Version
      * --------------------------------------
@@ -34,16 +35,12 @@ public class FastCache {
         return JSON.toJSONString(object);
     }
 
-    private static <T> T fromJson(String json, Class<T> classOfT) {
+    private static <T> T parseJson(String json, Class<T> classOfT) {
         return JSON.parseObject(json, classOfT);
     }
 
-    private static <T> List<T> fromJsonArray(String json, Class<T> classOfT) {
+    private static <T> List<T> parseJsonArray(String json, Class<T> classOfT) {
         return JSON.parseArray(json, classOfT);
-    }
-
-    private static <T> T fromJson(String json, Type typeOfT) {
-        return JSON.parseObject(json, typeOfT);
     }
     /**
      * --------------------------------------
@@ -58,12 +55,11 @@ public class FastCache {
     public static synchronized void init(Context context, long maxSize) {
         if (cacheDir == null)
             cacheDir = new File(context.getCacheDir() + File.separator + cacheFileName);
-
         if (!cacheDir.exists()) {
             cacheDir.mkdir();
         }
         try {
-            cache = SimpleDiskCache.open(cacheDir, 1, maxSize);
+            cache = SimpleDiskCache.open(cacheDir, version, maxSize);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -141,7 +137,7 @@ public class FastCache {
         T value = null;
         try {
             json = cache.getString(key).getString();
-            value = fromJson(json, classOfT);
+            value = parseJson(json, classOfT);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -162,34 +158,12 @@ public class FastCache {
         List<T> value = null;
         try {
             json = cache.getString(key).getString();
-            value = fromJsonArray(json, classOfT);
+            value = parseJsonArray(json, classOfT);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return value;
-    }
-
-
-
-    /**
-     * Get an object from FastCache with the given key. This a blocking IO operation.
-     *
-     * @param key     the key string.
-     * @param typeOfT the type of the expected return object.
-     * @return the object of the given type if it exists.
-     */
-    public static <T> T get(final String key, final Type typeOfT) {
-
-        String json;
-        T value = null;
-        try {
-            json = cache.getString(key).getString();
-            value = fromJson(json, typeOfT);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        if (value == null)
+            value = new ArrayList<>();
         return value;
     }
 
@@ -241,47 +215,6 @@ public class FastCache {
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
-    /**
-     * Get an object from FastCache with the given key asynchronously.
-     *
-     * @param key      the key string.
-     * @param classOfT the class type of the expected return object.
-     * @param typeOfT  the type of the collection object which contains objects of type {@code classOfT}.
-     * @return an {@link Observable} that will fetch the object from FastCache. By default, this
-     * will be scheduled on a background thread and will be observed on the main thread.
-     */
-    public static <T> Observable<T> getAsync(final String key, final Class<T> classOfT, final Type typeOfT) {
-
-        return Observable.create(new Observable.OnSubscribe<T>() {
-            @Override
-            public void call(Subscriber<? super T> subscriber) {
-                try {
-                    Collection<T> collectionOfT = FastCache.get(key, typeOfT);
-                    for (T t : collectionOfT) {
-                        subscriber.onNext(t);
-                    }
-                    subscriber.onCompleted();
-                } catch (Exception exception) {
-                    subscriber.onError(exception);
-                }
-            }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-    }
-
-    /**
-     * Delete an object from FastCache with the given key. This a blocking IO operation. Previously
-     * stored object with the same
-     * key (if any) will be deleted.
-     *
-     * @param key the key string.
-     */
-    public static void delete(final String key) {
-        try {
-            cache.delete(key);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * Delete an object into FastCache with the given key asynchronously. Previously
@@ -292,13 +225,12 @@ public class FastCache {
      * @return an {@link Observable} that will delete the object from FastCache.By default, this
      * will be scheduled on a background thread and will be observed on the main thread.
      */
-    public static Observable<Boolean> deleteAsync(final String key) {
-
+    public static Observable<Boolean> delete(final String key) {
         return Observable.create(new Observable.OnSubscribe<Boolean>() {
             @Override
             public void call(Subscriber<? super Boolean> subscriber) {
                 try {
-                    FastCache.delete(key);
+                    cache.delete(key);
                     subscriber.onNext(true);
                     subscriber.onCompleted();
                 } catch (Exception exception) {
@@ -309,33 +241,21 @@ public class FastCache {
     }
 
     /**
-     * Clears the cache. Deletes all the stored key-value pairs synchronously.
-     */
-    public static void clear(Context context) {
-        long maxSize;
-        try {
-            maxSize = cache.getMaxSize();
-            cache.destroy();
-            init(context, maxSize);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    /**
      * Clears the cache. Deletes all the stored key-value pairs asynchronously.
      *
      * @return an {@link Observable} that will clear all the key-value pairs from FastCache.By default, this
      * will be scheduled on a background thread and will be observed on the main thread.
      */
-    public static Observable<Boolean> clearAsync(final Context context) {
+    public static Observable<Boolean> clear(final Context context) {
 
         return Observable.create(new Observable.OnSubscribe<Boolean>() {
             @Override
             public void call(Subscriber<? super Boolean> subscriber) {
+                long maxSize;
                 try {
-                    FastCache.clear(context);
+                    maxSize = cache.getMaxSize();
+                    cache.destroy();
+                    init(context, maxSize);
                     subscriber.onNext(true);
                     subscriber.onCompleted();
                 } catch (Exception exception) {
@@ -348,7 +268,7 @@ public class FastCache {
     /**
      * Returns the number of bytes being used currently by the cache.
      */
-    static long bytesUsed() {
+    public static long bytesUsed() {
         long bytes = 0;
         try {
             bytes = cache.bytesUsed();

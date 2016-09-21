@@ -1,6 +1,5 @@
 package tysheng.sxbus.presenter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import tysheng.sxbus.bean.Star;
@@ -24,11 +23,7 @@ public class StarUtil {
     }
 
     public static List<Star> initStarList(String tag) {
-        List<Star> mStars = FastCache.getArray(tag, Star.class);
-        if (mStars == null) {
-            mStars = new ArrayList<>();
-        }
-        return mStars;
+        return FastCache.getArray(tag, Star.class);
     }
 
 

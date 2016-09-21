@@ -18,7 +18,7 @@ import java.util.Map;
 
 class SimpleDiskCache {
 
-    static final String OBJECT_SIZE_GREATER_THAN_CACHE_SIZE_MESSAGE = "Object size greater than " +
+    private static final String OBJECT_SIZE_GREATER_THAN_CACHE_SIZE_MESSAGE = "Object size greater than " +
             "cache size!";
     private static final int VALUE_IDX = 0;
     private static final int METADATA_IDX = 1;
@@ -36,7 +36,7 @@ class SimpleDiskCache {
     }
 
     StringEntry getString(String key) throws IOException {
-        DiskLruCache.Snapshot snapshot = diskLruCache.get(toInternalKey(key));
+        DiskLruCache.Snapshot snapshot = diskLruCache.get(md5(key));
         if (snapshot == null)
             return null;
 
@@ -52,7 +52,7 @@ class SimpleDiskCache {
     }
 
     boolean contains(String key) throws IOException {
-        DiskLruCache.Snapshot snapshot = diskLruCache.get(toInternalKey(key));
+        DiskLruCache.Snapshot snapshot = diskLruCache.get(md5(key));
         if (snapshot == null)
             return false;
 
@@ -62,7 +62,7 @@ class SimpleDiskCache {
 
     private OutputStream openStream(String key, Map<String, ? extends Serializable> metadata) throws
             IOException {
-        DiskLruCache.Editor editor = diskLruCache.edit(toInternalKey(key));
+        DiskLruCache.Editor editor = diskLruCache.edit(md5(key));
         try {
             writeMetadata(metadata, editor);
             BufferedOutputStream bos = new BufferedOutputStream(editor.newOutputStream(VALUE_IDX));
@@ -81,10 +81,10 @@ class SimpleDiskCache {
     }
 
     void delete(String key) throws IOException {
-        diskLruCache.remove(toInternalKey(key));
+        diskLruCache.remove(md5(key));
     }
 
-    public void destroy() throws IOException {
+    void destroy() throws IOException {
         diskLruCache.delete();
     }
 
@@ -124,10 +124,6 @@ class SimpleDiskCache {
         }
     }
 
-    private String toInternalKey(String key) {
-        return md5(key);
-    }
-
     private String md5(String s) {
         try {
             MessageDigest m = MessageDigest.getInstance("MD5");
@@ -138,6 +134,19 @@ class SimpleDiskCache {
         } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
             throw new AssertionError();
         }
+    }
+
+    public static class StringEntry {
+        private final String string;
+
+        StringEntry(String string) {
+            this.string = string;
+        }
+
+        String getString() {
+            return string;
+        }
+
     }
 
     private class CacheOutputStream extends FilterOutputStream {
@@ -208,19 +217,6 @@ class SimpleDiskCache {
                 throw e;
             }
         }
-    }
-
-    static class StringEntry {
-        private final String string;
-
-        StringEntry(String string) {
-            this.string = string;
-        }
-
-        String getString() {
-            return string;
-        }
-
     }
 }
 
