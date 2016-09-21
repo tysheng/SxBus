@@ -53,6 +53,10 @@ public class FastCache {
      * @param maxSize the maximum size in bytes.
      */
     public static synchronized void init(Context context, long maxSize) {
+        init(context, maxSize, version);
+    }
+
+    public static synchronized void init(Context context, long maxSize, int version) {
         if (cacheDir == null)
             cacheDir = new File(context.getCacheDir() + File.separator + cacheFileName);
         if (!cacheDir.exists()) {

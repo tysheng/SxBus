@@ -21,10 +21,4 @@ public class StarUtil {
                         }
                     });
     }
-
-    public static List<Star> initStarList(String tag) {
-        return FastCache.getArray(tag, Star.class);
-    }
-
-
 }

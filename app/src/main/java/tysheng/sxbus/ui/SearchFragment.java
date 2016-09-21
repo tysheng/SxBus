@@ -21,7 +21,9 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.BindString;
 import butterknife.BindView;
+import rx.Observable;
 import rx.functions.Action0;
+import rx.functions.Func2;
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.SearchAdapter;
@@ -36,6 +38,7 @@ import tysheng.sxbus.utils.LogUtil;
 import tysheng.sxbus.utils.RxHelper;
 import tysheng.sxbus.utils.SnackBarUtil;
 import tysheng.sxbus.utils.StySubscriber;
+import tysheng.sxbus.utils.fastcache.FastCache;
 
 /**
  * Created by Sty
@@ -66,12 +69,30 @@ public class SearchFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-        mRecentList = StarUtil.initStarList(Constant.RECENT);
-        if (mRecentList.size() > 6) {
-            mRecentList = mRecentList.subList(0, 6);
-        }
-        mStarList = StarUtil.initStarList(Constant.STAR);
+        Observable.zip(FastCache.getArrayAsync(Constant.RECENT, Star.class),
+                FastCache.getArrayAsync(Constant.STAR, Star.class),
+                new Func2<List<Star>, List<Star>, Boolean>() {
+                    @Override
+                    public Boolean call(List<Star> recent, List<Star> star) {
+                        if (recent.size() > 10) {
+                            mRecentList = recent.subList(0, 10);
+                        } else {
+                            mRecentList = recent;
+                        }
+                        mStarList = star;
+                        return true;
+                    }
+                })
+                .compose(this.<Boolean>bindUntilEvent(FragmentEvent.DESTROY))
+                .subscribe(new StySubscriber<Boolean>() {
+                    @Override
+                    public void next(Boolean aBoolean) {
+                        doNext();
+                    }
+                });
+    }
 
+    private void doNext() {
         mAdapter = new SearchAdapter(mRecentList);
         if (mRecentList != null && mRecentList.size() != 0) {
             View view = LayoutInflater.from(mActivity).inflate(R.layout.footer_clear, (ViewGroup) getView(), false);
@@ -175,6 +196,7 @@ public class SearchFragment extends BaseFragment {
                         } else
                             onError(null);
                     }
+
                     @Override
                     public void onError(Throwable e) {
                         LogUtil.d("search   " + e.getMessage());

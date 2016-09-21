@@ -20,6 +20,8 @@ import tysheng.sxbus.adapter.StarAdapter;
 import tysheng.sxbus.base.BaseFragment;
 import tysheng.sxbus.bean.Star;
 import tysheng.sxbus.presenter.StarUtil;
+import tysheng.sxbus.utils.StySubscriber;
+import tysheng.sxbus.utils.fastcache.FastCache;
 
 /**
  * 收藏
@@ -41,7 +43,21 @@ public class StarFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-        mStarList = StarUtil.initStarList(Constant.STAR);
+        FastCache.getArrayAsync(Constant.STAR, Star.class)
+                .subscribe(new StySubscriber<List<Star>>() {
+                    @Override
+                    public void next(List<Star> stars) {
+                        mStarList = stars;
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                        doNext();
+                    }
+                });
+    }
+
+    private void doNext() {
         mAdapter = new StarAdapter(mStarList);
 
         mRecyclerView.setAdapter(mAdapter);
@@ -86,7 +102,6 @@ public class StarFragment extends BaseFragment {
                 StarUtil.saveStarList(Constant.STAR, mStarList);
             }
         });
-
     }
 
 }

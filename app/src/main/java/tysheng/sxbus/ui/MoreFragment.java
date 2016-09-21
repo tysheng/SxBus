@@ -1,5 +1,6 @@
 package tysheng.sxbus.ui;
 
+import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -52,19 +53,24 @@ public class MoreFragment extends BaseFragment {
         ClipboardManager c = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
         c.setPrimaryClip(ClipData.newPlainText("wechat", "353491983"));//设置Clipboard 的内容
     }
-
     public void checkVersionByBaidu() {
+        final ProgressDialog dialog = new ProgressDialog(mActivity);
+        dialog.setMessage("正在检查新版本...");
+        dialog.show();
         BDAutoUpdateSDK.cpUpdateCheck(mActivity, new CPCheckUpdateCallback() {
             @Override
             public void onCheckUpdateCallback(AppUpdateInfo appUpdateInfo, AppUpdateInfoForInstall appUpdateInfoForInstall) {
                 if (appUpdateInfo != null && appUpdateInfo.getAppVersionCode() > SystemUtil.getVersionCode()) {
+                    dialog.dismiss();
                     BDAutoUpdateSDK.uiUpdateAction(mActivity,
                             new com.baidu.autoupdatesdk.UICheckUpdateCallback() {
                                 @Override
                                 public void onCheckComplete() {
+
                                 }
                             });
                 } else {
+                    dialog.dismiss();
                     SnackBarUtil.show(getView(), "当前版本已是最新版");
                 }
             }
