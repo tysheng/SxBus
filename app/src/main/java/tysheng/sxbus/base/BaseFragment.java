@@ -17,6 +17,7 @@ import com.trello.rxlifecycle.components.support.RxFragment;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import tysheng.sxbus.utils.LogUtil;
 
 /**
  * Created by shengtianyang on 16/2/22.
@@ -36,6 +37,12 @@ public abstract class BaseFragment extends RxFragment {
     public void onDetach() {
         super.onDetach();
         mActivity = null;
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        LogUtil.d(this.getTag() + hidden);
     }
 
     @Nullable

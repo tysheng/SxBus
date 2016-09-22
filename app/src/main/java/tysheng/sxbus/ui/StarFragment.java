@@ -42,6 +42,21 @@ public class StarFragment extends BaseFragment {
     }
 
     @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            RxFastCache.getArray(Constant.STAR, Star.class)
+                    .subscribe(new StySubscriber<List<Star>>() {
+                        @Override
+                        public void next(List<Star> stars) {
+                            mStarList = stars;
+                            mAdapter.setNewData(mStarList);
+                        }
+                    });
+        }
+    }
+
+    @Override
     protected void initData() {
         RxFastCache.getArray(Constant.STAR, Star.class)
                 .subscribe(new StySubscriber<List<Star>>() {

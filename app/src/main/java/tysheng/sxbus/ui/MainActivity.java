@@ -1,4 +1,4 @@
-package tysheng.sxbus;
+package tysheng.sxbus.ui;
 
 import android.Manifest;
 import android.os.Bundle;
@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
@@ -15,10 +14,8 @@ import com.tbruyelle.rxpermissions.RxPermissions;
 
 import butterknife.BindView;
 import rx.functions.Action1;
+import tysheng.sxbus.R;
 import tysheng.sxbus.base.BaseActivity;
-import tysheng.sxbus.ui.MoreFragment;
-import tysheng.sxbus.ui.SearchFragment;
-import tysheng.sxbus.ui.StarFragment;
 import tysheng.sxbus.utils.SnackBarUtil;
 
 
@@ -27,7 +24,6 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener {
     BottomBar mBottomBar;
     @BindView(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
-    private FragmentManager mManager;
     private Fragment mCurrent;
     private Fragment mSearch;
     private Fragment mStar;
@@ -40,7 +36,6 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener {
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        mManager = getSupportFragmentManager();
         mBottomBar.setOnTabSelectListener(this);
         RxPermissions.getInstance(this)
                 .request(Manifest.permission.READ_PHONE_STATE,
@@ -53,29 +48,37 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener {
                         }
                     }
                 });
-        mSearch = Fragment.instantiate(this, SearchFragment.class.getName());
     }
 
     @Override
     public void onTabSelected(@IdRes int tabId) {
         switch (tabId) {
-            case R.id.menu_search:
-                replaceFragment(Fragment.instantiate(this, SearchFragment.class.getName()));
-                break;
             case R.id.menu_star:
-                replaceFragment(Fragment.instantiate(this, StarFragment.class.getName()));
+                if (!(mCurrent instanceof StarFragment)) {
+                    if (mStar == null)
+                        mStar = Fragment.instantiate(this, StarFragment.class.getName());
+                    jumpFragment(mCurrent, mStar, "0");
+                    mCurrent = mStar;
+                }
+                break;
+            case R.id.menu_search:
+                if (!(mCurrent instanceof SearchFragment)) {
+                    if (mSearch == null)
+                        mSearch = Fragment.instantiate(this, SearchFragment.class.getName());
+                    jumpFragment(mCurrent, mSearch, "1");
+                    mCurrent = mSearch;
+                }
                 break;
             case R.id.menu_more:
-                replaceFragment(Fragment.instantiate(this, MoreFragment.class.getName()));
+                if (!(mCurrent instanceof MoreFragment)) {
+                    if (mMore == null)
+                        mMore = Fragment.instantiate(this, MoreFragment.class.getName());
+                    jumpFragment(mCurrent, mMore, "2");
+                    mCurrent = mMore;
+                }
             default:
                 break;
         }
-    }
-
-    private void replaceFragment(Fragment fragment) {
-        mManager.beginTransaction()
-                .replace(R.id.frameLayout, fragment)
-                .commit();
     }
 
     @Override

@@ -12,15 +12,13 @@ import com.baidu.mobstat.StatService;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
 import butterknife.ButterKnife;
-import rx.Subscription;
-import rx.subscriptions.CompositeSubscription;
+import tysheng.sxbus.R;
 
 /**
  * Created by shengtianyang on 16/2/22.
  */
 public abstract class BaseActivity extends RxAppCompatActivity {
 
-    private CompositeSubscription mSubscription;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -28,21 +26,6 @@ public abstract class BaseActivity extends RxAppCompatActivity {
         setContentView(getLayoutId());
         ButterKnife.bind(this);
         initData(savedInstanceState);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (this.mSubscription != null) {
-            this.mSubscription.unsubscribe();
-        }
-    }
-
-    protected void add(Subscription s) {
-        if (this.mSubscription == null) {
-            this.mSubscription = new CompositeSubscription();
-        }
-        this.mSubscription.add(s);
     }
 
     @Override
@@ -91,6 +74,10 @@ public abstract class BaseActivity extends RxAppCompatActivity {
         if (isfinish) {
             this.finish();
         }
+    }
+
+    protected void jumpFragment(Fragment from, Fragment to, String tag) {
+        jumpFragment(from, to, R.id.frameLayout, tag);
     }
 
     /**

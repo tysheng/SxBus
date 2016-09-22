@@ -68,6 +68,16 @@ public class SearchFragment extends BaseFragment {
     }
 
     @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            if (TextUtils.isEmpty(mSearchView.getQuery())) {
+                mAdapter.setNewData(mRecentList);
+            }
+        }
+    }
+
+    @Override
     protected void initData() {
         Observable.zip(RxFastCache.getArray(Constant.RECENT, Star.class),
                 RxFastCache.getArray(Constant.STAR, Star.class),
