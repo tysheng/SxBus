@@ -19,10 +19,11 @@ public class SearchAdapter extends BaseQuickAdapter<Star> {
     }
 
     @Override
-    protected void convert(BaseViewHolder holder,Star result) {
+    protected void convert(BaseViewHolder holder, Star result) {
         holder.setText(R.id.textView, result.lineName + "  " + result.startStationName + "-->" + result.endStationName)
                 .addOnClickListener(R.id.textView)
-                .addOnClickListener(R.id.star);
+                .addOnClickListener(R.id.star)
+                .setImageResource(R.id.star, R.drawable.star_no);
     }
 
 

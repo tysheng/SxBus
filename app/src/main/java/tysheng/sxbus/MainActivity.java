@@ -14,7 +14,6 @@ import com.roughike.bottombar.OnTabSelectListener;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import butterknife.BindView;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import tysheng.sxbus.base.BaseActivity;
 import tysheng.sxbus.ui.MoreFragment;
@@ -29,7 +28,10 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener {
     @BindView(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
     private FragmentManager mManager;
-
+    private Fragment mCurrent;
+    private Fragment mSearch;
+    private Fragment mStar;
+    private Fragment mMore;
 
     @Override
     public int getLayoutId() {
@@ -43,7 +45,6 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener {
         RxPermissions.getInstance(this)
                 .request(Manifest.permission.READ_PHONE_STATE,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<Boolean>() {
                     @Override
                     public void call(Boolean aBoolean) {
@@ -52,6 +53,7 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener {
                         }
                     }
                 });
+        mSearch = Fragment.instantiate(this, SearchFragment.class.getName());
     }
 
     @Override

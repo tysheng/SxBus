@@ -10,8 +10,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -93,16 +91,24 @@ class SimpleDiskCache {
         return diskLruCache.size();
     }
 
-    private String md5(String s) {
+    private String md5(String string) {
+        MessageDigest md5;
         try {
-            MessageDigest m = MessageDigest.getInstance("MD5");
-            m.update(s.getBytes("UTF-8"));
-            byte[] digest = m.digest();
-            BigInteger bigInt = new BigInteger(1, digest);
-            return bigInt.toString(16);
-        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-            throw new AssertionError();
+            md5 = MessageDigest.getInstance("MD5");
+            byte[] bytes = md5.digest(string.getBytes());
+            String result = "";
+            for (byte b : bytes) {
+                String temp = Integer.toHexString(b & 0xff);
+                if (temp.length() == 1) {
+                    temp = "0" + temp;
+                }
+                result += temp;
+            }
+            return result;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
         }
+        return "";
     }
 
     void putBitmap(String key, Bitmap value) throws IOException {

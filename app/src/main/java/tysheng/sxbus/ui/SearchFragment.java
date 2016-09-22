@@ -146,6 +146,13 @@ public class SearchFragment extends BaseFragment {
         mSearchView.clearFocus();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mSearchView != null)
+            mSearchView.clearFocus();
+    }
+
     private void save(String tag, List<Star> list, int i) {
         boolean flag = true;
         for (Star star : list) {

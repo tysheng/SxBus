@@ -2,11 +2,18 @@ package tysheng.sxbus.utils.rxfastcache;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import com.alibaba.fastjson.JSON;
+import com.jakewharton.disklrucache.DiskLruCache;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +27,7 @@ import rx.schedulers.Schedulers;
  */
 public class RxFastCache {
 
-    private static SimpleDiskCache cache;
+    private static DiskLruCache cache;
 
     private static File cacheDir;
 
@@ -55,10 +62,30 @@ public class RxFastCache {
             cacheDir.mkdir();
         }
         try {
-            cache = SimpleDiskCache.open(cacheDir, 1, maxSize);
+            cache = DiskLruCache.open(cacheDir, 1, 1, maxSize);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static String md5(String string) {
+        MessageDigest md5;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+            byte[] bytes = md5.digest(string.getBytes());
+            String result = "";
+            for (byte b : bytes) {
+                String temp = Integer.toHexString(b & 0xff);
+                if (temp.length() == 1) {
+                    temp = "0" + temp;
+                }
+                result += temp;
+            }
+            return result;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     /**
@@ -68,14 +95,18 @@ public class RxFastCache {
      * @return true if object with given key exists.
      */
     public static boolean containsSync(final String key) {
-        boolean contain = false;
+        DiskLruCache.Snapshot snapshot = null;
         try {
-            contain = cache.contains(key);
-        } catch (Exception e) {
+            snapshot = cache.get(md5(key));
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        return contain;
+        if (snapshot == null)
+            return false;
+        snapshot.close();
+        return true;
     }
+
     /**
      * Check if an object with the given key exists in the RxFastCache.
      *
@@ -108,7 +139,7 @@ public class RxFastCache {
                 Boolean b = true;
                 String json = toJson(object);
                 try {
-                    cache.put(key, json);
+                    _put(key, json);
                 } catch (Exception e) {
                     e.printStackTrace();
                     b = false;
@@ -116,6 +147,41 @@ public class RxFastCache {
                 return b;
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
+
+    /**
+     * put json object
+     *
+     * @param key   key
+     * @param value json object
+     * @throws IOException
+     */
+    private static void _put(String key, String value) throws IOException {
+        if (value.getBytes().length > cache.getMaxSize())
+            throw new IOException("Object size greater than cache size!");
+        OutputStream cos = null;
+        DiskLruCache.Editor editor = cache.edit(md5(key));
+        BufferedOutputStream bos = new BufferedOutputStream(editor.newOutputStream(0));
+        try {
+            cos = new CacheOutputStream(bos, editor);
+            cos.write(value.getBytes());
+        } catch (IOException e) {
+            editor.abort();
+        } finally {
+            if (cos != null)
+                cos.close();
+        }
+    }
+
+    private static String getString(String key) throws IOException {
+        DiskLruCache.Snapshot snapshot = cache.get(md5(key));
+        if (snapshot == null)
+            return null;
+        try {
+            return snapshot.getString(0);
+        } finally {
+            snapshot.close();
+        }
     }
 
     /**
@@ -129,7 +195,7 @@ public class RxFastCache {
         String json;
         T value = null;
         try {
-            json = cache.getString(key);
+            json = getString(key);
             value = parseJson(json, classOfT);
         } catch (Exception e) {
             e.printStackTrace();
@@ -149,7 +215,7 @@ public class RxFastCache {
         String json;
         List<T> value = null;
         try {
-            json = cache.getString(key);
+            json = getString(key);
             value = parseJsonArray(json, classOfT);
         } catch (Exception e) {
             e.printStackTrace();
@@ -202,13 +268,13 @@ public class RxFastCache {
      * @return an {@link Observable} that will delete the object from RxFastCache.By default, this
      * will be scheduled on a background thread and will be observed on the main thread.
      */
-    public static Observable<Boolean> delete(final String key) {
+    public static Observable<Boolean> remove(final String key) {
         return Observable.fromCallable(new Func0<Boolean>() {
             @Override
             public Boolean call() {
                 boolean b = true;
                 try {
-                    cache.delete(key);
+                    cache.remove(md5(key));
                 } catch (IOException e) {
                     e.printStackTrace();
                     b = false;
@@ -232,7 +298,7 @@ public class RxFastCache {
                 boolean b = true;
                 try {
                     maxSize = cache.getMaxSize();
-                    cache.destroy();
+                    cache.delete();
                     b = false;
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -247,13 +313,7 @@ public class RxFastCache {
      * Returns the number of bytes being used currently by the cache.
      */
     public static long getUsedSync() {
-        long bytes = 0;
-        try {
-            bytes = cache.bytesUsed();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return bytes;
+        return cache.size();
     }
 
 
@@ -270,7 +330,7 @@ public class RxFastCache {
             public Boolean call() {
                 Boolean b = true;
                 try {
-                    cache.putBitmap(key, bitmap);
+                    _putBitmap(key, bitmap);
                 } catch (Exception e) {
                     e.printStackTrace();
                     b = false;
@@ -283,7 +343,7 @@ public class RxFastCache {
     public static Bitmap getBitmapSync(final String key) {
         Bitmap bitmap = null;
         try {
-            bitmap = cache.getBitmap(key);
+            bitmap = _getBitmap(key);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -297,6 +357,39 @@ public class RxFastCache {
                 return getBitmapSync(key);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
+
+    private static Bitmap _getBitmap(String key) throws IOException {
+        DiskLruCache.Snapshot snapshot = cache.get(md5(key));
+        if (snapshot == null)
+            return null;
+        try {
+            return BitmapFactory.decodeStream(snapshot.getInputStream(0));
+        } finally {
+            snapshot.close();
+        }
+    }
+
+    private static void _putBitmap(String key, Bitmap value) throws IOException {
+        if (value == null)
+            return;
+        if (value.getByteCount() > cache.getMaxSize())
+            throw new IOException("Object size greater than cache size!");
+        OutputStream cos = null;
+        DiskLruCache.Editor editor = cache.edit(md5(key));
+        BufferedOutputStream bos = new BufferedOutputStream(editor.newOutputStream(0));
+        try {
+            cos = new CacheOutputStream(bos, editor);
+            //bitmap to byte[]
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            value.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            cos.write(stream.toByteArray());
+        } catch (IOException e) {
+            editor.abort();
+        } finally {
+            if (cos != null)
+                cos.close();
+        }
     }
 
 }

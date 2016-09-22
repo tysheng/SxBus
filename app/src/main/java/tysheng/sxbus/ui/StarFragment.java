@@ -100,6 +100,7 @@ public class StarFragment extends BaseFragment {
             @Override
             public void onItemDragEnd(RecyclerView.ViewHolder viewHolder, int i) {
                 StarUtil.saveStarList(Constant.STAR, mStarList);
+                viewHolder.itemView.setPressed(false);
             }
         });
     }
