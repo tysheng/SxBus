@@ -1,6 +1,7 @@
-package tysheng.sxbus.utils.fastcache;
+package tysheng.sxbus.utils.rxfastcache;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 
 import com.alibaba.fastjson.JSON;
 
@@ -10,22 +11,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func0;
 import rx.schedulers.Schedulers;
 
 /**
  * The main reservoir class.
  */
-public class FastCache {
+public class RxFastCache {
 
     private static SimpleDiskCache cache;
 
     private static File cacheDir;
 
-    private static String cacheFileName = "FastCache";
-
-    private static int version = 1;
+    private static String cacheFileName = "RxFastCache";
 
     /**
      * FastJson Version
@@ -42,40 +41,33 @@ public class FastCache {
     private static <T> List<T> parseJsonArray(String json, Class<T> classOfT) {
         return JSON.parseArray(json, classOfT);
     }
-    /**
-     * --------------------------------------
-     */
 
     /**
-     * Initialize FastCache
+     * Initialize RxFastCache
      *
      * @param context context.
      * @param maxSize the maximum size in bytes.
      */
     public static synchronized void init(Context context, long maxSize) {
-        init(context, maxSize, version);
-    }
-
-    public static synchronized void init(Context context, long maxSize, int version) {
         if (cacheDir == null)
             cacheDir = new File(context.getCacheDir() + File.separator + cacheFileName);
         if (!cacheDir.exists()) {
             cacheDir.mkdir();
         }
         try {
-            cache = SimpleDiskCache.open(cacheDir, version, maxSize);
+            cache = SimpleDiskCache.open(cacheDir, 1, maxSize);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     /**
-     * Check if an object with the given key exists in the FastCache.
+     * Check if an object with the given key exists in the RxFastCache.
      *
      * @param key the key string.
      * @return true if object with given key exists.
      */
-    public static boolean contains(final String key) {
+    public static boolean containsSync(final String key) {
         boolean contain = false;
         try {
             contain = cache.contains(key);
@@ -84,68 +76,64 @@ public class FastCache {
         }
         return contain;
     }
-
     /**
-     * Put an object into FastCache with the given key. This a blocking IO operation. Previously
-     * stored object with the same
-     * key (if any) will be overwritten.
+     * Check if an object with the given key exists in the RxFastCache.
      *
-     * @param key    the key string.
-     * @param object the object to be stored.
+     * @param key the key string.
+     * @return true if object with given key exists.
      */
-    public static void put(final String key, final Object object) {
-        String json = toJson(object);
-        try {
-            cache.put(key, json);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    /**
-     * Put an object into FastCache with the given key asynchronously. Previously
-     * stored object with the same
-     * key (if any) will be overwritten.
-     *
-     * @param key    the key string.
-     * @param object the object to be stored.
-     * @return an {@link Observable} that will insert the object into FastCache. By default, this
-     * will be scheduled on a background thread and will be observed on the main thread.
-     */
-    public static Observable<Boolean> putAsync(final String key, final Object object) {
-
-        return Observable.create(new Observable.OnSubscribe<Boolean>() {
+    public static Observable<Boolean> contain(final String key) {
+        return Observable.fromCallable(new Func0<Boolean>() {
             @Override
-            public void call(Subscriber<? super Boolean> subscriber) {
-                try {
-                    FastCache.put(key, object);
-                    subscriber.onNext(true);
-                    subscriber.onCompleted();
-                } catch (Exception exception) {
-                    subscriber.onError(exception);
-                }
+            public Boolean call() {
+                return containsSync(key);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
     /**
-     * Get an object from FastCache with the given key. This a blocking IO operation.
+     * Put an object into RxFastCache with the given key asynchronously. Previously
+     * stored object with the same
+     * key (if any) will be overwritten.
+     *
+     * @param key    the key string.
+     * @param object the object to be stored.
+     * @return an {@link Observable} that will insert the object into RxFastCache. By default, this
+     * will be scheduled on a background thread and will be observed on the main thread.
+     */
+    public static Observable<Boolean> put(final String key, final Object object) {
+        return Observable.fromCallable(new Func0<Boolean>() {
+            @Override
+            public Boolean call() {
+                Boolean b = true;
+                String json = toJson(object);
+                try {
+                    cache.put(key, json);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    b = false;
+                }
+                return b;
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
+
+    /**
+     * Get an object from RxFastCache with the given key. This a blocking IO operation.
      *
      * @param key      the key string.
      * @param classOfT the class type of the expected return object.
      * @return the object of the given type if it exists.
      */
-    public static <T> T get(final String key, final Class<T> classOfT) {
+    public static <T> T getSync(final String key, final Class<T> classOfT) {
         String json;
         T value = null;
         try {
-            json = cache.getString(key).getString();
+            json = cache.getString(key);
             value = parseJson(json, classOfT);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return value;
     }
 
@@ -157,11 +145,11 @@ public class FastCache {
      * @param <T>
      * @return
      */
-    public static <T> List<T> getArray(final String key, final Class<T> classOfT) {
+    public static <T> List<T> getArraySync(final String key, final Class<T> classOfT) {
         String json;
         List<T> value = null;
         try {
-            json = cache.getString(key).getString();
+            json = cache.getString(key);
             value = parseJsonArray(json, classOfT);
         } catch (Exception e) {
             e.printStackTrace();
@@ -171,27 +159,19 @@ public class FastCache {
         return value;
     }
 
-
     /**
-     * Get an object from FastCache with the given key asynchronously.
+     * Get an object from RxFastCache with the given key asynchronously.
      *
      * @param key      the key string.
      * @param classOfT the class type of the expected return object.
-     * @return an {@link Observable} that will fetch the object from FastCache. By default, this
+     * @return an {@link Observable} that will fetch the object from RxFastCache. By default, this
      * will be scheduled on a background thread and will be observed on the main thread.
      */
-    public static <T> Observable<T> getAsync(final String key, final Class<T> classOfT) {
-
-        return Observable.create(new Observable.OnSubscribe<T>() {
+    public static <T> Observable<T> get(final String key, final Class<T> classOfT) {
+        return Observable.fromCallable(new Func0<T>() {
             @Override
-            public void call(Subscriber<? super T> subscriber) {
-                try {
-                    T t = FastCache.get(key, classOfT);
-                    subscriber.onNext(t);
-                    subscriber.onCompleted();
-                } catch (Exception exception) {
-                    subscriber.onError(exception);
-                }
+            public T call() {
+                return getSync(key, classOfT);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
@@ -204,42 +184,36 @@ public class FastCache {
      * @param <T>
      * @return
      */
-    public static <T> Observable<List<T>> getArrayAsync(final String key, final Class<T> classOfT) {
-        return Observable.create(new Observable.OnSubscribe<List<T>>() {
+    public static <T> Observable<List<T>> getArray(final String key, final Class<T> classOfT) {
+        return Observable.fromCallable(new Func0<List<T>>() {
             @Override
-            public void call(Subscriber<? super List<T>> subscriber) {
-                try {
-                    List<T> t = FastCache.getArray(key, classOfT);
-                    subscriber.onNext(t);
-                    subscriber.onCompleted();
-                } catch (Exception exception) {
-                    subscriber.onError(exception);
-                }
+            public List<T> call() {
+                return getArraySync(key, classOfT);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
-
     /**
-     * Delete an object into FastCache with the given key asynchronously. Previously
+     * Delete an object into RxFastCache with the given key asynchronously. Previously
      * stored object with the same
      * key (if any) will be deleted.
      *
      * @param key the key string.
-     * @return an {@link Observable} that will delete the object from FastCache.By default, this
+     * @return an {@link Observable} that will delete the object from RxFastCache.By default, this
      * will be scheduled on a background thread and will be observed on the main thread.
      */
     public static Observable<Boolean> delete(final String key) {
-        return Observable.create(new Observable.OnSubscribe<Boolean>() {
+        return Observable.fromCallable(new Func0<Boolean>() {
             @Override
-            public void call(Subscriber<? super Boolean> subscriber) {
+            public Boolean call() {
+                boolean b = true;
                 try {
                     cache.delete(key);
-                    subscriber.onNext(true);
-                    subscriber.onCompleted();
-                } catch (Exception exception) {
-                    subscriber.onError(exception);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    b = false;
                 }
+                return b;
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
@@ -247,24 +221,24 @@ public class FastCache {
     /**
      * Clears the cache. Deletes all the stored key-value pairs asynchronously.
      *
-     * @return an {@link Observable} that will clear all the key-value pairs from FastCache.By default, this
+     * @return an {@link Observable} that will clear all the key-value pairs from RxFastCache.By default, this
      * will be scheduled on a background thread and will be observed on the main thread.
      */
     public static Observable<Boolean> clear(final Context context) {
-
-        return Observable.create(new Observable.OnSubscribe<Boolean>() {
+        return Observable.fromCallable(new Func0<Boolean>() {
             @Override
-            public void call(Subscriber<? super Boolean> subscriber) {
-                long maxSize;
+            public Boolean call() {
+                long maxSize = 0;
+                boolean b = true;
                 try {
                     maxSize = cache.getMaxSize();
                     cache.destroy();
-                    init(context, maxSize);
-                    subscriber.onNext(true);
-                    subscriber.onCompleted();
-                } catch (Exception exception) {
-                    subscriber.onError(exception);
+                    b = false;
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
+                init(context, maxSize);
+                return b;
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
@@ -272,7 +246,7 @@ public class FastCache {
     /**
      * Returns the number of bytes being used currently by the cache.
      */
-    public static long bytesUsed() {
+    public static long getUsedSync() {
         long bytes = 0;
         try {
             bytes = cache.bytesUsed();
@@ -280,6 +254,49 @@ public class FastCache {
             e.printStackTrace();
         }
         return bytes;
+    }
+
+
+    /**
+     * Bitmap
+     *
+     * @param key
+     * @param bitmap
+     * @return
+     */
+    public static Observable<Boolean> putBitmap(final String key, final Bitmap bitmap) {
+        return Observable.fromCallable(new Func0<Boolean>() {
+            @Override
+            public Boolean call() {
+                Boolean b = true;
+                try {
+                    cache.putBitmap(key, bitmap);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    b = false;
+                }
+                return b;
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public static Bitmap getBitmapSync(final String key) {
+        Bitmap bitmap = null;
+        try {
+            bitmap = cache.getBitmap(key);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bitmap;
+    }
+
+    public static Observable<Bitmap> getBitmap(final String key) {
+        return Observable.fromCallable(new Func0<Bitmap>() {
+            @Override
+            public Bitmap call() {
+                return getBitmapSync(key);
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
 }

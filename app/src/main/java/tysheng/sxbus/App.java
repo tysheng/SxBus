@@ -2,7 +2,7 @@ package tysheng.sxbus;
 
 import android.app.Application;
 
-import tysheng.sxbus.utils.fastcache.FastCache;
+import tysheng.sxbus.utils.rxfastcache.RxFastCache;
 
 public class App extends Application {
 
@@ -16,8 +16,7 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
-
-        FastCache.init(this, 1024 * 50); //in bytes
+        RxFastCache.init(this, 1024 * 50); //in bytes
     }
 
 

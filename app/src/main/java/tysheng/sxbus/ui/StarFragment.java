@@ -21,7 +21,7 @@ import tysheng.sxbus.base.BaseFragment;
 import tysheng.sxbus.bean.Star;
 import tysheng.sxbus.presenter.StarUtil;
 import tysheng.sxbus.utils.StySubscriber;
-import tysheng.sxbus.utils.fastcache.FastCache;
+import tysheng.sxbus.utils.rxfastcache.RxFastCache;
 
 /**
  * 收藏
@@ -43,7 +43,7 @@ public class StarFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-        FastCache.getArrayAsync(Constant.STAR, Star.class)
+        RxFastCache.getArray(Constant.STAR, Star.class)
                 .subscribe(new StySubscriber<List<Star>>() {
                     @Override
                     public void next(List<Star> stars) {

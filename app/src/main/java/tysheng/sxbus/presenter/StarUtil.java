@@ -4,7 +4,7 @@ import java.util.List;
 
 import tysheng.sxbus.bean.Star;
 import tysheng.sxbus.utils.StySubscriber;
-import tysheng.sxbus.utils.fastcache.FastCache;
+import tysheng.sxbus.utils.rxfastcache.RxFastCache;
 
 /**
  * Created by Sty
@@ -13,7 +13,7 @@ import tysheng.sxbus.utils.fastcache.FastCache;
 public class StarUtil {
     public static void saveStarList(String tag, List<Star> mStars) {
         if (mStars != null)
-            FastCache.putAsync(tag, mStars)
+            RxFastCache.put(tag, mStars)
                     .subscribe(new StySubscriber<Boolean>() {
                         @Override
                         public void next(Boolean aBoolean) {

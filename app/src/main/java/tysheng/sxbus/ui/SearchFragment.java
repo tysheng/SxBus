@@ -38,7 +38,7 @@ import tysheng.sxbus.utils.LogUtil;
 import tysheng.sxbus.utils.RxHelper;
 import tysheng.sxbus.utils.SnackBarUtil;
 import tysheng.sxbus.utils.StySubscriber;
-import tysheng.sxbus.utils.fastcache.FastCache;
+import tysheng.sxbus.utils.rxfastcache.RxFastCache;
 
 /**
  * Created by Sty
@@ -69,8 +69,8 @@ public class SearchFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-        Observable.zip(FastCache.getArrayAsync(Constant.RECENT, Star.class),
-                FastCache.getArrayAsync(Constant.STAR, Star.class),
+        Observable.zip(RxFastCache.getArray(Constant.RECENT, Star.class),
+                RxFastCache.getArray(Constant.STAR, Star.class),
                 new Func2<List<Star>, List<Star>, Boolean>() {
                     @Override
                     public Boolean call(List<Star> recent, List<Star> star) {
