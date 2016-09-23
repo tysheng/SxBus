@@ -128,7 +128,6 @@ public class RunningActivity extends BaseActivity {
                                     double[] i1 = new double[]{result.lng, result.lat};
                                     double distance = 2;
                                     int station = 0;
-                                    LogUtil.d("lng" + result.lng + "  lat" + result.lat);
                                     for (int i = 0; i < stations.size(); i++) {
                                         double[] i2 = new double[]{stations.get(i).lng, stations.get(i).lat};
                                         double temp = countDistance(i1, i2);

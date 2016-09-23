@@ -16,11 +16,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func0;
-import rx.schedulers.Schedulers;
 
 /**
  * The main reservoir class.
@@ -114,12 +112,12 @@ public class RxFastCache {
      * @return true if object with given key exists.
      */
     public static Observable<Boolean> contain(final String key) {
-        return Observable.fromCallable(new Func0<Boolean>() {
+        return Observable.fromCallable(new Callable<Boolean>() {
             @Override
-            public Boolean call() {
+            public Boolean call() throws Exception {
                 return containsSync(key);
             }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        });
     }
 
     /**
@@ -133,9 +131,9 @@ public class RxFastCache {
      * will be scheduled on a background thread and will be observed on the main thread.
      */
     public static Observable<Boolean> put(final String key, final Object object) {
-        return Observable.fromCallable(new Func0<Boolean>() {
+        return Observable.fromCallable(new Callable<Boolean>() {
             @Override
-            public Boolean call() {
+            public Boolean call() throws Exception {
                 Boolean b = true;
                 String json = toJson(object);
                 try {
@@ -146,7 +144,7 @@ public class RxFastCache {
                 }
                 return b;
             }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        });
     }
 
     /**
@@ -234,12 +232,12 @@ public class RxFastCache {
      * will be scheduled on a background thread and will be observed on the main thread.
      */
     public static <T> Observable<T> get(final String key, final Class<T> classOfT) {
-        return Observable.fromCallable(new Func0<T>() {
+        return Observable.fromCallable(new Callable<T>() {
             @Override
-            public T call() {
+            public T call() throws Exception {
                 return getSync(key, classOfT);
             }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        });
     }
 
     /**
@@ -251,12 +249,12 @@ public class RxFastCache {
      * @return
      */
     public static <T> Observable<List<T>> getArray(final String key, final Class<T> classOfT) {
-        return Observable.fromCallable(new Func0<List<T>>() {
+        return Observable.fromCallable(new Callable<List<T>>() {
             @Override
-            public List<T> call() {
+            public List<T> call() throws Exception {
                 return getArraySync(key, classOfT);
             }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        });
     }
 
     /**
@@ -269,9 +267,9 @@ public class RxFastCache {
      * will be scheduled on a background thread and will be observed on the main thread.
      */
     public static Observable<Boolean> remove(final String key) {
-        return Observable.fromCallable(new Func0<Boolean>() {
+        return Observable.fromCallable(new Callable<Boolean>() {
             @Override
-            public Boolean call() {
+            public Boolean call() throws Exception {
                 boolean b = true;
                 try {
                     cache.remove(md5(key));
@@ -281,7 +279,7 @@ public class RxFastCache {
                 }
                 return b;
             }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        });
     }
 
     /**
@@ -291,9 +289,9 @@ public class RxFastCache {
      * will be scheduled on a background thread and will be observed on the main thread.
      */
     public static Observable<Boolean> clear(final Context context) {
-        return Observable.fromCallable(new Func0<Boolean>() {
+        return Observable.fromCallable(new Callable<Boolean>() {
             @Override
-            public Boolean call() {
+            public Boolean call() throws Exception {
                 long maxSize = 0;
                 boolean b = true;
                 try {
@@ -306,7 +304,7 @@ public class RxFastCache {
                 init(context, maxSize);
                 return b;
             }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        });
     }
 
     /**
@@ -325,9 +323,9 @@ public class RxFastCache {
      * @return
      */
     public static Observable<Boolean> putBitmap(final String key, final Bitmap bitmap) {
-        return Observable.fromCallable(new Func0<Boolean>() {
+        return Observable.fromCallable(new Callable<Boolean>() {
             @Override
-            public Boolean call() {
+            public Boolean call() throws Exception {
                 Boolean b = true;
                 try {
                     _putBitmap(key, bitmap);
@@ -337,7 +335,7 @@ public class RxFastCache {
                 }
                 return b;
             }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        });
     }
 
     public static Bitmap getBitmapSync(final String key) {
@@ -351,12 +349,12 @@ public class RxFastCache {
     }
 
     public static Observable<Bitmap> getBitmap(final String key) {
-        return Observable.fromCallable(new Func0<Bitmap>() {
+        return Observable.fromCallable(new Callable<Bitmap>() {
             @Override
-            public Bitmap call() {
+            public Bitmap call() throws Exception {
                 return getBitmapSync(key);
             }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        });
     }
 
     private static Bitmap _getBitmap(String key) throws IOException {

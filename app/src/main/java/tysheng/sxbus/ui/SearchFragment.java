@@ -78,6 +78,19 @@ public class SearchFragment extends BaseFragment {
         if (!hidden) {
             if (TextUtils.isEmpty(mSearchView.getQuery())) {
                 mAdapter.setNewData(mRecentList);
+                if (mRecentList != null && mRecentList.size() != 0 && mAdapter.getFooterLayoutCount() == 0) {
+                    View view = LayoutInflater.from(mActivity).inflate(R.layout.footer_clear, (ViewGroup) getView(), false);
+                    mAdapter.addFooterView(view);
+                    (view.findViewById(R.id.textView)).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mAdapter.removeAllFooterView();
+                            mRecentList.clear();
+                            mAdapter.notifyDataSetChanged();
+                            StarUtil.saveStarList(Constant.RECENT, mRecentList);
+                        }
+                    });
+                }
             }
         }
     }
@@ -99,6 +112,7 @@ public class SearchFragment extends BaseFragment {
                     }
                 })
                 .compose(this.<Boolean>bindUntilEvent(FragmentEvent.DESTROY))
+                .compose(RxHelper.<Boolean>ioToMain())
                 .subscribe(new StySubscriber<Boolean>() {
                     @Override
                     public void next(Boolean aBoolean) {

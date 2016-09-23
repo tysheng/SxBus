@@ -8,8 +8,8 @@ android {
         applicationId "tysheng.sxbus"
         minSdkVersion 14
         targetSdkVersion 24
-        versionCode 13
-        versionName "1.8.dev"
+        versionCode 14
+        versionName "1.8"
         resConfigs "zh"
 
     }
@@ -39,7 +39,7 @@ dependencies {
     compile 'com.jakewharton:butterknife:8.4.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
     compile 'io.reactivex:rxandroid:1.2.1'
-    compile 'io.reactivex:rxjava:1.1.6'
+    compile 'io.reactivex:rxjava:1.2.0'
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'org.ligboy.retrofit2:converter-fastjson-android:2.1.0'
     compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'

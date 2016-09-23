@@ -20,6 +20,7 @@ import tysheng.sxbus.adapter.StarAdapter;
 import tysheng.sxbus.base.BaseFragment;
 import tysheng.sxbus.bean.Star;
 import tysheng.sxbus.presenter.StarUtil;
+import tysheng.sxbus.utils.RxHelper;
 import tysheng.sxbus.utils.StySubscriber;
 import tysheng.sxbus.utils.rxfastcache.RxFastCache;
 
@@ -46,6 +47,7 @@ public class StarFragment extends BaseFragment {
         super.onHiddenChanged(hidden);
         if (!hidden) {
             RxFastCache.getArray(Constant.STAR, Star.class)
+                    .compose(RxHelper.<List<Star>>ioToMain())
                     .subscribe(new StySubscriber<List<Star>>() {
                         @Override
                         public void next(List<Star> stars) {
@@ -59,6 +61,7 @@ public class StarFragment extends BaseFragment {
     @Override
     protected void initData() {
         RxFastCache.getArray(Constant.STAR, Star.class)
+                .compose(RxHelper.<List<Star>>ioToMain())
                 .subscribe(new StySubscriber<List<Star>>() {
                     @Override
                     public void next(List<Star> stars) {
