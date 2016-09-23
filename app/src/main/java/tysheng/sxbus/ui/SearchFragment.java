@@ -67,6 +67,11 @@ public class SearchFragment extends BaseFragment {
         return R.layout.fragment_search;
     }
 
+    /**
+     * 切换时刷新页面
+     *
+     * @param hidden
+     */
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);

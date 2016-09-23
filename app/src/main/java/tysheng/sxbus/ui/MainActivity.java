@@ -20,6 +20,7 @@ import tysheng.sxbus.utils.SnackBarUtil;
 
 
 public class MainActivity extends BaseActivity implements OnTabSelectListener {
+    private static final String TAG = "tag";
     @BindView(R.id.bottomBar)
     BottomBar mBottomBar;
     @BindView(R.id.coordinatorLayout)
@@ -35,7 +36,16 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener {
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(TAG, mCurrent.getTag());
+    }
+
+    @Override
     public void initData(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            restoreFragment(savedInstanceState);
+        }
         mBottomBar.setOnTabSelectListener(this);
         RxPermissions.getInstance(this)
                 .request(Manifest.permission.READ_PHONE_STATE,
@@ -48,6 +58,10 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener {
                         }
                     }
                 });
+    }
+
+    private void restoreFragment(Bundle savedInstanceState) {
+        mCurrent = getSupportFragmentManager().findFragmentByTag(savedInstanceState.getString(TAG));
     }
 
     @Override

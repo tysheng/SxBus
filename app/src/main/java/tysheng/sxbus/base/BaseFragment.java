@@ -7,7 +7,6 @@ import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,18 +30,13 @@ public abstract class BaseFragment extends RxFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mActivity = activity;
+        LogUtil.d(getTag() + "onAttach");
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        mActivity = null;
-    }
-
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        LogUtil.d(this.getTag() + hidden);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        LogUtil.d(getTag() + "onCreate");
     }
 
     @Nullable
@@ -50,9 +44,8 @@ public abstract class BaseFragment extends RxFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mRootView = inflater.inflate(getLayoutId(), container, false);
         mBinder = ButterKnife.bind(this, mRootView);
-
-
         initData();
+        LogUtil.d(getTag() + "onCreateView");
         return mRootView;
     }
 
@@ -68,29 +61,37 @@ public abstract class BaseFragment extends RxFragment {
         StatService.onPause(this);
     }
 
-    protected void addFragment(@Nullable FragmentManager manager, @NonNull Fragment from, @NonNull Fragment to, @IdRes int id, String tag, String backStackTag) {
-        doAddFragment(manager, from, to, id, tag, backStackTag);
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        LogUtil.d(getTag() + "onDestroyView");
+        mBinder.unbind();
     }
 
-    protected void addFragment(@Nullable FragmentManager manager, @NonNull Fragment from, @NonNull Fragment to, @IdRes int id, String tag) {
-        doAddFragment(manager, from, to, id, tag, null);
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mActivity = null;
+        LogUtil.d(getTag() + "onDetach");
     }
 
-    private void doAddFragment(@Nullable FragmentManager manager, @NonNull Fragment from, @NonNull Fragment to, @IdRes int id, String tag, String backStackTag) {
-        if (manager == null)
-            manager = getActivity().getSupportFragmentManager();
-        manager.beginTransaction()
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        LogUtil.d(this.getTag() + hidden);
+    }
+
+    protected void addFragment(@NonNull Fragment from, @NonNull Fragment to, @IdRes int id, String tag, String backStackTag) {
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
                 .hide(from)
                 .addToBackStack(backStackTag)
                 .add(id, to, tag)
                 .commit();
     }
 
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        mBinder.unbind();
+    protected void addFragment(@NonNull Fragment from, @NonNull Fragment to, @IdRes int id, String tag) {
+        addFragment(from, to, id, tag, null);
     }
 
     protected abstract int getLayoutId();
