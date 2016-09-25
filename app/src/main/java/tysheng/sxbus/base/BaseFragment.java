@@ -69,6 +69,11 @@ public abstract class BaseFragment extends RxFragment {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
         mActivity = null;
@@ -82,10 +87,10 @@ public abstract class BaseFragment extends RxFragment {
     }
 
     protected void addFragment(@NonNull Fragment from, @NonNull Fragment to, @IdRes int id, String tag, String backStackTag) {
-        getActivity().getSupportFragmentManager()
+        getFragmentManager()
                 .beginTransaction()
                 .hide(from)
-                .addToBackStack(backStackTag)
+//                .addToBackStack(backStackTag)
                 .add(id, to, tag)
                 .commit();
     }

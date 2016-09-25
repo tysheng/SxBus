@@ -26,7 +26,7 @@ import rx.functions.Func2;
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.SearchAdapter;
-import tysheng.sxbus.base.BaseFragment;
+import tysheng.sxbus.base.BaseTabFragment;
 import tysheng.sxbus.bean.CallBack;
 import tysheng.sxbus.bean.Star;
 import tysheng.sxbus.bean.Stars;
@@ -44,7 +44,7 @@ import tysheng.sxbus.utils.rxfastcache.RxFastCache;
  * Created by Sty
  * Date: 16/8/10 22:52.
  */
-public class SearchFragment extends BaseFragment {
+public class SearchFragment extends BaseTabFragment {
 
     @BindString(R.string.recent)
     String mRecent;
@@ -92,6 +92,7 @@ public class SearchFragment extends BaseFragment {
                     });
                 }
             }
+            mSearchView.clearFocus();
         }
     }
 
@@ -144,9 +145,12 @@ public class SearchFragment extends BaseFragment {
             public void SimpleOnItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 switch (view.getId()) {
                     case R.id.textView:
-                        startActivity(RunningActivity.newIntent(getContext(), mAdapter.getItem(i).id
-                                , mAdapter.getItem(i).lineName + " 前往 " + mAdapter.getItem(i).endStationName)
-                        );
+//                        startActivity(RunningActivity.newIntent(getContext(), mAdapter.getItem(i).id
+//                                , mAdapter.getItem(i).lineName + " 前往 " + mAdapter.getItem(i).endStationName)
+//                        );
+                        ((MainActivity) mActivity).addTag(1, "1_1");
+                        addFragment(getFragmentManager().findFragmentByTag("1"), RunningFragment.newFragment(mAdapter.getItem(i).id,
+                                mAdapter.getItem(i).lineName + " 前往 " + mAdapter.getItem(i).endStationName), R.id.frameLayout, "1_1");
                         save(Constant.RECENT, mRecentList, i);
                         break;
                     case R.id.star:
@@ -178,8 +182,9 @@ public class SearchFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (mSearchView != null)
+        if (mSearchView != null) {
             mSearchView.clearFocus();
+        }
     }
 
     private void save(String tag, List<Star> list, int i) {

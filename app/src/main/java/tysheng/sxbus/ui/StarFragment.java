@@ -17,7 +17,7 @@ import butterknife.BindView;
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.StarAdapter;
-import tysheng.sxbus.base.BaseFragment;
+import tysheng.sxbus.base.BaseTabFragment;
 import tysheng.sxbus.bean.Star;
 import tysheng.sxbus.presenter.StarUtil;
 import tysheng.sxbus.utils.RxHelper;
@@ -30,7 +30,7 @@ import tysheng.sxbus.utils.rxfastcache.RxFastCache;
  * Date: 16/8/11 21:41.
  */
 
-public class StarFragment extends BaseFragment {
+public class StarFragment extends BaseTabFragment {
 
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
@@ -88,8 +88,11 @@ public class StarFragment extends BaseFragment {
                 switch (view.getId()) {
                     case R.id.number:
                     case R.id.textView:
-                        startActivity(RunningActivity.newIntent(getContext(), mAdapter.getItem(i).id,
-                                mAdapter.getItem(i).lineName + " 前往 " + mAdapter.getItem(i).endStationName));
+                        ((MainActivity) mActivity).addTag(0, "0_1");
+                        addFragment(getFragmentManager().findFragmentByTag("0"), RunningFragment.newFragment(mAdapter.getItem(i).id,
+                                mAdapter.getItem(i).lineName + " 前往 " + mAdapter.getItem(i).endStationName), R.id.frameLayout, "0_1");
+//                        startActivity(RunningActivity.newIntent(getContext(), mAdapter.getItem(i).id,
+//                                mAdapter.getItem(i).lineName + " 前往 " + mAdapter.getItem(i).endStationName));
                         break;
                     case R.id.star:
                         mAdapter.remove(i);
