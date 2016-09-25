@@ -11,11 +11,10 @@ import android.text.TextUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.Callable;
 
-import rx.Single;
-import rx.android.schedulers.AndroidSchedulers;
+import rx.Observable;
 import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import tysheng.sxbus.App;
 
@@ -146,6 +145,7 @@ public class SystemUtil {
 
     /**
      * 遍历文件大小
+     *
      * @param dir file
      * @return file size
      */
@@ -168,16 +168,14 @@ public class SystemUtil {
         }
         return dirSize;
     }
+
     public static void clearCache() {
-        Single.just(null)
-                .map(new Func1<Object, Boolean>() {
-                    @Override
-                    public Boolean call(Object o) {
-                        return SystemUtil.deleteFile(App.get().getCacheDir().getPath());
-                    }
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
+        Observable.fromCallable(new Callable<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
+                return SystemUtil.deleteFile(App.get().getCacheDir().getPath());
+            }
+        }).subscribeOn(Schedulers.io())
                 .subscribe(new Action1<Boolean>() {
                     @Override
                     public void call(Boolean aBoolean) {

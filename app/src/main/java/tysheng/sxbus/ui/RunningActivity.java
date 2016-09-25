@@ -12,8 +12,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.trello.rxlifecycle.android.ActivityEvent;
 
 import java.util.List;
@@ -33,6 +31,7 @@ import tysheng.sxbus.bean.Stations;
 import tysheng.sxbus.bean.Status;
 import tysheng.sxbus.bean.YueChenBusResult;
 import tysheng.sxbus.net.BusRetrofit;
+import tysheng.sxbus.utils.JsonUtil;
 import tysheng.sxbus.utils.ListUtil;
 import tysheng.sxbus.utils.LogUtil;
 import tysheng.sxbus.utils.RxHelper;
@@ -107,14 +106,14 @@ public class RunningActivity extends BaseActivity {
                 new Func2<CallBack, CallBack, List<Stations>>() {
                     @Override
                     public List<Stations> call(CallBack busLines, CallBack busLine) {
-                        BusLinesResult finalResult = JSON.parseObject(busLines.result, BusLinesResult.class);
+                        BusLinesResult finalResult = JsonUtil.parse(busLines.result, BusLinesResult.class);
                         LogUtil.d(finalResult.lineName + finalResult.endStationName);
-                        List<Stations> stations = JSONArray.parseArray(finalResult.stations, Stations.class);
+                        List<Stations> stations = JsonUtil.parseArray(finalResult.stations, Stations.class);
                         //running
-                        Status status = JSON.parseObject(busLine.status, Status.class);
+                        Status status = JsonUtil.parse(busLine.status, Status.class);
                         if (status.code == 0 && !ListUtil.isEmpty(stations)) {
                             if (TextUtils.equals("市公交集团公司", finalResult.owner)) {
-                                List<YueChenBusResult> list = JSONArray.parseArray(busLine.result, YueChenBusResult.class);
+                                List<YueChenBusResult> list = JsonUtil.parseArray(busLine.result, YueChenBusResult.class);
                                 LogUtil.d("running :" + list.size());
                                 for (YueChenBusResult result : list) {
                                     int station = result.stationSeqNum - 1;
@@ -122,7 +121,7 @@ public class RunningActivity extends BaseActivity {
                                         stations.get(station).updateTime = "a";
                                 }
                             } else {//县汽运巴士
-                                List<KeQiaoBusResult> runningList = JSONArray.parseArray(busLine.result, KeQiaoBusResult.class);
+                                List<KeQiaoBusResult> runningList = JsonUtil.parseArray(busLine.result, KeQiaoBusResult.class);
                                 LogUtil.d("running :" + runningList.size());
                                 for (KeQiaoBusResult result : runningList) {
                                     double[] i1 = new double[]{result.lng, result.lat};

@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.trello.rxlifecycle.android.FragmentEvent;
@@ -34,6 +33,7 @@ import tysheng.sxbus.bean.Stars;
 import tysheng.sxbus.bean.Status;
 import tysheng.sxbus.net.BusRetrofit;
 import tysheng.sxbus.presenter.StarUtil;
+import tysheng.sxbus.utils.JsonUtil;
 import tysheng.sxbus.utils.LogUtil;
 import tysheng.sxbus.utils.RxHelper;
 import tysheng.sxbus.utils.SnackBarUtil;
@@ -222,12 +222,12 @@ public class SearchFragment extends BaseFragment {
 
                     @Override
                     public void next(CallBack s) {
-                        Status status = JSON.parseObject(s.status, Status.class);
+                        Status status = JsonUtil.parse(s.status, Status.class);
 
                         if (status.code == 20306) {
                             SnackBarUtil.show(mCoordinatorLayout, "查询的公交线路不存在");
                         } else if (status.code == 0) {
-                            Stars stars = JSON.parseObject(s.result, Stars.class);
+                            Stars stars = JsonUtil.parse(s.result, Stars.class);
                             mAdapter.setNewData(stars.result);
                         } else
                             onError(null);
