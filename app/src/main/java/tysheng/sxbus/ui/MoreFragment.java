@@ -17,7 +17,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import tysheng.sxbus.App;
 import tysheng.sxbus.R;
-import tysheng.sxbus.base.BaseTabFragment;
+import tysheng.sxbus.base.BaseFragment;
 import tysheng.sxbus.bean.SnackBarMsg;
 import tysheng.sxbus.utils.AlipayZeroSdk;
 import tysheng.sxbus.utils.RxBus;
@@ -28,7 +28,7 @@ import tysheng.sxbus.view.ChooseCityFragment;
  * Created by Sty
  * Date: 16/9/11 20:23.
  */
-public class MoreFragment extends BaseTabFragment {
+public class MoreFragment extends BaseFragment {
     @BindView(R.id.more)
     TextView mMore;
 

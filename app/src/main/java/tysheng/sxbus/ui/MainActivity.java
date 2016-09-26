@@ -123,6 +123,8 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener {
                         addTag(tag.which, tag.tag);
                     }
                 });
+//        BottomBarTab tab = mBottomBar.getTabAtPosition(2);
+//        tab.setBadgeCount(1);
     }
 
     public void showSnackBar(String msg, boolean isLong) {

@@ -20,7 +20,7 @@ import butterknife.BindView;
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.StarAdapter;
-import tysheng.sxbus.base.BaseTabFragment;
+import tysheng.sxbus.base.BaseFragment;
 import tysheng.sxbus.bean.FragmentTag;
 import tysheng.sxbus.bean.Star;
 import tysheng.sxbus.presenter.StarUtil;
@@ -35,7 +35,7 @@ import tysheng.sxbus.utils.rxfastcache.RxFastCache;
  * Date: 16/8/11 21:41.
  */
 
-public class StarFragment extends BaseTabFragment {
+public class StarFragment extends BaseFragment {
 
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;

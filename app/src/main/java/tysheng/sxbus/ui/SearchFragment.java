@@ -29,7 +29,7 @@ import rx.functions.Func2;
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.SearchAdapter;
-import tysheng.sxbus.base.BaseTabFragment;
+import tysheng.sxbus.base.BaseFragment;
 import tysheng.sxbus.bean.CallBack;
 import tysheng.sxbus.bean.FragmentTag;
 import tysheng.sxbus.bean.SnackBarMsg;
@@ -49,7 +49,7 @@ import tysheng.sxbus.utils.rxfastcache.RxFastCache;
  * Created by Sty
  * Date: 16/8/10 22:52.
  */
-public class SearchFragment extends BaseTabFragment {
+public class SearchFragment extends BaseFragment {
 
     @BindString(R.string.recent)
     String mRecent;
