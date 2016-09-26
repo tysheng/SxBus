@@ -18,8 +18,9 @@ import butterknife.OnClick;
 import tysheng.sxbus.App;
 import tysheng.sxbus.R;
 import tysheng.sxbus.base.BaseTabFragment;
+import tysheng.sxbus.bean.SnackBarMsg;
 import tysheng.sxbus.utils.AlipayZeroSdk;
-import tysheng.sxbus.utils.SnackBarUtil;
+import tysheng.sxbus.utils.RxBus;
 import tysheng.sxbus.utils.SystemUtil;
 import tysheng.sxbus.view.ChooseCityFragment;
 
@@ -43,16 +44,17 @@ public class MoreFragment extends BaseTabFragment {
 
 
     public void showAlipayFail(String s) {
-        SnackBarUtil.show(getView(), s);
+        RxBus.getDefault().post(new SnackBarMsg(s, false));
         ClipboardManager c = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
         c.setPrimaryClip(ClipData.newPlainText("email", "353491983@qq.com"));//设置Clipboard 的内容
     }
 
     public void showMsg(String s) {
-        SnackBarUtil.show(getView(), s);
+        RxBus.getDefault().post(new SnackBarMsg(s, false));
         ClipboardManager c = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
         c.setPrimaryClip(ClipData.newPlainText("wechat", "353491983"));//设置Clipboard 的内容
     }
+
     public void checkVersionByBaidu() {
         final ProgressDialog dialog = new ProgressDialog(mActivity);
         dialog.setMessage("正在检查新版本...");
@@ -71,7 +73,7 @@ public class MoreFragment extends BaseTabFragment {
                             });
                 } else {
                     dialog.dismiss();
-                    SnackBarUtil.show(getView(), "当前版本已是最新版");
+                    RxBus.getDefault().post(new SnackBarMsg("当前版本已是最新版", false));
                 }
             }
         });

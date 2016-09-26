@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 import com.tbruyelle.rxpermissions.RxPermissions;
+import com.trello.rxlifecycle.android.ActivityEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +21,12 @@ import butterknife.BindView;
 import rx.functions.Action1;
 import tysheng.sxbus.R;
 import tysheng.sxbus.base.BaseActivity;
+import tysheng.sxbus.bean.FragmentTag;
+import tysheng.sxbus.bean.SnackBarMsg;
 import tysheng.sxbus.utils.ListUtil;
+import tysheng.sxbus.utils.RxBus;
 import tysheng.sxbus.utils.SnackBarUtil;
+import tysheng.sxbus.utils.StySubscriber;
 
 
 public class MainActivity extends BaseActivity implements OnTabSelectListener {
@@ -58,6 +63,12 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(TAG, mCurrent.getTag());
+        outState.putStringArrayList("-1", (ArrayList<String>) mList);
+        outState.putStringArrayList("0", (ArrayList<String>) mList0);
+        outState.putStringArrayList("1", (ArrayList<String>) mList1);
+        outState.putStringArrayList("2", (ArrayList<String>) mList2);
+
+
     }
 
     /**
@@ -67,18 +78,24 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener {
      */
     private void restoreFragment(Bundle savedInstanceState) {
         mCurrent = getSupportFragmentManager().findFragmentByTag(savedInstanceState.getString(TAG));
+        mList = savedInstanceState.getStringArrayList("-1");
+        mList0 = savedInstanceState.getStringArrayList("0");
+        mList1 = savedInstanceState.getStringArrayList("1");
+        mList2 = savedInstanceState.getStringArrayList("2");
     }
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             restoreFragment(savedInstanceState);
+            mBottomBar.setOnTabSelectListener(this);
+        } else {
+            mList = new ArrayList<>();
+            mList0 = new ArrayList<>();
+            mList1 = new ArrayList<>();
+            mList2 = new ArrayList<>();
+            mBottomBar.setOnTabSelectListener(this);
         }
-        mList = new ArrayList<>();
-        mList0 = new ArrayList<>();
-        mList1 = new ArrayList<>();
-        mList2 = new ArrayList<>();
-        mBottomBar.setOnTabSelectListener(this);
         RxPermissions.getInstance(this)
                 .request(Manifest.permission.READ_PHONE_STATE,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -86,10 +103,31 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener {
                     @Override
                     public void call(Boolean aBoolean) {
                         if (!aBoolean) {
-                            SnackBarUtil.show(mCoordinatorLayout, "没有这些权限可能会出现问题:(", Snackbar.LENGTH_LONG);
+                            showSnackBar("没有这些权限可能会出现问题:(", true);
                         }
                     }
                 });
+        RxBus.getDefault().toObservable(SnackBarMsg.class)
+                .compose(this.<SnackBarMsg>bindUntilEvent(ActivityEvent.DESTROY))
+                .subscribe(new StySubscriber<SnackBarMsg>() {
+                    @Override
+                    public void next(SnackBarMsg snackBarMsg) {
+                        showSnackBar(snackBarMsg.msg, snackBarMsg.isLong);
+                    }
+                });
+        RxBus.getDefault().toObservable(FragmentTag.class)
+                .compose(this.<FragmentTag>bindUntilEvent(ActivityEvent.DESTROY))
+                .subscribe(new StySubscriber<FragmentTag>() {
+                    @Override
+                    public void next(FragmentTag tag) {
+                        addTag(tag.which, tag.tag);
+                    }
+                });
+    }
+
+    public void showSnackBar(String msg, boolean isLong) {
+        SnackBarUtil.show(mCoordinatorLayout, msg,
+                isLong ? Snackbar.LENGTH_LONG : Snackbar.LENGTH_SHORT);
     }
 
     @Override
@@ -98,9 +136,13 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener {
             case R.id.menu_star:
                 if (!(mCurrent instanceof StarFragment)) {
                     if (mStar == null) {
-                        mStar = Fragment.instantiate(this, StarFragment.class.getName());
-                        getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, mStar, "0").commitNow();
-
+                        Fragment f0 = getSupportFragmentManager().findFragmentByTag("0");
+                        if (f0 == null) {
+                            mStar = Fragment.instantiate(this, StarFragment.class.getName());
+                            getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, mStar, "0").commitNow();
+                        } else {
+                            mStar = f0;
+                        }
                     }
                     if (ListUtil.isEmpty(mList0))
                         mList0.add(0, "0");
@@ -112,8 +154,13 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener {
             case R.id.menu_search:
                 if (!(mCurrent instanceof SearchFragment)) {
                     if (mSearch == null) {
-                        mSearch = Fragment.instantiate(this, SearchFragment.class.getName());
-                        getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, mSearch, "1").commitNow();
+                        Fragment f0 = getSupportFragmentManager().findFragmentByTag("1");
+                        if (f0 == null) {
+                            mSearch = Fragment.instantiate(this, SearchFragment.class.getName());
+                            getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, mSearch, "1").commitNow();
+                        } else {
+                            mSearch = f0;
+                        }
                     }
                     if (ListUtil.isEmpty(mList1))
                         mList1.add(0, "1");
@@ -125,8 +172,13 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener {
             case R.id.menu_more:
                 if (!(mCurrent instanceof MoreFragment)) {
                     if (mMore == null) {
-                        mMore = Fragment.instantiate(this, MoreFragment.class.getName());
-                        getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, mMore, "2").commitNow();
+                        Fragment f0 = getSupportFragmentManager().findFragmentByTag("2");
+                        if (f0 == null) {
+                            mMore = Fragment.instantiate(this, MoreFragment.class.getName());
+                            getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, mMore, "2").commitNow();
+                        } else {
+                            mMore = f0;
+                        }
                     }
                     if (ListUtil.isEmpty(mList2))
                         mList2.add(0, "2");

@@ -1,7 +1,10 @@
 package tysheng.sxbus.ui;
 
 import android.app.ProgressDialog;
+import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -28,6 +31,8 @@ import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.SearchAdapter;
 import tysheng.sxbus.base.BaseTabFragment;
 import tysheng.sxbus.bean.CallBack;
+import tysheng.sxbus.bean.FragmentTag;
+import tysheng.sxbus.bean.SnackBarMsg;
 import tysheng.sxbus.bean.Star;
 import tysheng.sxbus.bean.Stars;
 import tysheng.sxbus.bean.Status;
@@ -35,8 +40,8 @@ import tysheng.sxbus.net.BusRetrofit;
 import tysheng.sxbus.presenter.StarUtil;
 import tysheng.sxbus.utils.JsonUtil;
 import tysheng.sxbus.utils.LogUtil;
+import tysheng.sxbus.utils.RxBus;
 import tysheng.sxbus.utils.RxHelper;
-import tysheng.sxbus.utils.SnackBarUtil;
 import tysheng.sxbus.utils.StySubscriber;
 import tysheng.sxbus.utils.rxfastcache.RxFastCache;
 
@@ -145,10 +150,6 @@ public class SearchFragment extends BaseTabFragment {
             public void SimpleOnItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 switch (view.getId()) {
                     case R.id.textView:
-//                        startActivity(RunningActivity.newIntent(getContext(), mAdapter.getItem(i).id
-//                                , mAdapter.getItem(i).lineName + " 前往 " + mAdapter.getItem(i).endStationName)
-//                        );
-                        ((MainActivity) mActivity).addTag(1, "1_1");
                         addFragment(getFragmentManager().findFragmentByTag("1"), RunningFragment.newFragment(mAdapter.getItem(i).id,
                                 mAdapter.getItem(i).lineName + " 前往 " + mAdapter.getItem(i).endStationName), R.id.frameLayout, "1_1");
                         save(Constant.RECENT, mRecentList, i);
@@ -177,6 +178,12 @@ public class SearchFragment extends BaseTabFragment {
         });
         mSearchView.onActionViewExpanded();
         mSearchView.clearFocus();
+    }
+
+    @Override
+    protected void addFragment(@NonNull Fragment from, @NonNull Fragment to, @IdRes int id, String tag) {
+        super.addFragment(from, to, id, tag);
+        RxBus.getDefault().post(new FragmentTag(1, tag));
     }
 
     @Override
@@ -230,7 +237,7 @@ public class SearchFragment extends BaseTabFragment {
                         Status status = JsonUtil.parse(s.status, Status.class);
 
                         if (status.code == 20306) {
-                            SnackBarUtil.show(mCoordinatorLayout, "查询的公交线路不存在");
+                            RxBus.getDefault().post(new SnackBarMsg("查询的公交线路不存在", false));
                         } else if (status.code == 0) {
                             Stars stars = JsonUtil.parse(s.result, Stars.class);
                             mAdapter.setNewData(stars.result);
@@ -241,7 +248,7 @@ public class SearchFragment extends BaseTabFragment {
                     @Override
                     public void onError(Throwable e) {
                         LogUtil.d("search   " + e.getMessage());
-                        SnackBarUtil.show(mCoordinatorLayout, searchError);
+                        RxBus.getDefault().post(new SnackBarMsg(searchError, false));
 
                     }
                 });

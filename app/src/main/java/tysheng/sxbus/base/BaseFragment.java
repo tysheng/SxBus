@@ -7,6 +7,7 @@ import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import tysheng.sxbus.utils.LogUtil;
  * Created by shengtianyang on 16/2/22.
  */
 public abstract class BaseFragment extends RxFragment {
+    private static final String STATE_SAVE_IS_HIDDEN = "STATE_SAVE_IS_HIDDEN";
     protected View mRootView;
     protected Activity mActivity;
     private Unbinder mBinder;
@@ -37,6 +39,23 @@ public abstract class BaseFragment extends RxFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LogUtil.d(getTag() + "onCreate");
+        if (savedInstanceState != null) {
+            boolean isSupportHidden = savedInstanceState.getBoolean(STATE_SAVE_IS_HIDDEN);
+
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            if (isSupportHidden) {
+                ft.hide(this);
+            } else {
+                ft.show(this);
+            }
+            ft.commit();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(STATE_SAVE_IS_HIDDEN, isHidden());
     }
 
     @Nullable
