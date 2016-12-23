@@ -1,10 +1,10 @@
 package tysheng.sxbus.utils;
 
 import android.graphics.Color;
+import android.support.design.internal.SnackbarContentLayout;
 import android.support.design.widget.Snackbar;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.FrameLayout;
 
 /**
  * Created by Sty
@@ -16,12 +16,9 @@ public class SnackBarUtil {
     }
     public static void show(View view,String msg,int time){
         Snackbar snackbar = Snackbar.make(view, msg, time);
-        ViewGroup viewGroup = (ViewGroup) snackbar.getView();
-        for (int i = 0; i < viewGroup.getChildCount(); i++) {
-            View v = viewGroup.getChildAt(i);
-            if (v instanceof TextView)
-                ((TextView) v).setTextColor(Color.WHITE);
-        }
+        FrameLayout frameLayout = (FrameLayout) snackbar.getView();
+        final SnackbarContentLayout contentLayout = (SnackbarContentLayout) frameLayout.getChildAt(0);
+        contentLayout.getMessageView().setTextColor(Color.WHITE);
         snackbar.show();
 
     }

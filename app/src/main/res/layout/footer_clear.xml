@@ -1,14 +1,14 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TextView
+    <Button
         android:id="@+id/textView"
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:layout_marginTop="10dp"
-        android:background="?selectableItemBackground"
-        android:gravity="center"
-        android:text="@string/clear_search"
-        android:textColor="@color/grey_700" />
-</RelativeLayout>
+        style="@style/MDButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:foreground="?selectableItemBackground"
+        android:padding="15dp"
+        android:text="@string/clear_search" />
+</FrameLayout>

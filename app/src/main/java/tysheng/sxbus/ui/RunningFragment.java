@@ -116,7 +116,7 @@ public class RunningFragment extends BaseFragment {
                                 List<YueChenBusResult> list = JsonUtil.parseArray(busLine.result, YueChenBusResult.class);
                                 LogUtil.d("running :" + list.size());
                                 for (YueChenBusResult result : list) {
-                                    int station = result.stationSeqNum - 1;
+                                    int station = result.stationSeqNum;
                                     if (station < stations.size())
                                         stations.get(station).updateTime = "a";
                                 }

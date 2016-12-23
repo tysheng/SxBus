@@ -12,152 +12,147 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:paddingLeft="30dp"
             android:paddingTop="10dp">
 
             <TextView
                 android:id="@+id/more"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
-                android:gravity="left|center_vertical"
+                android:gravity="center_vertical"
+                android:paddingLeft="24dp"
                 android:textColor="@color/blue"
-                android:textSize="14sp"
                 tools:text="版本 12" />
 
             <LinearLayout
                 android:id="@+id/chooseCity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:foreground="?selectableItemBackgroundBorderless"
+                android:orientation="vertical"
+                android:paddingLeft="24dp">
 
                 <TextView
                     android:id="@+id/cityName"
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
-                    android:gravity="left|center_vertical"
+                    android:gravity="center_vertical"
                     android:text="绍兴"
-                    android:textSize="17sp" />
+                    android:textSize="16sp" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="20dp"
-                    android:gravity="left"
                     android:text="选择其他城市会清空你的收藏记录"
-                    android:textColor="@color/grey_700" />
+                    android:textColor="@color/grey_700"
+                    android:textSize="12sp" />
             </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:layout_marginTop="15dp"
-                android:gravity="left|center_vertical"
+                android:gravity="center_vertical"
+                android:paddingLeft="24dp"
                 android:text="更多"
-                android:textColor="@color/blue"
-                android:textSize="14sp" />
+                android:textColor="@color/blue" />
 
             <LinearLayout
                 android:id="@+id/feedback"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:foreground="?selectableItemBackgroundBorderless"
+                android:orientation="vertical"
+                android:paddingLeft="24dp">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
-                    android:gravity="left|center_vertical"
+                    android:gravity="center_vertical"
                     android:text="反馈"
-                    android:textSize="17sp" />
+                    android:textSize="16sp" />
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="20dp"
-                    android:gravity="left"
+                    android:layout_height="25dp"
                     android:text="以邮件的形式反馈"
-                    android:textColor="@color/grey_700" />
+                    android:textColor="@color/grey_700"
+                    android:textSize="12sp" />
             </LinearLayout>
+
+            <include layout="@layout/divider" />
 
             <LinearLayout
                 android:id="@+id/donate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:orientation="vertical">
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.3dp"
-                    android:layout_marginRight="20dp"
-                    android:background="@color/grey" />
+                android:foreground="?selectableItemBackgroundBorderless"
+                android:orientation="vertical"
+                android:paddingLeft="24dp">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
-                    android:gravity="left|center_vertical"
+                    android:gravity="center_vertical"
                     android:text="捐赠"
-                    android:textSize="17sp" />
+                    android:textSize="16sp" />
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="20dp"
-                    android:gravity="left"
+                    android:layout_height="25dp"
                     android:text="以支付宝转账的形式捐赠"
-                    android:textColor="@color/grey_700" />
+                    android:textColor="@color/grey_700"
+                    android:textSize="12sp" />
             </LinearLayout>
+
+            <include layout="@layout/divider" />
 
             <LinearLayout
                 android:id="@+id/add_wechat"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:orientation="vertical">
+                android:foreground="?selectableItemBackgroundBorderless"
+                android:orientation="vertical"
+                android:paddingLeft="24dp">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.3dp"
-                    android:layout_marginRight="20dp"
-                    android:background="@color/grey" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
-                    android:gravity="left|center_vertical"
+                    android:gravity="center_vertical"
                     android:text="联系"
-                    android:textSize="17sp" />
+                    android:textSize="16sp" />
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="20dp"
-                    android:gravity="left"
+                    android:layout_height="25dp"
                     android:text="添加我的微信号"
-                    android:textColor="@color/grey_700" />
+                    android:textColor="@color/grey_700"
+                    android:textSize="12sp" />
             </LinearLayout>
+
+            <include layout="@layout/divider" />
 
             <LinearLayout
                 android:id="@+id/check_update"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:orientation="vertical">
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.3dp"
-                    android:layout_marginRight="20dp"
-                    android:background="@color/grey" />
+                android:foreground="?selectableItemBackgroundBorderless"
+                android:orientation="vertical"
+                android:paddingLeft="24dp">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
-                    android:gravity="left|center_vertical"
+                    android:gravity="center_vertical"
                     android:text="更新"
-                    android:textSize="17sp" />
+                    android:textSize="16sp" />
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="20dp"
-                    android:gravity="left"
+                    android:layout_height="25dp"
                     android:text="检查更新"
-                    android:textColor="@color/grey_700" />
+                    android:textColor="@color/grey_700"
+                    android:textSize="12sp" />
             </LinearLayout>
 
         </LinearLayout>

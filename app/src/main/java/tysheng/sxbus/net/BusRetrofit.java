@@ -20,7 +20,7 @@ import tysheng.sxbus.utils.SystemUtil;
  * Created by shengtianyang on 16/3/19.
  */
 public class BusRetrofit {
-    public static BusService sService = null;
+    private static BusService sService = null;
     private static volatile Retrofit retrofit = null;
     private static Interceptor REWRITE_CACHE_CONTROL_INTERCEPTOR = new Interceptor() {
         @Override
@@ -37,16 +37,16 @@ public class BusRetrofit {
                         .build();
             }
             Response originalResponse = chain.proceed(request);
+            Response.Builder builder = originalResponse.newBuilder()
+                    .removeHeader("Pragma");
             if (SystemUtil.isNetworkAvailable()) {
                 int maxAge = 0; // read from cache
-                return originalResponse.newBuilder()
-                        .removeHeader("Pragma")
+                return builder
                         .header("Cache-Control", "public ,max-age=" + maxAge)
                         .build();
             } else {
-                int maxStale = 60 * 60 * 24 * 28; // tolerate 4-weeks stale
-                return originalResponse.newBuilder()
-                        .removeHeader("Pragma")
+                int maxStale = 60 * 60 * 24 * 7; // tolerate one-week stale
+                return builder
                         .header("Cache-Control", "public, only-if-cached, max-stale=" + maxStale)
                         .build();
             }

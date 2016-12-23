@@ -28,7 +28,7 @@ import rx.functions.Action0;
 import rx.functions.Func2;
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
-import tysheng.sxbus.adapter.SearchAdapter;
+import tysheng.sxbus.adapter.StarAdapter;
 import tysheng.sxbus.base.BaseFragment;
 import tysheng.sxbus.bean.CallBack;
 import tysheng.sxbus.bean.FragmentTag;
@@ -64,7 +64,7 @@ public class SearchFragment extends BaseFragment {
     @BindView(R.id.searchView)
     SearchView mSearchView;
     private List<Star> mRecentList, mStarList;
-    private SearchAdapter mAdapter;
+    private StarAdapter mAdapter;
     private ProgressDialog mDialog;
 
     @Override
@@ -128,7 +128,7 @@ public class SearchFragment extends BaseFragment {
     }
 
     private void doNext() {
-        mAdapter = new SearchAdapter(mRecentList);
+        mAdapter = new StarAdapter(mRecentList);
         if (mRecentList != null && mRecentList.size() != 0) {
             View view = LayoutInflater.from(mActivity).inflate(R.layout.footer_clear, (ViewGroup) getView(), false);
             mAdapter.addFooterView(view);
@@ -149,6 +149,7 @@ public class SearchFragment extends BaseFragment {
             @Override
             public void SimpleOnItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 switch (view.getId()) {
+                    case R.id.number:
                     case R.id.textView:
                         addFragment(getFragmentManager().findFragmentByTag("1"), RunningFragment.newFragment(mAdapter.getItem(i).id,
                                 mAdapter.getItem(i).lineName + " 前往 " + mAdapter.getItem(i).endStationName), R.id.frameLayout, "1_1");

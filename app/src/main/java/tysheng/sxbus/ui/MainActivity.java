@@ -36,7 +36,7 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener {
     @BindView(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
     private Fragment mCurrent, mSearch, mStar, mMore;
-    private List<String> mList, mList0, mList1, mList2;
+    private ArrayList<String> mList, mList0, mList1, mList2;
 
     public void addTag(int which, String tag) {
         switch (which) {
@@ -63,10 +63,10 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(TAG, mCurrent.getTag());
-        outState.putStringArrayList("-1", (ArrayList<String>) mList);
-        outState.putStringArrayList("0", (ArrayList<String>) mList0);
-        outState.putStringArrayList("1", (ArrayList<String>) mList1);
-        outState.putStringArrayList("2", (ArrayList<String>) mList2);
+        outState.putStringArrayList("-1", mList);
+        outState.putStringArrayList("0", mList0);
+        outState.putStringArrayList("1", mList1);
+        outState.putStringArrayList("2", mList2);
 
 
     }
