@@ -4,9 +4,11 @@ import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.text.TextUtils;
+import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.RelativeSizeSpan;
 import android.view.View;
-import android.widget.TextView;
 
 import com.baidu.autoupdatesdk.AppUpdateInfo;
 import com.baidu.autoupdatesdk.AppUpdateInfoForInstall;
@@ -27,8 +29,8 @@ import tysheng.sxbus.view.ChooseCityFragment;
  * Date: 16/9/11 20:23.
  */
 public class MoreFragment extends BaseFragment {
-    @BindView(R.id.more)
-    TextView mMore;
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
 
     @Override
     protected int getLayoutId() {
@@ -37,7 +39,10 @@ public class MoreFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-        mMore.setText(TextUtils.concat("版本: ", SystemUtil.getVersionName()));
+        SpannableString string = new SpannableString("版本 " + SystemUtil.getVersionName());
+        RelativeSizeSpan sizeSpan = new RelativeSizeSpan(0.75f);
+        string.setSpan(sizeSpan, 3, 6, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        mToolbar.setTitle(string);
     }
 
 
