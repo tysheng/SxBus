@@ -1,8 +1,8 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="70dp"
-    android:layout_marginBottom="20dp"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_marginBottom="20dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -11,9 +11,9 @@
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/number"
             android:layout_width="80dp"
             android:layout_height="match_parent"
-            android:id="@+id/number"
             android:gravity="center"
             tools:text="9lu"/>
         <TextView
@@ -29,7 +29,7 @@
             android:layout_width="60dp"
             android:layout_height="match_parent"
             android:padding="16dp"
-            android:src="@drawable/star_yes" />
+            tools:src="@drawable/star_yes" />
 
     </LinearLayout>
 </android.support.v7.widget.CardView>

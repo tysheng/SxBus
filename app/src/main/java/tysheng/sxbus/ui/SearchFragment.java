@@ -12,7 +12,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
@@ -23,9 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.BindString;
 import butterknife.BindView;
-import rx.Observable;
 import rx.functions.Action0;
-import rx.functions.Func2;
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.StarAdapter;
@@ -36,14 +33,15 @@ import tysheng.sxbus.bean.SnackBarMsg;
 import tysheng.sxbus.bean.Star;
 import tysheng.sxbus.bean.Stars;
 import tysheng.sxbus.bean.Status;
+import tysheng.sxbus.dao.StarDao;
+import tysheng.sxbus.db.DbUtil;
+import tysheng.sxbus.db.StarHelper;
 import tysheng.sxbus.net.BusRetrofit;
-import tysheng.sxbus.presenter.StarUtil;
 import tysheng.sxbus.utils.JsonUtil;
 import tysheng.sxbus.utils.LogUtil;
 import tysheng.sxbus.utils.RxBus;
 import tysheng.sxbus.utils.RxHelper;
 import tysheng.sxbus.utils.StySubscriber;
-import tysheng.sxbus.utils.rxfastcache.RxFastCache;
 
 /**
  * Created by Sty
@@ -63,9 +61,10 @@ public class SearchFragment extends BaseFragment {
     CoordinatorLayout mCoordinatorLayout;
     @BindView(R.id.searchView)
     SearchView mSearchView;
-    private List<Star> mRecentList, mStarList;
+    private List<Star> mRecentList;
     private StarAdapter mAdapter;
     private ProgressDialog mDialog;
+    private StarHelper mHelper;
 
     @Override
     protected int getLayoutId() {
@@ -82,6 +81,7 @@ public class SearchFragment extends BaseFragment {
         super.onHiddenChanged(hidden);
         if (!hidden) {
             if (TextUtils.isEmpty(mSearchView.getQuery())) {
+                mRecentList = getRecentList();
                 mAdapter.setNewData(mRecentList);
                 if (mRecentList != null && mRecentList.size() != 0 && mAdapter.getFooterLayoutCount() == 0) {
                     View view = LayoutInflater.from(mActivity).inflate(R.layout.footer_clear, (ViewGroup) getView(), false);
@@ -92,7 +92,7 @@ public class SearchFragment extends BaseFragment {
                             mAdapter.removeAllFooterView();
                             mRecentList.clear();
                             mAdapter.notifyDataSetChanged();
-                            StarUtil.saveStarList(Constant.RECENT, mRecentList);
+                            mHelper.delete(getRecentList());
                         }
                     });
                 }
@@ -103,28 +103,16 @@ public class SearchFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-        Observable.zip(RxFastCache.getArray(Constant.RECENT, Star.class),
-                RxFastCache.getArray(Constant.STAR, Star.class),
-                new Func2<List<Star>, List<Star>, Boolean>() {
-                    @Override
-                    public Boolean call(List<Star> recent, List<Star> star) {
-                        if (recent.size() > 10) {
-                            mRecentList = recent.subList(0, 10);
-                        } else {
-                            mRecentList = recent;
-                        }
-                        mStarList = star;
-                        return true;
-                    }
-                })
-                .compose(this.<Boolean>bindUntilEvent(FragmentEvent.DESTROY))
-                .compose(RxHelper.<Boolean>ioToMain())
-                .subscribe(new StySubscriber<Boolean>() {
-                    @Override
-                    public void next(Boolean aBoolean) {
-                        doNext();
-                    }
-                });
+        mHelper = DbUtil.getDriverHelper();
+        mRecentList = getRecentList();
+        doNext();
+    }
+
+
+    List<Star> getRecentList() {
+        return mHelper.queryBuilder()
+                .where(StarDao.Properties.TableName.eq(Constant.RECENT))
+                .list();
     }
 
     private void doNext() {
@@ -138,7 +126,7 @@ public class SearchFragment extends BaseFragment {
                     mAdapter.removeAllFooterView();
                     mRecentList.clear();
                     mAdapter.notifyDataSetChanged();
-                    StarUtil.saveStarList(Constant.RECENT, mRecentList);
+                    mHelper.delete(getRecentList());
                 }
             });
         }
@@ -153,12 +141,16 @@ public class SearchFragment extends BaseFragment {
                     case R.id.textView:
                         addFragment(getFragmentManager().findFragmentByTag("1"), RunningFragment.newFragment(mAdapter.getItem(i).id,
                                 mAdapter.getItem(i).lineName + " 前往 " + mAdapter.getItem(i).endStationName), R.id.frameLayout, "1_1");
-                        save(Constant.RECENT, mRecentList, i);
+                        Star star = mAdapter.getItem(i);
+                        star.setTableName(Constant.RECENT);
+                        mHelper.saveOrUpdate(star);
                         break;
                     case R.id.star:
-                        ImageView imageView = (ImageView) view;
-                        imageView.setImageResource(R.drawable.star_yes);
-                        save(Constant.STAR, mStarList, i);
+                        Star star1 = mAdapter.getItem(i);
+                        star1.isStar = true;
+                        star1.setTableName(Constant.STAR);
+                        mHelper.saveOrUpdate(star1);
+                        mAdapter.notifyItemChanged(i);
                         break;
                     default:
                         break;
@@ -192,19 +184,6 @@ public class SearchFragment extends BaseFragment {
         super.onResume();
         if (mSearchView != null) {
             mSearchView.clearFocus();
-        }
-    }
-
-    private void save(String tag, List<Star> list, int i) {
-        boolean flag = true;
-        for (Star star : list) {
-            if (TextUtils.equals(star.id, mAdapter.getItem(i).id)) {
-                flag = false;
-            }
-        }
-        if (flag) {
-            list.add(0, mAdapter.getItem(i));
-            StarUtil.saveStarList(tag, list);
         }
     }
 

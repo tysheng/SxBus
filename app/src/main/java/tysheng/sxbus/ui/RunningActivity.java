@@ -114,7 +114,7 @@ public class RunningActivity extends BaseActivity {
                         if (status.code == 0 && !ListUtil.isEmpty(stations)) {
                             if (TextUtils.equals("市公交集团公司", finalResult.owner)) {
                                 List<YueChenBusResult> list = JsonUtil.parseArray(busLine.result, YueChenBusResult.class);
-                                LogUtil.d("running :" + list.size());
+
                                 for (YueChenBusResult result : list) {
                                     int station = result.stationSeqNum - 1;
                                     if (station < stations.size())
@@ -122,7 +122,6 @@ public class RunningActivity extends BaseActivity {
                                 }
                             } else {//县汽运巴士
                                 List<KeQiaoBusResult> runningList = JsonUtil.parseArray(busLine.result, KeQiaoBusResult.class);
-                                LogUtil.d("running :" + runningList.size());
                                 for (KeQiaoBusResult result : runningList) {
                                     double[] i1 = new double[]{result.lng, result.lat};
                                     double distance = 2;
@@ -164,7 +163,6 @@ public class RunningActivity extends BaseActivity {
 
                     @Override
                     public void onError(Throwable e) {
-                        LogUtil.d("running" + e.getMessage());
                         SnackBarUtil.show(mCoordinatorLayout, runningError, Snackbar.LENGTH_LONG);
                     }
                 });

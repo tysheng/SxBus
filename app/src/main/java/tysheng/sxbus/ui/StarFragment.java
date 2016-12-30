@@ -23,11 +23,12 @@ import tysheng.sxbus.adapter.StarAdapter;
 import tysheng.sxbus.base.BaseFragment;
 import tysheng.sxbus.bean.FragmentTag;
 import tysheng.sxbus.bean.Star;
-import tysheng.sxbus.presenter.StarUtil;
+import tysheng.sxbus.dao.StarDao;
+import tysheng.sxbus.db.DbUtil;
+import tysheng.sxbus.db.StarHelper;
 import tysheng.sxbus.utils.RxBus;
-import tysheng.sxbus.utils.RxHelper;
-import tysheng.sxbus.utils.StySubscriber;
-import tysheng.sxbus.utils.rxfastcache.RxFastCache;
+
+import static tysheng.sxbus.R.id.star;
 
 /**
  * 收藏
@@ -41,6 +42,7 @@ public class StarFragment extends BaseFragment {
     RecyclerView mRecyclerView;
     private List<Star> mStarList;
     private StarAdapter mAdapter;
+    private StarHelper mHelper;
 
     @Override
     protected int getLayoutId() {
@@ -51,33 +53,22 @@ public class StarFragment extends BaseFragment {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (!hidden) {
-            RxFastCache.getArray(Constant.STAR, Star.class)
-                    .compose(RxHelper.<List<Star>>ioToMain())
-                    .subscribe(new StySubscriber<List<Star>>() {
-                        @Override
-                        public void next(List<Star> stars) {
-                            mStarList = stars;
-                            mAdapter.setNewData(mStarList);
-                        }
-                    });
+            mStarList = getStarList();
+            mAdapter.setNewData(mStarList);
         }
+    }
+
+    List<Star> getStarList() {
+        return mHelper.queryBuilder()
+                .where(StarDao.Properties.TableName.eq(Constant.STAR))
+                .list();
     }
 
     @Override
     protected void initData() {
-        RxFastCache.getArray(Constant.STAR, Star.class)
-                .compose(RxHelper.<List<Star>>ioToMain())
-                .subscribe(new StySubscriber<List<Star>>() {
-                    @Override
-                    public void next(List<Star> stars) {
-                        mStarList = stars;
-                    }
-
-                    @Override
-                    public void onCompleted() {
-                        doNext();
-                    }
-                });
+        mHelper = DbUtil.getDriverHelper();
+        mStarList = getStarList();
+        doNext();
     }
 
     @Override
@@ -102,9 +93,10 @@ public class StarFragment extends BaseFragment {
                         addFragment(getFragmentManager().findFragmentByTag("0"), RunningFragment.newFragment(mAdapter.getItem(i).id,
                                 mAdapter.getItem(i).lineName + " 前往 " + mAdapter.getItem(i).endStationName), R.id.frameLayout, "0_1");
                         break;
-                    case R.id.star:
+                    case star:
+                        Star star = mAdapter.getItem(i);
                         mAdapter.remove(i);
-                        StarUtil.saveStarList(Constant.STAR, mStarList);
+                        mHelper.deleteByKey(star.getMainId());
                     default:
                         break;
                 }
@@ -128,7 +120,8 @@ public class StarFragment extends BaseFragment {
 
             @Override
             public void onItemDragEnd(RecyclerView.ViewHolder viewHolder, int i) {
-                StarUtil.saveStarList(Constant.STAR, mStarList);
+                mHelper.delete(getStarList());
+                mHelper.save(mStarList);
                 viewHolder.itemView.setPressed(false);
             }
         });

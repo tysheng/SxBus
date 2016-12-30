@@ -22,6 +22,7 @@ public class StarAdapter extends BaseItemDraggableAdapter<Star> {
     protected void convert(BaseViewHolder holder, Star result) {
         holder.setText(R.id.textView, result.startStationName + " - " + result.endStationName)
                 .setText(R.id.number, result.lineName)
+                .setImageResource(R.id.star, result.isStar ? R.drawable.star_yes : R.drawable.star_no)
                 .addOnClickListener(R.id.textView)
                 .addOnClickListener(R.id.number)
                 .addOnClickListener(R.id.star);

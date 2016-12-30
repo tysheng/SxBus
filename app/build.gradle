@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'org.greenrobot.greendao'
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
@@ -8,8 +8,8 @@ android {
         applicationId "tysheng.sxbus"
         minSdkVersion 14
         targetSdkVersion 25
-        versionCode 17
-        versionName "2.1"
+        versionCode 18
+        versionName "2.2"
         resConfigs "zh"
 
     }
@@ -26,6 +26,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+}
+//greendao配置
+greendao {
+    schemaVersion 2                            //版本号，升级时可配置
+    daoPackage 'tysheng.sxbus.dao'     //包名
+    targetGenDir 'src/main/java'                 //生成目录
 }
 def androidSupportVersion = "25.1.0"
 dependencies {
@@ -52,5 +58,6 @@ dependencies {
     compile 'com.tbruyelle.rxpermissions:rxpermissions:0.7.0@aar'
     compile 'com.trello:rxlifecycle-components:0.7.0'
     compile 'com.trello:rxlifecycle:0.7.0'
+    compile 'org.greenrobot:greendao:3.2.0'
 
 }
