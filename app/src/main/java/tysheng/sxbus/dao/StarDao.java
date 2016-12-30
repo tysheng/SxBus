@@ -33,7 +33,7 @@ public class StarDao extends AbstractDao<Star, Long> {
      * Creates the underlying database table.
      */
     public static void createTable(Database db, boolean ifNotExists) {
-        String constraint = ifNotExists ? "IF NOT EXISTS " : "";
+        String constraint = ifNotExists ? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"STAR\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY ," + // 0: mainId
                 "\"TABLE_NAME\" TEXT," + // 1: tableName
@@ -46,9 +46,7 @@ public class StarDao extends AbstractDao<Star, Long> {
                 "\"UPDATE_TIME\" TEXT);"); // 8: updateTime
     }
 
-    /**
-     * Drops the underlying database table.
-     */
+    /** Drops the underlying database table. */
     public static void dropTable(Database db, boolean ifExists) {
         String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "\"STAR\"";
         db.execSQL(sql);
@@ -67,7 +65,7 @@ public class StarDao extends AbstractDao<Star, Long> {
         if (tableName != null) {
             stmt.bindString(2, tableName);
         }
-        stmt.bindLong(3, entity.getIsStar() ? 1L : 0L);
+        stmt.bindLong(3, entity.getIsStar() ? 1L: 0L);
 
         String id = entity.getId();
         if (id != null) {
@@ -113,7 +111,7 @@ public class StarDao extends AbstractDao<Star, Long> {
         if (tableName != null) {
             stmt.bindString(2, tableName);
         }
-        stmt.bindLong(3, entity.getIsStar() ? 1L : 0L);
+        stmt.bindLong(3, entity.getIsStar() ? 1L: 0L);
 
         String id = entity.getId();
         if (id != null) {
@@ -178,14 +176,14 @@ public class StarDao extends AbstractDao<Star, Long> {
         entity.setLineName(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
         entity.setStartStationName(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
         entity.setUpdateTime(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
-    }
-
+     }
+     
     @Override
     protected final Long updateKeyAfterInsert(Star entity, long rowId) {
         entity.setMainId(rowId);
         return rowId;
     }
-
+    
     @Override
     public Long getKey(Star entity) {
         if (entity != null) {
@@ -194,7 +192,7 @@ public class StarDao extends AbstractDao<Star, Long> {
             return null;
         }
     }
-
+    
     @Override
     public boolean hasKey(Star entity) {
         return entity.getMainId() != null;
@@ -220,5 +218,5 @@ public class StarDao extends AbstractDao<Star, Long> {
         public final static Property StartStationName = new Property(7, String.class, "startStationName", false, "START_STATION_NAME");
         public final static Property UpdateTime = new Property(8, String.class, "updateTime", false, "UPDATE_TIME");
     }
-
+    
 }

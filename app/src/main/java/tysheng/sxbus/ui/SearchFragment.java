@@ -15,21 +15,17 @@ import android.view.ViewGroup;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
-import com.trello.rxlifecycle.android.FragmentEvent;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindString;
 import butterknife.BindView;
-import rx.functions.Action0;
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.StarAdapter;
 import tysheng.sxbus.base.BaseFragment;
 import tysheng.sxbus.bean.CallBack;
-import tysheng.sxbus.bean.FragmentTag;
-import tysheng.sxbus.bean.SnackBarMsg;
 import tysheng.sxbus.bean.Star;
 import tysheng.sxbus.bean.Stars;
 import tysheng.sxbus.bean.Status;
@@ -39,7 +35,6 @@ import tysheng.sxbus.db.StarHelper;
 import tysheng.sxbus.net.BusRetrofit;
 import tysheng.sxbus.utils.JsonUtil;
 import tysheng.sxbus.utils.LogUtil;
-import tysheng.sxbus.utils.RxBus;
 import tysheng.sxbus.utils.RxHelper;
 import tysheng.sxbus.utils.StySubscriber;
 
@@ -176,7 +171,7 @@ public class SearchFragment extends BaseFragment {
     @Override
     protected void addFragment(@NonNull Fragment from, @NonNull Fragment to, @IdRes int id, String tag) {
         super.addFragment(from, to, id, tag);
-        RxBus.getDefault().post(new FragmentTag(1, tag));
+        ((MainActivity) getActivity()).addTag(1, tag);
     }
 
     @Override
@@ -188,48 +183,41 @@ public class SearchFragment extends BaseFragment {
     }
 
     private void getBusSimple(String number) {
+        mSearchView.clearFocus();
+        if (mAdapter.getFooterLayoutCount() != 0)
+            mAdapter.removeAllFooterView();
+        if (mDialog == null) {
+            mDialog = new ProgressDialog(mActivity);
+            mDialog.setMessage("正在搜索...");
+        }
+        mDialog.show();
         BusRetrofit.get()
                 .numberToSearch(number)
                 .delay(200, TimeUnit.MILLISECONDS)
-                .doAfterTerminate(new Action0() {
-                    @Override
-                    public void call() {
-                        mDialog.dismiss();
-                    }
-                })
-                .compose(this.<CallBack>bindUntilEvent(FragmentEvent.DESTROY))
                 .compose(RxHelper.<CallBack>ioToMain())
                 .subscribe(new StySubscriber<CallBack>() {
                     @Override
-                    public void onStart() {
-                        mSearchView.clearFocus();
-                        if (mAdapter.getFooterLayoutCount() != 0)
-                            mAdapter.removeAllFooterView();
-                        if (mDialog == null) {
-                            mDialog = new ProgressDialog(mActivity);
-                            mDialog.setMessage("正在搜索...");
-                        }
-                        mDialog.show();
+                    public void onTerminate() {
+                        super.onTerminate();
+                        mDialog.dismiss();
                     }
 
                     @Override
                     public void next(CallBack s) {
+                        LogUtil.d(s.toString());
                         Status status = JsonUtil.parse(s.status, Status.class);
-
                         if (status.code == 20306) {
-                            RxBus.getDefault().post(new SnackBarMsg("查询的公交线路不存在", false));
+                            ((MainActivity) getActivity()).showSnackBar("查询的公交线路不存在", false);
                         } else if (status.code == 0) {
                             Stars stars = JsonUtil.parse(s.result, Stars.class);
                             mAdapter.setNewData(stars.result);
-                        } else
-                            onError(null);
+                        }
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        LogUtil.d("search   " + e.getMessage());
-                        RxBus.getDefault().post(new SnackBarMsg(searchError, false));
-
+                        super.onError(e);
+                        ((MainActivity) getActivity()).showSnackBar(searchError, false);
                     }
                 });
     }

@@ -11,22 +11,17 @@ import android.support.v4.app.FragmentManager;
 
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
-import com.tbruyelle.rxpermissions.RxPermissions;
-import com.trello.rxlifecycle.android.ActivityEvent;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import rx.functions.Action1;
+import io.reactivex.functions.Consumer;
 import tysheng.sxbus.R;
 import tysheng.sxbus.base.BaseActivity;
-import tysheng.sxbus.bean.FragmentTag;
-import tysheng.sxbus.bean.SnackBarMsg;
 import tysheng.sxbus.utils.ListUtil;
-import tysheng.sxbus.utils.RxBus;
 import tysheng.sxbus.utils.SnackBarUtil;
-import tysheng.sxbus.utils.StySubscriber;
 
 
 public class MainActivity extends BaseActivity implements OnTabSelectListener {
@@ -96,31 +91,15 @@ public class MainActivity extends BaseActivity implements OnTabSelectListener {
             mList2 = new ArrayList<>();
             mBottomBar.setOnTabSelectListener(this);
         }
-        RxPermissions.getInstance(this)
+        new RxPermissions(this)
                 .request(Manifest.permission.READ_PHONE_STATE,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .subscribe(new Action1<Boolean>() {
+                .subscribe(new Consumer<Boolean>() {
                     @Override
-                    public void call(Boolean aBoolean) {
+                    public void accept(Boolean aBoolean) throws Exception {
                         if (!aBoolean) {
                             showSnackBar("没有这些权限可能会出现问题:(", true);
                         }
-                    }
-                });
-        RxBus.getDefault().toObservable(SnackBarMsg.class)
-                .compose(this.<SnackBarMsg>bindUntilEvent(ActivityEvent.DESTROY))
-                .subscribe(new StySubscriber<SnackBarMsg>() {
-                    @Override
-                    public void next(SnackBarMsg snackBarMsg) {
-                        showSnackBar(snackBarMsg.msg, snackBarMsg.isLong);
-                    }
-                });
-        RxBus.getDefault().toObservable(FragmentTag.class)
-                .compose(this.<FragmentTag>bindUntilEvent(ActivityEvent.DESTROY))
-                .subscribe(new StySubscriber<FragmentTag>() {
-                    @Override
-                    public void next(FragmentTag tag) {
-                        addTag(tag.which, tag.tag);
                     }
                 });
     }

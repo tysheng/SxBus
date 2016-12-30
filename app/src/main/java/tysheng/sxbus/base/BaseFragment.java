@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.baidu.mobstat.StatService;
-import com.trello.rxlifecycle.components.support.RxFragment;
+import com.trello.rxlifecycle2.components.support.RxFragment;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -99,12 +99,6 @@ public abstract class BaseFragment extends RxFragment {
         LogUtil.d(getTag() + "onDetach");
     }
 
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        LogUtil.d(this.getTag() + hidden);
-    }
-
     protected void addFragment(@NonNull Fragment from, @NonNull Fragment to, @IdRes int id, String tag, String backStackTag) {
         getFragmentManager()
                 .beginTransaction()
@@ -121,5 +115,6 @@ public abstract class BaseFragment extends RxFragment {
     protected abstract int getLayoutId();
 
     protected abstract void initData();
+
 
 }

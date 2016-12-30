@@ -1,19 +1,17 @@
 package tysheng.sxbus.net;
 
-import java.io.File;
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Cache;
 import okhttp3.CacheControl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.fastjson.FastJsonConverterFactory;
-import tysheng.sxbus.App;
 import tysheng.sxbus.utils.SystemUtil;
 
 /**
@@ -53,28 +51,28 @@ public class BusRetrofit {
         }
     };
 
-    public static void init() {
-        final File baseDir = App.get().getCacheDir();
-        Cache cache = null;
-        if (baseDir != null) {
-            final File cacheDir = new File(baseDir, "HttpCache");
-            cache = new Cache(cacheDir, 10 * 1024 * 1024);
-        }
+    private static void init() {
+//        final File baseDir = App.get().getCacheDir();
+//        Cache cache = null;
+//        if (baseDir != null) {
+//            final File cacheDir = new File(baseDir, "HttpCache");
+//            cache = new Cache(cacheDir, 10 * 1024 * 1024);
+//        }
         //设置缓存 10M
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        final int TIME_MAX = 12;
+        final int TIME_MAX = 5;
         builder.readTimeout(TIME_MAX, TimeUnit.SECONDS);
         builder.connectTimeout(TIME_MAX, TimeUnit.SECONDS);
         builder.writeTimeout(TIME_MAX, TimeUnit.SECONDS);
 
-        builder.addInterceptor(REWRITE_CACHE_CONTROL_INTERCEPTOR);
-        OkHttpClient client = builder.cache(cache).build();
+//        builder.addInterceptor(REWRITE_CACHE_CONTROL_INTERCEPTOR);
+        OkHttpClient client = builder.build();
 
         retrofit = new Retrofit.Builder()
                 .client(client)
                 .addConverterFactory(FastJsonConverterFactory.create())
                 .baseUrl(BusService.BASE_URL)
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
 
     }

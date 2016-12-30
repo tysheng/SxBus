@@ -13,9 +13,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 
-import rx.Observable;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 import tysheng.sxbus.App;
 
 
@@ -170,17 +169,14 @@ public class SystemUtil {
     }
 
     public static void clearCache() {
-        Observable.fromCallable(new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                return SystemUtil.deleteFile(App.get().getCacheDir().getPath());
-            }
-        }).subscribeOn(Schedulers.io())
-                .subscribe(new Action1<Boolean>() {
+        Observable
+                .fromCallable(new Callable<Boolean>() {
                     @Override
-                    public void call(Boolean aBoolean) {
-
+                    public Boolean call() throws Exception {
+                        return SystemUtil.deleteFile(App.get().getCacheDir().getPath());
                     }
-                });
+                })
+                .subscribeOn(Schedulers.io())
+                .subscribe();
     }
 }

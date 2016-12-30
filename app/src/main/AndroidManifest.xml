@@ -37,18 +37,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".ui.RunningActivity"
-            android:configChanges="screenSize|orientation" />
-
-        <!--百度定位-->
-        <!--<service android:name="com.baidu.location.f" android:enabled="true" android:process=":remote">-->
-        <!--</service>-->
-        <!--<meta-data-->
-        <!--android:name="com.baidu.lbsapi.API_KEY"-->
-        <!--android:value="dReiwsMG8S0emok8OmDia1t1japfMzWs" />-->
-        <!--百度定位-->
-
         <!--百度更新-->
         <meta-data
             android:name="BDAPPID"

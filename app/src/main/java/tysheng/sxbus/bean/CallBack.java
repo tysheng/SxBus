@@ -17,4 +17,11 @@ public class CallBack {
 
     public String result;
 
+    @Override
+    public String toString() {
+        return "CallBack{" +
+                "status='" + status + '\'' +
+                ", result='" + result + '\'' +
+                '}';
+    }
 }

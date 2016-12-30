@@ -2,28 +2,25 @@ package tysheng.sxbus.ui;
 
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.widget.TextView;
 
-import com.trello.rxlifecycle.android.FragmentEvent;
-
 import java.util.List;
 
 import butterknife.BindString;
 import butterknife.BindView;
-import rx.Observable;
-import rx.functions.Action0;
-import rx.functions.Func2;
+import io.reactivex.Flowable;
+import io.reactivex.functions.BiFunction;
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.RunningAdapter;
 import tysheng.sxbus.base.BaseFragment;
 import tysheng.sxbus.bean.BusLinesResult;
 import tysheng.sxbus.bean.CallBack;
 import tysheng.sxbus.bean.KeQiaoBusResult;
-import tysheng.sxbus.bean.SnackBarMsg;
 import tysheng.sxbus.bean.Stations;
 import tysheng.sxbus.bean.Status;
 import tysheng.sxbus.bean.YueChenBusResult;
@@ -31,8 +28,8 @@ import tysheng.sxbus.net.BusRetrofit;
 import tysheng.sxbus.utils.JsonUtil;
 import tysheng.sxbus.utils.ListUtil;
 import tysheng.sxbus.utils.LogUtil;
-import tysheng.sxbus.utils.RxBus;
 import tysheng.sxbus.utils.RxHelper;
+import tysheng.sxbus.utils.SnackBarUtil;
 import tysheng.sxbus.utils.StySubscriber;
 
 /**
@@ -101,11 +98,11 @@ public class RunningFragment extends BaseFragment {
     }
 
     private void refresh() {
-        Observable.zip(BusRetrofit.get().getBusLines(id),
+        Flowable.zip(BusRetrofit.get().getBusLines(id),
                 BusRetrofit.get().getRunningBus(id),
-                new Func2<CallBack, CallBack, List<Stations>>() {
+                new BiFunction<CallBack, CallBack, List<Stations>>() {
                     @Override
-                    public List<Stations> call(CallBack busLines, CallBack busLine) {
+                    public List<Stations> apply(CallBack busLines, CallBack busLine) throws Exception {
                         BusLinesResult finalResult = JsonUtil.parse(busLines.result, BusLinesResult.class);
                         LogUtil.d(finalResult.lineName + finalResult.endStationName);
                         List<Stations> stations = JsonUtil.parseArray(finalResult.stations, Stations.class);
@@ -114,15 +111,14 @@ public class RunningFragment extends BaseFragment {
                         if (status.code == 0 && !ListUtil.isEmpty(stations)) {
                             if (TextUtils.equals("市公交集团公司", finalResult.owner)) {
                                 List<YueChenBusResult> list = JsonUtil.parseArray(busLine.result, YueChenBusResult.class);
-                                LogUtil.d("running :" + list.size());
+
                                 for (YueChenBusResult result : list) {
-                                    int station = result.stationSeqNum;
+                                    int station = result.stationSeqNum - 1;
                                     if (station < stations.size())
                                         stations.get(station).updateTime = "a";
                                 }
                             } else {//县汽运巴士
                                 List<KeQiaoBusResult> runningList = JsonUtil.parseArray(busLine.result, KeQiaoBusResult.class);
-                                LogUtil.d("running :" + runningList.size());
                                 for (KeQiaoBusResult result : runningList) {
                                     double[] i1 = new double[]{result.lng, result.lat};
                                     double distance = 2;
@@ -142,9 +138,17 @@ public class RunningFragment extends BaseFragment {
                         return stations;
                     }
                 })
-                .doAfterTerminate(new Action0() {
+                .compose(this.<List<Stations>>bindToLifecycle())
+                .compose(RxHelper.<List<Stations>>ioToMain())
+                .subscribe(new StySubscriber<List<Stations>>() {
                     @Override
-                    public void call() {
+                    public void next(List<Stations> stationses) {
+                        mRunningAdapter.setNewData(stationses);
+                    }
+
+                    @Override
+                    public void onTerminate() {
+                        super.onTerminate();
                         mSwipeRefreshLayout.post(new Runnable() {
                             @Override
                             public void run() {
@@ -153,20 +157,13 @@ public class RunningFragment extends BaseFragment {
                             }
                         });
                     }
-                })
-                .compose(this.<List<Stations>>bindUntilEvent(FragmentEvent.DESTROY_VIEW))
-                .compose(RxHelper.<List<Stations>>ioToMain())
-                .subscribe(new StySubscriber<List<Stations>>() {
-                    @Override
-                    public void next(List<Stations> stationsList) {
-                        mRunningAdapter.setNewData(stationsList);
-                    }
 
                     @Override
-                    public void onError(Throwable e) {
-                        LogUtil.d("running" + e.getMessage());
-                        RxBus.getDefault().post(new SnackBarMsg(runningError, true));
+                    public void onError(Throwable t) {
+                        super.onError(t);
+                        SnackBarUtil.show(mCoordinatorLayout, runningError, Snackbar.LENGTH_LONG);
                     }
                 });
+
     }
 }

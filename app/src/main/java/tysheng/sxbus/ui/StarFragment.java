@@ -21,12 +21,10 @@ import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.StarAdapter;
 import tysheng.sxbus.base.BaseFragment;
-import tysheng.sxbus.bean.FragmentTag;
 import tysheng.sxbus.bean.Star;
 import tysheng.sxbus.dao.StarDao;
 import tysheng.sxbus.db.DbUtil;
 import tysheng.sxbus.db.StarHelper;
-import tysheng.sxbus.utils.RxBus;
 
 import static tysheng.sxbus.R.id.star;
 
@@ -74,7 +72,7 @@ public class StarFragment extends BaseFragment {
     @Override
     protected void addFragment(@NonNull Fragment from, @NonNull Fragment to, @IdRes int id, String tag) {
         super.addFragment(from, to, id, tag);
-        RxBus.getDefault().post(new FragmentTag(0, tag));
+        ((MainActivity) getActivity()).addTag(0, tag);
     }
 
     private void doNext() {
