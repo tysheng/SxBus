@@ -14,6 +14,8 @@ import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.chad.library.adapter.base.listener.OnItemDragListener;
 
+import org.greenrobot.greendao.query.QueryBuilder;
+
 import java.util.List;
 
 import butterknife.BindView;
@@ -41,6 +43,7 @@ public class StarFragment extends BaseFragment {
     private List<Star> mStarList;
     private StarAdapter mAdapter;
     private StarHelper mHelper;
+    private QueryBuilder<Star> mQueryBuilder;
 
     @Override
     protected int getLayoutId() {
@@ -57,8 +60,11 @@ public class StarFragment extends BaseFragment {
     }
 
     List<Star> getStarList() {
-        return mHelper.queryBuilder()
-                .where(StarDao.Properties.TableName.eq(Constant.STAR))
+        if (mQueryBuilder == null)
+            mQueryBuilder = mHelper.queryBuilder()
+                    .where(StarDao.Properties.TableName.eq(Constant.STAR))
+                    .orderAsc(StarDao.Properties.SortId);
+        return mQueryBuilder
                 .list();
     }
 
@@ -76,8 +82,7 @@ public class StarFragment extends BaseFragment {
     }
 
     private void doNext() {
-        mAdapter = new StarAdapter(mStarList);
-
+        mAdapter = new StarAdapter(0, mStarList);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
         View view = LayoutInflater.from(mActivity).inflate(R.layout.empty_layout, mRecyclerView, false);
@@ -118,11 +123,20 @@ public class StarFragment extends BaseFragment {
 
             @Override
             public void onItemDragEnd(RecyclerView.ViewHolder viewHolder, int i) {
-                mHelper.delete(getStarList());
-                mHelper.save(mStarList);
+                dragEnd();
                 viewHolder.itemView.setPressed(false);
             }
         });
     }
+
+    void dragEnd() {
+        mHelper.delete(getStarList());
+        for (int i = 0; i < mStarList.size(); i++) {
+            Star star = mStarList.get(i);
+            star.setSortId((long) i);
+            mHelper.save(star);
+        }
+    }
+
 
 }

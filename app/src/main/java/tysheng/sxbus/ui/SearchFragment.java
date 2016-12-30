@@ -111,7 +111,7 @@ public class SearchFragment extends BaseFragment {
     }
 
     private void doNext() {
-        mAdapter = new StarAdapter(mRecentList);
+        mAdapter = new StarAdapter(1, mRecentList);
         if (mRecentList != null && mRecentList.size() != 0) {
             View view = LayoutInflater.from(mActivity).inflate(R.layout.footer_clear, (ViewGroup) getView(), false);
             mAdapter.addFooterView(view);
@@ -144,7 +144,11 @@ public class SearchFragment extends BaseFragment {
                         Star star1 = mAdapter.getItem(i);
                         star1.isStar = true;
                         star1.setTableName(Constant.STAR);
-                        mHelper.saveOrUpdate(star1);
+                        Star uni = mHelper.queryBuilder()
+                                .where(StarDao.Properties.Id.eq(star1.getLocalLineId()))
+                                .unique();
+                        if (uni == null)
+                            mHelper.saveOrUpdate(star1);
                         mAdapter.notifyItemChanged(i);
                         break;
                     default:

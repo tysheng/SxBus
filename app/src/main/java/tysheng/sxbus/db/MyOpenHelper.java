@@ -62,7 +62,7 @@ public class MyOpenHelper extends DaoMaster.OpenHelper {
     @Override
     public void onUpgrade(Database db, int oldVersion, int newVersion) {
         switch (oldVersion) {
-            case 1:
+            case 3:
 
                 //不能先删除表，否则数据都没有了
 //                StudentDao.dropTable(db, true);
@@ -71,7 +71,7 @@ public class MyOpenHelper extends DaoMaster.OpenHelper {
 
 
                 // 加入新字段 score
-                db.execSQL("ALTER TABLE 'STUDENT' ADD 'SCORE' TEXT;");
+                db.execSQL("ALTER TABLE STAR ADD COLUMN 'SORT_ID';");
 
                 break;
         }

@@ -14,6 +14,7 @@ public class Star {
     public Long mainId;
     public String tableName;
     public boolean isStar;
+    public Long sortId;
 //    ----------------
 
     public String id;
@@ -23,13 +24,14 @@ public class Star {
     public String startStationName;
     public String updateTime;
 
-    @Generated(hash = 1362092274)
-    public Star(Long mainId, String tableName, boolean isStar, String id,
-                String localLineId, String endStationName, String lineName,
+    @Generated(hash = 1387536182)
+    public Star(Long mainId, String tableName, boolean isStar, Long sortId,
+                String id, String localLineId, String endStationName, String lineName,
                 String startStationName, String updateTime) {
         this.mainId = mainId;
         this.tableName = tableName;
         this.isStar = isStar;
+        this.sortId = sortId;
         this.id = id;
         this.localLineId = localLineId;
         this.endStationName = endStationName;
@@ -113,6 +115,14 @@ public class Star {
     public void setUpdateTime(String updateTime) {
         this.updateTime = updateTime;
     }
-    
+
+    public Long getSortId() {
+        return this.sortId;
+    }
+
+    public void setSortId(Long sortId) {
+        this.sortId = sortId;
+    }
+
 
 }

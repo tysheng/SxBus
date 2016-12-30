@@ -29,7 +29,7 @@ android {
 }
 //greendao配置
 greendao {
-    schemaVersion 2                            //版本号，升级时可配置
+    schemaVersion 4                            //版本号，升级时可配置
     daoPackage 'tysheng.sxbus.dao'     //包名
     targetGenDir 'src/main/java'                 //生成目录
 }

@@ -38,12 +38,13 @@ public class StarDao extends AbstractDao<Star, Long> {
                 "\"_id\" INTEGER PRIMARY KEY ," + // 0: mainId
                 "\"TABLE_NAME\" TEXT," + // 1: tableName
                 "\"IS_STAR\" INTEGER NOT NULL ," + // 2: isStar
-                "\"ID\" TEXT," + // 3: id
-                "\"LOCAL_LINE_ID\" TEXT," + // 4: localLineId
-                "\"END_STATION_NAME\" TEXT," + // 5: endStationName
-                "\"LINE_NAME\" TEXT," + // 6: lineName
-                "\"START_STATION_NAME\" TEXT," + // 7: startStationName
-                "\"UPDATE_TIME\" TEXT);"); // 8: updateTime
+                "\"SORT_ID\" INTEGER," + // 3: sortId
+                "\"ID\" TEXT," + // 4: id
+                "\"LOCAL_LINE_ID\" TEXT," + // 5: localLineId
+                "\"END_STATION_NAME\" TEXT," + // 6: endStationName
+                "\"LINE_NAME\" TEXT," + // 7: lineName
+                "\"START_STATION_NAME\" TEXT," + // 8: startStationName
+                "\"UPDATE_TIME\" TEXT);"); // 9: updateTime
     }
 
     /** Drops the underlying database table. */
@@ -65,36 +66,41 @@ public class StarDao extends AbstractDao<Star, Long> {
         if (tableName != null) {
             stmt.bindString(2, tableName);
         }
-        stmt.bindLong(3, entity.getIsStar() ? 1L: 0L);
+        stmt.bindLong(3, entity.getIsStar() ? 1L : 0L);
+
+        Long sortId = entity.getSortId();
+        if (sortId != null) {
+            stmt.bindLong(4, sortId);
+        }
 
         String id = entity.getId();
         if (id != null) {
-            stmt.bindString(4, id);
+            stmt.bindString(5, id);
         }
 
         String localLineId = entity.getLocalLineId();
         if (localLineId != null) {
-            stmt.bindString(5, localLineId);
+            stmt.bindString(6, localLineId);
         }
 
         String endStationName = entity.getEndStationName();
         if (endStationName != null) {
-            stmt.bindString(6, endStationName);
+            stmt.bindString(7, endStationName);
         }
 
         String lineName = entity.getLineName();
         if (lineName != null) {
-            stmt.bindString(7, lineName);
+            stmt.bindString(8, lineName);
         }
 
         String startStationName = entity.getStartStationName();
         if (startStationName != null) {
-            stmt.bindString(8, startStationName);
+            stmt.bindString(9, startStationName);
         }
 
         String updateTime = entity.getUpdateTime();
         if (updateTime != null) {
-            stmt.bindString(9, updateTime);
+            stmt.bindString(10, updateTime);
         }
     }
 
@@ -111,36 +117,41 @@ public class StarDao extends AbstractDao<Star, Long> {
         if (tableName != null) {
             stmt.bindString(2, tableName);
         }
-        stmt.bindLong(3, entity.getIsStar() ? 1L: 0L);
+        stmt.bindLong(3, entity.getIsStar() ? 1L : 0L);
+
+        Long sortId = entity.getSortId();
+        if (sortId != null) {
+            stmt.bindLong(4, sortId);
+        }
 
         String id = entity.getId();
         if (id != null) {
-            stmt.bindString(4, id);
+            stmt.bindString(5, id);
         }
 
         String localLineId = entity.getLocalLineId();
         if (localLineId != null) {
-            stmt.bindString(5, localLineId);
+            stmt.bindString(6, localLineId);
         }
 
         String endStationName = entity.getEndStationName();
         if (endStationName != null) {
-            stmt.bindString(6, endStationName);
+            stmt.bindString(7, endStationName);
         }
 
         String lineName = entity.getLineName();
         if (lineName != null) {
-            stmt.bindString(7, lineName);
+            stmt.bindString(8, lineName);
         }
 
         String startStationName = entity.getStartStationName();
         if (startStationName != null) {
-            stmt.bindString(8, startStationName);
+            stmt.bindString(9, startStationName);
         }
 
         String updateTime = entity.getUpdateTime();
         if (updateTime != null) {
-            stmt.bindString(9, updateTime);
+            stmt.bindString(10, updateTime);
         }
     }
 
@@ -155,12 +166,13 @@ public class StarDao extends AbstractDao<Star, Long> {
                 cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // mainId
                 cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // tableName
                 cursor.getShort(offset + 2) != 0, // isStar
-                cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // id
-                cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // localLineId
-                cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // endStationName
-                cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // lineName
-                cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // startStationName
-                cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8) // updateTime
+                cursor.isNull(offset + 3) ? null : cursor.getLong(offset + 3), // sortId
+                cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // id
+                cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // localLineId
+                cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // endStationName
+                cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // lineName
+                cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // startStationName
+                cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9) // updateTime
         );
         return entity;
     }
@@ -170,12 +182,13 @@ public class StarDao extends AbstractDao<Star, Long> {
         entity.setMainId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setTableName(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setIsStar(cursor.getShort(offset + 2) != 0);
-        entity.setId(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
-        entity.setLocalLineId(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
-        entity.setEndStationName(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
-        entity.setLineName(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
-        entity.setStartStationName(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
-        entity.setUpdateTime(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
+        entity.setSortId(cursor.isNull(offset + 3) ? null : cursor.getLong(offset + 3));
+        entity.setId(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setLocalLineId(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setEndStationName(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
+        entity.setLineName(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
+        entity.setStartStationName(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
+        entity.setUpdateTime(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
      }
      
     @Override
@@ -211,12 +224,13 @@ public class StarDao extends AbstractDao<Star, Long> {
         public final static Property MainId = new Property(0, Long.class, "mainId", true, "_id");
         public final static Property TableName = new Property(1, String.class, "tableName", false, "TABLE_NAME");
         public final static Property IsStar = new Property(2, boolean.class, "isStar", false, "IS_STAR");
-        public final static Property Id = new Property(3, String.class, "id", false, "ID");
-        public final static Property LocalLineId = new Property(4, String.class, "localLineId", false, "LOCAL_LINE_ID");
-        public final static Property EndStationName = new Property(5, String.class, "endStationName", false, "END_STATION_NAME");
-        public final static Property LineName = new Property(6, String.class, "lineName", false, "LINE_NAME");
-        public final static Property StartStationName = new Property(7, String.class, "startStationName", false, "START_STATION_NAME");
-        public final static Property UpdateTime = new Property(8, String.class, "updateTime", false, "UPDATE_TIME");
+        public final static Property SortId = new Property(3, Long.class, "sortId", false, "SORT_ID");
+        public final static Property Id = new Property(4, String.class, "id", false, "ID");
+        public final static Property LocalLineId = new Property(5, String.class, "localLineId", false, "LOCAL_LINE_ID");
+        public final static Property EndStationName = new Property(6, String.class, "endStationName", false, "END_STATION_NAME");
+        public final static Property LineName = new Property(7, String.class, "lineName", false, "LINE_NAME");
+        public final static Property StartStationName = new Property(8, String.class, "startStationName", false, "START_STATION_NAME");
+        public final static Property UpdateTime = new Property(9, String.class, "updateTime", false, "UPDATE_TIME");
     }
     
 }

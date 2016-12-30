@@ -14,8 +14,11 @@ import tysheng.sxbus.bean.Star;
  * Date: 16/8/10 22:07.
  */
 public class StarAdapter extends BaseItemDraggableAdapter<Star> {
-    public StarAdapter(List<Star> data) {
+    private int type;
+
+    public StarAdapter(int type, List<Star> data) {
         super(R.layout.item_star, data);
+        this.type = type;
     }
 
     @Override
@@ -26,6 +29,8 @@ public class StarAdapter extends BaseItemDraggableAdapter<Star> {
                 .addOnClickListener(R.id.textView)
                 .addOnClickListener(R.id.number)
                 .addOnClickListener(R.id.star);
+//        if (type == 0)
+//            result.setSortId((long) holder.getAdapterPosition());
     }
 
 
