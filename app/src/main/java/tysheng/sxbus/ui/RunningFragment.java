@@ -13,7 +13,7 @@ import java.util.List;
 
 import butterknife.BindString;
 import butterknife.BindView;
-import io.reactivex.Flowable;
+import io.reactivex.Observable;
 import io.reactivex.functions.BiFunction;
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.RunningAdapter;
@@ -30,7 +30,7 @@ import tysheng.sxbus.utils.ListUtil;
 import tysheng.sxbus.utils.LogUtil;
 import tysheng.sxbus.utils.RxHelper;
 import tysheng.sxbus.utils.SnackBarUtil;
-import tysheng.sxbus.utils.StySubscriber;
+import tysheng.sxbus.utils.StyObserver;
 
 /**
  * Created by tysheng
@@ -98,7 +98,7 @@ public class RunningFragment extends BaseFragment {
     }
 
     private void refresh() {
-        Flowable.zip(BusRetrofit.get().getBusLines(id),
+        Observable.zip(BusRetrofit.get().getBusLines(id),
                 BusRetrofit.get().getRunningBus(id),
                 new BiFunction<CallBack, CallBack, List<Stations>>() {
                     @Override
@@ -140,7 +140,7 @@ public class RunningFragment extends BaseFragment {
                 })
                 .compose(this.<List<Stations>>bindToLifecycle())
                 .compose(RxHelper.<List<Stations>>ioToMain())
-                .subscribe(new StySubscriber<List<Stations>>() {
+                .subscribe(new StyObserver<List<Stations>>() {
                     @Override
                     public void next(List<Stations> stationses) {
                         mRunningAdapter.setNewData(stationses);

@@ -36,7 +36,7 @@ import tysheng.sxbus.net.BusRetrofit;
 import tysheng.sxbus.utils.JsonUtil;
 import tysheng.sxbus.utils.LogUtil;
 import tysheng.sxbus.utils.RxHelper;
-import tysheng.sxbus.utils.StySubscriber;
+import tysheng.sxbus.utils.StyObserver;
 
 /**
  * Created by Sty
@@ -193,9 +193,10 @@ public class SearchFragment extends BaseFragment {
         mDialog.show();
         BusRetrofit.get()
                 .numberToSearch(number)
-                .delay(200, TimeUnit.MILLISECONDS)
+                .delay(200, TimeUnit.MICROSECONDS)
+                .compose(this.<CallBack>bindToLifecycle())
                 .compose(RxHelper.<CallBack>ioToMain())
-                .subscribe(new StySubscriber<CallBack>() {
+                .subscribe(new StyObserver<CallBack>() {
                     @Override
                     public void onTerminate() {
                         super.onTerminate();
@@ -220,6 +221,7 @@ public class SearchFragment extends BaseFragment {
                         ((MainActivity) getActivity()).showSnackBar(searchError, false);
                     }
                 });
+
     }
 
 
