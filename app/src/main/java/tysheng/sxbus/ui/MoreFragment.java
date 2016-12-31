@@ -88,7 +88,7 @@ public class MoreFragment extends BaseFragment {
     }
 
 
-    @OnClick({R.id.feedback, R.id.donate, R.id.add_wechat, R.id.check_update, R.id.chooseCity})
+    @OnClick({R.id.feedback, R.id.donate, R.id.check_update, R.id.chooseCity})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.feedback:
@@ -101,9 +101,6 @@ public class MoreFragment extends BaseFragment {
                     }
                 } else
                     showAlipayFail("支付宝账号已复制到剪贴板");
-                break;
-            case R.id.add_wechat:
-                showMsg("微信号已复制到剪贴板");
                 break;
             case R.id.check_update:
                 checkVersionByBaidu();
