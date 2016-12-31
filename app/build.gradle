@@ -8,8 +8,8 @@ android {
         applicationId "tysheng.sxbus"
         minSdkVersion 14
         targetSdkVersion 25
-        versionCode 19
-        versionName "2.3"
+        versionCode 25
+        versionName "2.5"
         resConfigs "zh"
 
     }

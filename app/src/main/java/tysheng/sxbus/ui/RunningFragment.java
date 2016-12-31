@@ -149,21 +149,15 @@ public class RunningFragment extends BaseFragment {
                     @Override
                     public void onTerminate() {
                         super.onTerminate();
-                        mSwipeRefreshLayout.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (mSwipeRefreshLayout.isRefreshing())
-                                    mSwipeRefreshLayout.setRefreshing(false);
-                            }
-                        });
+                        if (mSwipeRefreshLayout.isRefreshing())
+                            mSwipeRefreshLayout.setRefreshing(false);
                     }
 
                     @Override
                     public void onError(Throwable t) {
-                        super.onError(t);
                         SnackBarUtil.show(mCoordinatorLayout, runningError, Snackbar.LENGTH_LONG);
+                        super.onError(t);
                     }
                 });
-
     }
 }

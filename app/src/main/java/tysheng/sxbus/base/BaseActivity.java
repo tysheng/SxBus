@@ -123,7 +123,7 @@ public abstract class BaseActivity extends RxAppCompatActivity {
     }
 
     /**
-     * Fragment之间的切换
+     * Fragment之间的切换 from没有就直接添加，from有就hide，to没有就add，有就show
      *
      * @param from 当前
      * @param to   目标

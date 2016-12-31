@@ -1,10 +1,8 @@
 package tysheng.sxbus.ui;
 
 import android.app.ProgressDialog;
-import android.support.annotation.IdRes;
-import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.app.Fragment;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -26,6 +24,7 @@ import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.StarAdapter;
 import tysheng.sxbus.base.BaseFragment;
 import tysheng.sxbus.bean.CallBack;
+import tysheng.sxbus.bean.FragCallback;
 import tysheng.sxbus.bean.Star;
 import tysheng.sxbus.bean.Stars;
 import tysheng.sxbus.bean.Status;
@@ -36,6 +35,7 @@ import tysheng.sxbus.net.BusRetrofit;
 import tysheng.sxbus.utils.JsonUtil;
 import tysheng.sxbus.utils.LogUtil;
 import tysheng.sxbus.utils.RxHelper;
+import tysheng.sxbus.utils.SnackBarUtil;
 import tysheng.sxbus.utils.StyObserver;
 
 /**
@@ -79,7 +79,7 @@ public class SearchFragment extends BaseFragment {
                 mRecentList = getRecentList();
                 mAdapter.setNewData(mRecentList);
                 if (mRecentList != null && mRecentList.size() != 0 && mAdapter.getFooterLayoutCount() == 0) {
-                    View view = LayoutInflater.from(mActivity).inflate(R.layout.footer_clear, (ViewGroup) getView(), false);
+                    View view = LayoutInflater.from(getContext()).inflate(R.layout.footer_clear, (ViewGroup) getView(), false);
                     mAdapter.addFooterView(view);
                     (view.findViewById(R.id.textView)).setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -92,7 +92,12 @@ public class SearchFragment extends BaseFragment {
                     });
                 }
             }
-            mSearchView.clearFocus();
+            mSearchView.post(new Runnable() {
+                @Override
+                public void run() {
+                    mSearchView.clearFocus();
+                }
+            });
         }
     }
 
@@ -113,7 +118,7 @@ public class SearchFragment extends BaseFragment {
     private void doNext() {
         mAdapter = new StarAdapter(1, mRecentList);
         if (mRecentList != null && mRecentList.size() != 0) {
-            View view = LayoutInflater.from(mActivity).inflate(R.layout.footer_clear, (ViewGroup) getView(), false);
+            View view = LayoutInflater.from(getContext()).inflate(R.layout.footer_clear, (ViewGroup) getView(), false);
             mAdapter.addFooterView(view);
             (view.findViewById(R.id.textView)).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -126,7 +131,7 @@ public class SearchFragment extends BaseFragment {
             });
         }
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         mRecyclerView.addOnItemTouchListener(new OnItemChildClickListener() {
             @Override
@@ -134,8 +139,8 @@ public class SearchFragment extends BaseFragment {
                 switch (view.getId()) {
                     case R.id.number:
                     case R.id.textView:
-                        addFragment(getFragmentManager().findFragmentByTag("1"), RunningFragment.newFragment(mAdapter.getItem(i).id,
-                                mAdapter.getItem(i).lineName + " 前往 " + mAdapter.getItem(i).endStationName), R.id.frameLayout, "1_1");
+                        ((FragmentCallback) getActivity()).handleCallbackNew(new FragCallback(Constant.WHAT_SEARCH, mAdapter.getItem(i).id,
+                                mAdapter.getItem(i).lineName + " 前往 " + mAdapter.getItem(i).endStationName));
                         Star star = mAdapter.getItem(i);
                         star.setTableName(Constant.RECENT);
                         mHelper.saveOrUpdate(star);
@@ -173,12 +178,6 @@ public class SearchFragment extends BaseFragment {
     }
 
     @Override
-    protected void addFragment(@NonNull Fragment from, @NonNull Fragment to, @IdRes int id, String tag) {
-        super.addFragment(from, to, id, tag);
-        ((MainActivity) getActivity()).addTag(1, tag);
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         if (mSearchView != null) {
@@ -191,7 +190,7 @@ public class SearchFragment extends BaseFragment {
         if (mAdapter.getFooterLayoutCount() != 0)
             mAdapter.removeAllFooterView();
         if (mDialog == null) {
-            mDialog = new ProgressDialog(mActivity);
+            mDialog = new ProgressDialog(getContext());
             mDialog.setMessage("正在搜索...");
         }
         mDialog.show();
@@ -212,7 +211,7 @@ public class SearchFragment extends BaseFragment {
                         LogUtil.d(s.toString());
                         Status status = JsonUtil.parse(s.status, Status.class);
                         if (status.code == 20306) {
-                            ((MainActivity) getActivity()).showSnackBar("查询的公交线路不存在", false);
+                            showSnackBar("查询的公交线路不存在", false);
                         } else if (status.code == 0) {
                             Stars stars = JsonUtil.parse(s.result, Stars.class);
                             mAdapter.setNewData(stars.result);
@@ -222,11 +221,15 @@ public class SearchFragment extends BaseFragment {
                     @Override
                     public void onError(Throwable e) {
                         super.onError(e);
-                        ((MainActivity) getActivity()).showSnackBar(searchError, false);
+                        showSnackBar(searchError, false);
                     }
                 });
 
     }
 
+    public void showSnackBar(String msg, boolean isLong) {
+        SnackBarUtil.show(mCoordinatorLayout, msg,
+                isLong ? Snackbar.LENGTH_LONG : Snackbar.LENGTH_SHORT);
+    }
 
 }

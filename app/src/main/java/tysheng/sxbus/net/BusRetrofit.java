@@ -18,7 +18,7 @@ public class BusRetrofit {
 
     private static void init() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        final int TIME_MAX = 5;
+        final int TIME_MAX = 10;
         builder.readTimeout(TIME_MAX, TimeUnit.SECONDS);
         builder.connectTimeout(TIME_MAX, TimeUnit.SECONDS);
         builder.writeTimeout(TIME_MAX, TimeUnit.SECONDS);

@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -17,10 +19,10 @@ import com.baidu.autoupdatesdk.CPCheckUpdateCallback;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import tysheng.sxbus.App;
 import tysheng.sxbus.R;
 import tysheng.sxbus.base.BaseFragment;
 import tysheng.sxbus.utils.AlipayZeroSdk;
+import tysheng.sxbus.utils.SnackBarUtil;
 import tysheng.sxbus.utils.SystemUtil;
 import tysheng.sxbus.view.ChooseCityFragment;
 
@@ -31,6 +33,8 @@ import tysheng.sxbus.view.ChooseCityFragment;
 public class MoreFragment extends BaseFragment {
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
+    @BindView(R.id.coordinatorLayout)
+    CoordinatorLayout mCoordinatorLayout;
 
     @Override
     protected int getLayoutId() {
@@ -45,23 +49,27 @@ public class MoreFragment extends BaseFragment {
         mToolbar.setTitle(string);
     }
 
-
     public void showAlipayFail(String s) {
-        ((MainActivity) getActivity()).showSnackBar(s, false);
-        ClipboardManager c = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+        showSnackBar(s, false);
+        ClipboardManager c = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
         c.setPrimaryClip(ClipData.newPlainText("email", "353491983@qq.com"));//设置Clipboard 的内容
     }
 
+    public void showSnackBar(String msg, boolean isLong) {
+        SnackBarUtil.show(mCoordinatorLayout, msg,
+                isLong ? Snackbar.LENGTH_LONG : Snackbar.LENGTH_SHORT);
+    }
+
     public void checkVersionByBaidu() {
-        final ProgressDialog dialog = new ProgressDialog(mActivity);
+        final ProgressDialog dialog = new ProgressDialog(getContext());
         dialog.setMessage("正在检查新版本...");
         dialog.show();
-        BDAutoUpdateSDK.cpUpdateCheck(mActivity, new CPCheckUpdateCallback() {
+        BDAutoUpdateSDK.cpUpdateCheck(getContext(), new CPCheckUpdateCallback() {
             @Override
             public void onCheckUpdateCallback(AppUpdateInfo appUpdateInfo, AppUpdateInfoForInstall appUpdateInfoForInstall) {
+                dialog.dismiss();
                 if (appUpdateInfo != null && appUpdateInfo.getAppVersionCode() > SystemUtil.getVersionCode()) {
-                    dialog.dismiss();
-                    BDAutoUpdateSDK.uiUpdateAction(mActivity,
+                    BDAutoUpdateSDK.uiUpdateAction(getContext(),
                             new com.baidu.autoupdatesdk.UICheckUpdateCallback() {
                                 @Override
                                 public void onCheckComplete() {
@@ -69,8 +77,7 @@ public class MoreFragment extends BaseFragment {
                                 }
                             });
                 } else {
-                    dialog.dismiss();
-                    ((MainActivity) getActivity()).showSnackBar("当前版本已是最新版", false);
+                    showSnackBar("当前版本已是最新版", false);
                 }
             }
         });
@@ -78,7 +85,7 @@ public class MoreFragment extends BaseFragment {
 
     private void chooseCity() {
         ChooseCityFragment f = new ChooseCityFragment();
-        f.show(getFragmentManager(), "");
+        f.show(getChildFragmentManager(), "");
     }
 
 
@@ -86,10 +93,10 @@ public class MoreFragment extends BaseFragment {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.feedback:
-                SystemUtil.sendEmail(getActivity());
+                SystemUtil.sendEmail(getContext());
                 break;
             case R.id.donate:
-                if (AlipayZeroSdk.hasInstalledAlipayClient(App.get())) {
+                if (AlipayZeroSdk.hasInstalledAlipayClient(getContext())) {
                     if (!AlipayZeroSdk.startAlipayClient(getActivity())) {
                         showAlipayFail("支付宝账号已复制到剪贴板");
                     }

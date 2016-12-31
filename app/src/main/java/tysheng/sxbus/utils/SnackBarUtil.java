@@ -20,6 +20,5 @@ public class SnackBarUtil {
         final SnackbarContentLayout contentLayout = (SnackbarContentLayout) frameLayout.getChildAt(0);
         contentLayout.getMessageView().setTextColor(Color.WHITE);
         snackbar.show();
-
     }
 }

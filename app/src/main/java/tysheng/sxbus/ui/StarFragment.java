@@ -1,8 +1,5 @@
 package tysheng.sxbus.ui;
 
-import android.support.annotation.IdRes;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -23,6 +20,7 @@ import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.StarAdapter;
 import tysheng.sxbus.base.BaseFragment;
+import tysheng.sxbus.bean.FragCallback;
 import tysheng.sxbus.bean.Star;
 import tysheng.sxbus.dao.StarDao;
 import tysheng.sxbus.db.DbUtil;
@@ -75,12 +73,6 @@ public class StarFragment extends BaseFragment {
         doNext();
     }
 
-    @Override
-    protected void addFragment(@NonNull Fragment from, @NonNull Fragment to, @IdRes int id, String tag) {
-        super.addFragment(from, to, id, tag);
-        ((MainActivity) getActivity()).addTag(0, tag);
-    }
-
     private void doNext() {
         mAdapter = new StarAdapter(0, mStarList);
         mRecyclerView.setAdapter(mAdapter);
@@ -93,8 +85,8 @@ public class StarFragment extends BaseFragment {
                 switch (view.getId()) {
                     case R.id.number:
                     case R.id.textView:
-                        addFragment(getFragmentManager().findFragmentByTag("0"), RunningFragment.newFragment(mAdapter.getItem(i).id,
-                                mAdapter.getItem(i).lineName + " 前往 " + mAdapter.getItem(i).endStationName), R.id.frameLayout, "0_1");
+                        ((FragmentCallback) getActivity()).handleCallbackNew(new FragCallback(Constant.WHAT_STAR, mAdapter.getItem(i).id,
+                                mAdapter.getItem(i).lineName + " 前往 " + mAdapter.getItem(i).endStationName));
                         break;
                     case star:
                         Star star = mAdapter.getItem(i);

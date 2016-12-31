@@ -7,4 +7,7 @@ package tysheng.sxbus;
 public interface Constant {
     String STAR = "STAR";
     String RECENT = "Search";
+
+    int WHAT_STAR = 3;
+    int WHAT_SEARCH = 4;
 }

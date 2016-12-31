@@ -17,6 +17,7 @@ import com.trello.rxlifecycle2.components.support.RxFragment;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import tysheng.sxbus.bean.FragCallback;
 import tysheng.sxbus.utils.LogUtil;
 
 /**
@@ -84,12 +85,12 @@ public abstract class BaseFragment extends RxFragment {
     public void onDestroyView() {
         super.onDestroyView();
         LogUtil.d(getTag() + "onDestroyView");
-        mBinder.unbind();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mBinder.unbind();
     }
 
     @Override
@@ -112,9 +113,17 @@ public abstract class BaseFragment extends RxFragment {
         addFragment(from, to, id, tag, null);
     }
 
+    public boolean onInterceptBackPressed() {
+        return false;
+    }
+
     protected abstract int getLayoutId();
 
     protected abstract void initData();
+
+    public interface FragmentCallback {
+        void handleCallbackNew(FragCallback callback);
+    }
 
 
 }
