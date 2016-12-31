@@ -209,4 +209,9 @@ public class MainActivity extends BaseActivity implements PositionBottomNavigati
 
         }
     }
+
+    @Override
+    public void onPositionReselected(int position) {
+
+    }
 }

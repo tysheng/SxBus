@@ -16,7 +16,7 @@ import android.view.MenuItem;
 
 public class PositionBottomNavigationView extends BottomNavigationView implements BottomNavigationView.OnNavigationItemSelectedListener {
     private SparseIntArray mMenuIds;
-    private int currentPosition;
+    private int prePosition = -1;
     private onPositionSelectedListener mListener;
 
     public PositionBottomNavigationView(Context context) {
@@ -50,28 +50,24 @@ public class PositionBottomNavigationView extends BottomNavigationView implement
     }
 
     public int getCurrentPosition() {
-        return currentPosition;
+        return prePosition;
     }
 
-    public void setCurrentPosition(int currentPosition) {
-        this.currentPosition = currentPosition;
-        setPositionChecked();
-        if (mListener != null)
-            mListener.onPositionSelected(currentPosition);
-    }
-
-    private void setPositionChecked() {
-        Menu menu = getMenu();
-        if (menu.getItem(currentPosition).isChecked()) {
+    public void setCurrentPosition(int current) {
+        if (prePosition == current) {
+            if (mListener != null)
+                mListener.onPositionReselected(current);
             return;
         }
+        Menu menu = getMenu();
         for (int i = 0; i < mMenuIds.size(); i++) {
-            if (mMenuIds.get(i) != mMenuIds.get(currentPosition)) {
-                menu.getItem(i).setChecked(false);
-            } else {
-                menu.getItem(i).setChecked(true);
-            }
+            if (prePosition >= 0)
+                menu.getItem(prePosition).setChecked(false);
+            menu.getItem(current).setChecked(true);
         }
+        prePosition = current;
+        if (mListener != null)
+            mListener.onPositionSelected(current);
     }
 
     @Override
@@ -85,5 +81,20 @@ public class PositionBottomNavigationView extends BottomNavigationView implement
 
     public interface onPositionSelectedListener {
         void onPositionSelected(int position);
+
+        void onPositionReselected(int position);
+    }
+
+    public static class onSimplePositionSelectedListener implements onPositionSelectedListener {
+
+        @Override
+        public void onPositionSelected(int position) {
+
+        }
+
+        @Override
+        public void onPositionReselected(int position) {
+
+        }
     }
 }

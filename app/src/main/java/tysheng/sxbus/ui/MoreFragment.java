@@ -52,12 +52,6 @@ public class MoreFragment extends BaseFragment {
         c.setPrimaryClip(ClipData.newPlainText("email", "353491983@qq.com"));//设置Clipboard 的内容
     }
 
-    public void showMsg(String s) {
-        ((MainActivity) getActivity()).showSnackBar(s, false);
-        ClipboardManager c = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-        c.setPrimaryClip(ClipData.newPlainText("wechat", "353491983"));//设置Clipboard 的内容
-    }
-
     public void checkVersionByBaidu() {
         final ProgressDialog dialog = new ProgressDialog(mActivity);
         dialog.setMessage("正在检查新版本...");
