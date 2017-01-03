@@ -7,17 +7,16 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 import android.widget.TextView;
 
 import java.util.List;
 
 import butterknife.BindString;
 import butterknife.BindView;
+import butterknife.OnClick;
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.RunningAdapter;
 import tysheng.sxbus.base.BaseFragment;
-import tysheng.sxbus.base.BaseView;
 import tysheng.sxbus.bean.Stations;
 import tysheng.sxbus.utils.SnackBarUtil;
 
@@ -27,7 +26,7 @@ import tysheng.sxbus.utils.SnackBarUtil;
  * Email: tyshengsx@gmail.com
  */
 
-public class RunningFragment extends BaseFragment implements BaseView<List<Stations>> {
+public class RunningFragment extends BaseFragment implements RunningView<List<Stations>>, SwipeRefreshLayout.OnRefreshListener {
     @BindView(R.id.title)
     TextView mTitle;
     @BindView(R.id.recyclerView)
@@ -67,31 +66,13 @@ public class RunningFragment extends BaseFragment implements BaseView<List<Stati
         mRunningAdapter = new RunningAdapter();
         mRecyclerView.setAdapter(mRunningAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mPresenter.refresh(id);
-            }
-        });
+        mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
                 mSwipeRefreshLayout.setRefreshing(true);
-                mPresenter.refresh(id);
-            }
-        });
-        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mSwipeRefreshLayout.setEnabled(true);
-                mSwipeRefreshLayout.setRefreshing(true);
-                mSwipeRefreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mPresenter.refresh(id);
-                    }
-                }, 100);
+                mPresenter.refresh(RunningFragment.this, id);
             }
         });
     }
@@ -117,5 +98,22 @@ public class RunningFragment extends BaseFragment implements BaseView<List<Stati
         if (mSwipeRefreshLayout.isRefreshing())
             mSwipeRefreshLayout.setRefreshing(false);
         mSwipeRefreshLayout.setEnabled(false);
+    }
+
+    @OnClick(R.id.fab)
+    public void onClick() {
+        mSwipeRefreshLayout.setEnabled(true);
+        mSwipeRefreshLayout.setRefreshing(true);
+        mSwipeRefreshLayout.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mPresenter.refresh(RunningFragment.this, id);
+            }
+        }, 100);
+    }
+
+    @Override
+    public void onRefresh() {
+        mPresenter.refresh(this, id);
     }
 }

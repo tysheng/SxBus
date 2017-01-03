@@ -21,6 +21,7 @@ class DbModule implements BaseModule {
     private StarPresenter mPresenter;
     private StarHelper mHelper;
     private QueryBuilder<Star> mQueryBuilder;
+    private List<Star> mStarList;
 
     DbModule(StarPresenter presenter) {
         mPresenter = presenter;
@@ -33,7 +34,7 @@ class DbModule implements BaseModule {
             mQueryBuilder = mHelper.queryBuilder()
                     .where(StarDao.Properties.TableName.eq(Constant.STAR), StarDao.Properties.IsStar.eq("TRUE"))
                     .orderAsc(StarDao.Properties.SortId);
-        return mQueryBuilder
+        return mStarList = mQueryBuilder
                 .list();
     }
 
@@ -46,10 +47,10 @@ class DbModule implements BaseModule {
         mHelper.deleteByKey(mainId);
     }
 
-    void dragEnd(List<Star> starList) {
+    void dragEnd() {
         mHelper.delete(getStarList());
-        for (int i = 0; i < starList.size(); i++) {
-            Star star = starList.get(i);
+        for (int i = 0; i < mStarList.size(); i++) {
+            Star star = mStarList.get(i);
             star.setSortId((long) i);
             mHelper.save(star);
         }

@@ -3,6 +3,7 @@ package tysheng.sxbus.ui.search;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import tysheng.sxbus.base.BaseFragment;
 import tysheng.sxbus.base.BasePresenter;
 import tysheng.sxbus.bean.CallBack;
 import tysheng.sxbus.bean.Star;
@@ -17,10 +18,10 @@ import tysheng.sxbus.utils.StyObserver;
  */
 
 class SearchPresenter implements BasePresenter {
-    private SearchFragment mFragment;
+    private SearchView<CallBack> mFragment;
     private DbModule mDbModule;
 
-    public SearchPresenter(SearchFragment fragment) {
+    public SearchPresenter(SearchView<CallBack> fragment) {
         mFragment = fragment;
         mDbModule = new DbModule(this);
     }
@@ -47,11 +48,11 @@ class SearchPresenter implements BasePresenter {
         mDbModule.delete();
     }
 
-    void getBusSimple(String number) {
+    void getBusSimple(BaseFragment fragment, String number) {
         BusRetrofit.get()
                 .numberToSearch(number)
                 .delay(200, TimeUnit.MICROSECONDS)
-                .compose(mFragment.<CallBack>bindToLifecycle())
+                .compose(fragment.<CallBack>bindToLifecycle())
                 .compose(RxHelper.<CallBack>ioToMain())
                 .subscribe(new StyObserver<CallBack>() {
                     @Override

@@ -1,6 +1,7 @@
 package tysheng.sxbus.ui.main;
 
 import android.Manifest;
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -25,21 +26,21 @@ import tysheng.sxbus.utils.SnackBarUtil;
 
 class MainPresenter {
     private static final String POSITION = "POSITION";
-    private MainActivity mActivity;
+    private MainView mMainView;
     private FragmentManager mFragmentManager;
-    private int pre;// 0 ,1 ,2 ,3,4
+    private int pre;// 0 ,1 ,2 ,3(0跳到running),4(1跳到running)
 
-    MainPresenter(MainActivity activity) {
-        mActivity = activity;
-        mFragmentManager = mActivity.getSupportFragmentManager();
+    MainPresenter(MainActivity mainView, FragmentManager manager) {
+        mMainView = mainView;
+        mFragmentManager = manager;
     }
 
     public void onDestroy() {
         mFragmentManager = null;
-        mActivity = null;
+        mMainView = null;
     }
 
-    private Fragment get(int pos, FragCallback callback) {
+    private Fragment getFragmentInstance(int pos, FragCallback callback) {
         if (callback == null) {
             if (pos == 0) {
                 return new StarFragment();
@@ -53,23 +54,23 @@ class MainPresenter {
         }
     }
 
-    void restoreFragment(Bundle savedInstanceState) {
-
-        if (savedInstanceState != null) {
-            int pos = savedInstanceState.getInt(POSITION);
-            preToCur(pos, null);
-        } else {
-            preToCur(0, null);
-        }
+    void restorePosition(Bundle savedInstanceState) {
+        preToCur(savedInstanceState != null ? savedInstanceState.getInt(POSITION) : 0, null);
     }
 
+    /**
+     * fragment 的跳转
+     *
+     * @param cur      现在要跳转的 position
+     * @param callback
+     */
     void preToCur(int cur, FragCallback callback) {
         Fragment preFrag = mFragmentManager.findFragmentByTag(String.valueOf(pre));
         Fragment to = mFragmentManager.findFragmentByTag(String.valueOf(cur));
         if (to == null) {
-            to = get(cur, callback);
+            to = getFragmentInstance(cur, callback);
         }
-        mActivity.jumpFragment(preFrag, to, String.valueOf(cur));
+        mMainView.jumpFragment(preFrag, to, String.valueOf(cur));
         pre = cur;
     }
 
@@ -86,7 +87,7 @@ class MainPresenter {
                     .commit();
             dispatch = false;
         } else if (pre != 0) {
-            mActivity.setCurrentPosition(0);
+            mMainView.setCurrentPosition(0);
             dispatch = false;
         }
         return dispatch;
@@ -102,8 +103,8 @@ class MainPresenter {
         preToCur(finalPos, null);
     }
 
-    void askPermission(final View v) {
-        new RxPermissions(mActivity)
+    void askPermission(Activity activity, final View v) {
+        new RxPermissions(activity)
                 .request(Manifest.permission.READ_PHONE_STATE,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .subscribe(new Consumer<Boolean>() {

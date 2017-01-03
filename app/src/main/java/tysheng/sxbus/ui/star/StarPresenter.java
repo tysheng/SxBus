@@ -26,14 +26,14 @@ class StarPresenter implements BasePresenter {
 
     @Override
     public void onDestroy() {
-
+        mFragment = null;
     }
 
     void deleteByKey(Long mainId) {
         mDbModule.deleteByKey(mainId);
     }
 
-    void dragEnd(List<Star> starList) {
-        mDbModule.dragEnd(starList);
+    void dragEnd() {
+        mDbModule.dragEnd();
     }
 }

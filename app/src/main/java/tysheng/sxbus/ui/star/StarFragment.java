@@ -11,8 +11,6 @@ import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.chad.library.adapter.base.listener.OnItemDragListener;
 
-import java.util.List;
-
 import butterknife.BindView;
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
@@ -27,13 +25,18 @@ import tysheng.sxbus.bean.Star;
  * Date: 16/8/11 21:41.
  */
 
-public class StarFragment extends BaseFragment {
+public class StarFragment extends BaseFragment implements OnItemDragListener {
 
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
-    private List<Star> mStarList;
     private StarAdapter mAdapter;
     private StarPresenter mPresenter;
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPresenter.onDestroy();
+    }
 
     @Override
     protected int getLayoutId() {
@@ -44,26 +47,14 @@ public class StarFragment extends BaseFragment {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (!hidden) {
-            mStarList = mPresenter.getStarList();
-            mAdapter.setNewData(mStarList);
+            mAdapter.setNewData(mPresenter.getStarList());
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mPresenter.onDestroy();
     }
 
     @Override
     protected void initData() {
         mPresenter = new StarPresenter(this);
-        mStarList = mPresenter.getStarList();
-        doNext();
-    }
-
-    private void doNext() {
-        mAdapter = new StarAdapter(mStarList);
+        mAdapter = new StarAdapter(mPresenter.getStarList());
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mAdapter.setEmptyView(LayoutInflater.from(getContext()).inflate(R.layout.empty_layout, mRecyclerView, false));
@@ -90,22 +81,22 @@ public class StarFragment extends BaseFragment {
         itemTouchHelper.attachToRecyclerView(mRecyclerView);
         // 开启拖拽
         mAdapter.enableDragItem(itemTouchHelper, R.id.textView, true);
-        mAdapter.setOnItemDragListener(new OnItemDragListener() {
-            @Override
-            public void onItemDragStart(RecyclerView.ViewHolder viewHolder, int i) {
+        mAdapter.setOnItemDragListener(this);
+    }
 
-            }
+    @Override
+    public void onItemDragStart(RecyclerView.ViewHolder viewHolder, int i) {
 
-            @Override
-            public void onItemDragMoving(RecyclerView.ViewHolder viewHolder, int i, RecyclerView.ViewHolder viewHolder1, int i1) {
+    }
 
-            }
+    @Override
+    public void onItemDragMoving(RecyclerView.ViewHolder viewHolder, int i, RecyclerView.ViewHolder viewHolder1, int i1) {
 
-            @Override
-            public void onItemDragEnd(RecyclerView.ViewHolder viewHolder, int i) {
-                mPresenter.dragEnd(mStarList);
-                viewHolder.itemView.setPressed(false);
-            }
-        });
+    }
+
+    @Override
+    public void onItemDragEnd(RecyclerView.ViewHolder viewHolder, int i) {
+        mPresenter.dragEnd();
+        viewHolder.itemView.setPressed(false);
     }
 }

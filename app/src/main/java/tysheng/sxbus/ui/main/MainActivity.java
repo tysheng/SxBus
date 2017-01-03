@@ -12,7 +12,7 @@ import tysheng.sxbus.bean.FragCallback;
 import tysheng.sxbus.view.PositionBottomNavigationView;
 
 
-public class MainActivity extends BaseActivity implements PositionBottomNavigationView.onPositionSelectedListener, BaseFragment.FragmentCallback {
+public class MainActivity extends BaseActivity implements MainView, PositionBottomNavigationView.onPositionSelectedListener, BaseFragment.FragmentCallback {
     @BindView(R.id.bottom)
     PositionBottomNavigationView mBottom;
     private MainPresenter mPresenter;
@@ -30,11 +30,11 @@ public class MainActivity extends BaseActivity implements PositionBottomNavigati
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        mPresenter = new MainPresenter(this);
-        mPresenter.restoreFragment(savedInstanceState);
+        mPresenter = new MainPresenter(this, getSupportFragmentManager());
+        mPresenter.restorePosition(savedInstanceState);
         mBottom.registerIds(R.id.menu_star, R.id.menu_search, R.id.menu_more);
         mBottom.setOnPositionSelectedListener(this);
-        mPresenter.askPermission(mBottom);
+        mPresenter.askPermission(this, mBottom);
     }
 
     @Override
@@ -44,6 +44,7 @@ public class MainActivity extends BaseActivity implements PositionBottomNavigati
         }
     }
 
+    @Override
     public void setCurrentPosition(int pos) {
         mBottom.setCurrentPosition(pos);
     }

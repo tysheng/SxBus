@@ -22,7 +22,6 @@ import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.StarAdapter;
 import tysheng.sxbus.base.BaseFragment;
-import tysheng.sxbus.base.BaseView;
 import tysheng.sxbus.bean.CallBack;
 import tysheng.sxbus.bean.FragCallback;
 import tysheng.sxbus.bean.Star;
@@ -37,7 +36,7 @@ import tysheng.sxbus.utils.SnackBarUtil;
  * Created by Sty
  * Date: 16/8/10 22:52.
  */
-public class SearchFragment extends BaseFragment implements BaseView<CallBack> {
+public class SearchFragment extends BaseFragment implements tysheng.sxbus.ui.search.SearchView<CallBack> {
     @BindString(R.string.search_error)
     String searchError;
     @BindView(R.id.recyclerView)
@@ -66,8 +65,7 @@ public class SearchFragment extends BaseFragment implements BaseView<CallBack> {
         super.onHiddenChanged(hidden);
         if (!hidden) {
             if (TextUtils.isEmpty(mSearchView.getQuery())) {
-                mRecentList = mPresenter.getRecentList();
-                mAdapter.setNewData(mRecentList);
+                mAdapter.setNewData(mRecentList = mPresenter.getRecentList());
                 initFooter();
             }
             mSearchView.post(new Runnable() {
@@ -82,7 +80,6 @@ public class SearchFragment extends BaseFragment implements BaseView<CallBack> {
     @Override
     protected void initData() {
         mPresenter = new SearchPresenter(this);
-        mRecentList = mPresenter.getRecentList();
         init();
     }
 
@@ -93,8 +90,7 @@ public class SearchFragment extends BaseFragment implements BaseView<CallBack> {
     }
 
     private void init() {
-        mAdapter = new StarAdapter(mRecentList);
-        initFooter();
+        initAdapter();
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.addOnItemTouchListener(new OnItemChildClickListener() {
@@ -132,6 +128,11 @@ public class SearchFragment extends BaseFragment implements BaseView<CallBack> {
         mSearchView.clearFocus();
     }
 
+    private void initAdapter() {
+        mAdapter = new StarAdapter(mRecentList = mPresenter.getRecentList());
+        initFooter();
+    }
+
     private void initFooter() {
         if (!ListUtil.isEmpty(mRecentList) && mAdapter.getFooterLayoutCount() == 0) {
             View view = LayoutInflater.from(getContext()).inflate(R.layout.footer_clear, (ViewGroup) getView(), false);
@@ -165,7 +166,7 @@ public class SearchFragment extends BaseFragment implements BaseView<CallBack> {
             mDialog.setMessage("正在搜索...");
         }
         mDialog.show();
-        mPresenter.getBusSimple(number);
+        mPresenter.getBusSimple(this, number);
     }
 
     @Override
@@ -175,8 +176,7 @@ public class SearchFragment extends BaseFragment implements BaseView<CallBack> {
         if (status.code == 20306) {
             SnackBarUtil.show(mCoordinatorLayout, "查询的公交线路不存在", Snackbar.LENGTH_SHORT);
         } else if (status.code == 0) {
-            Stars stars = JsonUtil.parse(callBack.result, Stars.class);
-            mAdapter.setNewData(stars.result);
+            mAdapter.setNewData(JsonUtil.parse(callBack.result, Stars.class).result);
         }
     }
 

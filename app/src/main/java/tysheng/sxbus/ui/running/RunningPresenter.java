@@ -6,6 +6,7 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.functions.BiFunction;
+import tysheng.sxbus.base.BaseFragment;
 import tysheng.sxbus.base.BasePresenter;
 import tysheng.sxbus.bean.BusLinesResult;
 import tysheng.sxbus.bean.CallBack;
@@ -27,13 +28,13 @@ import tysheng.sxbus.utils.StyObserver;
  */
 
 class RunningPresenter implements BasePresenter {
-    private RunningFragment mFragment;
+    private RunningView<List<Stations>> mFragment;
 
-    RunningPresenter(RunningFragment fragment) {
+    RunningPresenter(RunningView<List<Stations>> fragment) {
         mFragment = fragment;
     }
 
-    void refresh(String id) {
+    void refresh(BaseFragment fragment, String id) {
         Observable.zip(BusRetrofit.get().getBusLines(id),
                 BusRetrofit.get().getRunningBus(id),
                 new BiFunction<CallBack, CallBack, List<Stations>>() {
@@ -42,7 +43,7 @@ class RunningPresenter implements BasePresenter {
                         return zip(busLines, busLine);
                     }
                 })
-                .compose(mFragment.<List<Stations>>bindToLifecycle())
+                .compose(fragment.<List<Stations>>bindToLifecycle())
                 .compose(RxHelper.<List<Stations>>ioToMain())
                 .subscribe(new StyObserver<List<Stations>>() {
                     @Override
