@@ -37,7 +37,7 @@ public class StarDao extends AbstractDao<Star, Long> {
         db.execSQL("CREATE TABLE " + constraint + "\"STAR\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY ," + // 0: mainId
                 "\"TABLE_NAME\" TEXT," + // 1: tableName
-                "\"IS_STAR\" INTEGER NOT NULL ," + // 2: isStar
+                "\"IS_STAR\" INTEGER," + // 2: isStar
                 "\"SORT_ID\" INTEGER," + // 3: sortId
                 "\"ID\" TEXT," + // 4: id
                 "\"LOCAL_LINE_ID\" TEXT," + // 5: localLineId
@@ -66,7 +66,11 @@ public class StarDao extends AbstractDao<Star, Long> {
         if (tableName != null) {
             stmt.bindString(2, tableName);
         }
-        stmt.bindLong(3, entity.getIsStar() ? 1L: 0L);
+
+        Boolean isStar = entity.getIsStar();
+        if (isStar != null) {
+            stmt.bindLong(3, isStar ? 1L : 0L);
+        }
 
         Long sortId = entity.getSortId();
         if (sortId != null) {
@@ -117,7 +121,11 @@ public class StarDao extends AbstractDao<Star, Long> {
         if (tableName != null) {
             stmt.bindString(2, tableName);
         }
-        stmt.bindLong(3, entity.getIsStar() ? 1L: 0L);
+
+        Boolean isStar = entity.getIsStar();
+        if (isStar != null) {
+            stmt.bindLong(3, isStar ? 1L : 0L);
+        }
 
         Long sortId = entity.getSortId();
         if (sortId != null) {
@@ -165,7 +173,7 @@ public class StarDao extends AbstractDao<Star, Long> {
         Star entity = new Star( //
                 cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // mainId
                 cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // tableName
-                cursor.getShort(offset + 2) != 0, // isStar
+                cursor.isNull(offset + 2) ? null : cursor.getShort(offset + 2) != 0, // isStar
                 cursor.isNull(offset + 3) ? null : cursor.getLong(offset + 3), // sortId
                 cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // id
                 cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // localLineId
@@ -181,7 +189,7 @@ public class StarDao extends AbstractDao<Star, Long> {
     public void readEntity(Cursor cursor, Star entity, int offset) {
         entity.setMainId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setTableName(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
-        entity.setIsStar(cursor.getShort(offset + 2) != 0);
+        entity.setIsStar(cursor.isNull(offset + 2) ? null : cursor.getShort(offset + 2) != 0);
         entity.setSortId(cursor.isNull(offset + 3) ? null : cursor.getLong(offset + 3));
         entity.setId(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
         entity.setLocalLineId(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
@@ -223,7 +231,7 @@ public class StarDao extends AbstractDao<Star, Long> {
     public static class Properties {
         public final static Property MainId = new Property(0, Long.class, "mainId", true, "_id");
         public final static Property TableName = new Property(1, String.class, "tableName", false, "TABLE_NAME");
-        public final static Property IsStar = new Property(2, boolean.class, "isStar", false, "IS_STAR");
+        public final static Property IsStar = new Property(2, Boolean.class, "isStar", false, "IS_STAR");
         public final static Property SortId = new Property(3, Long.class, "sortId", false, "SORT_ID");
         public final static Property Id = new Property(4, String.class, "id", false, "ID");
         public final static Property LocalLineId = new Property(5, String.class, "localLineId", false, "LOCAL_LINE_ID");

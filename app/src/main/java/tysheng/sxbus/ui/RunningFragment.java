@@ -2,11 +2,13 @@ package tysheng.sxbus.ui;
 
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.TextView;
 
 import java.util.List;
@@ -49,6 +51,8 @@ public class RunningFragment extends BaseFragment {
     CoordinatorLayout mCoordinatorLayout;
     @BindString(R.string.running_error)
     String runningError;
+    @BindView(R.id.fab)
+    FloatingActionButton mFloatingActionButton;
     private String id, title;
     private RunningAdapter mRunningAdapter;
 
@@ -89,6 +93,19 @@ public class RunningFragment extends BaseFragment {
                 refresh();
             }
         });
+        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSwipeRefreshLayout.setEnabled(true);
+                mSwipeRefreshLayout.setRefreshing(true);
+                mSwipeRefreshLayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        refresh();
+                    }
+                }, 100);
+            }
+        });
     }
 
 
@@ -111,7 +128,6 @@ public class RunningFragment extends BaseFragment {
                         if (status.code == 0 && !ListUtil.isEmpty(stations)) {
                             if (TextUtils.equals("市公交集团公司", finalResult.owner)) {
                                 List<YueChenBusResult> list = JsonUtil.parseArray(busLine.result, YueChenBusResult.class);
-
                                 for (YueChenBusResult result : list) {
                                     int station = result.stationSeqNum - 1;
                                     if (station < stations.size())
@@ -144,6 +160,7 @@ public class RunningFragment extends BaseFragment {
                     @Override
                     public void next(List<Stations> stationses) {
                         mRunningAdapter.setNewData(stationses);
+
                     }
 
                     @Override
@@ -151,6 +168,7 @@ public class RunningFragment extends BaseFragment {
                         super.onTerminate();
                         if (mSwipeRefreshLayout.isRefreshing())
                             mSwipeRefreshLayout.setRefreshing(false);
+                        mSwipeRefreshLayout.setEnabled(false);
                     }
 
                     @Override

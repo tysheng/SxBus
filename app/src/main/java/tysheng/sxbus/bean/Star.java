@@ -9,11 +9,11 @@ import org.greenrobot.greendao.annotation.Id;
  * Date: 16/9/11 11:44.
  */
 @Entity
-public class Star {
+public class Star implements Cloneable {
     @Id
     public Long mainId;
     public String tableName;
-    public boolean isStar;
+    public Boolean isStar = false;
     public Long sortId;
 //    ----------------
 
@@ -24,9 +24,9 @@ public class Star {
     public String startStationName;
     public String updateTime;
 
-    @Generated(hash = 1387536182)
-    public Star(Long mainId, String tableName, boolean isStar, Long sortId,
-                String id, String localLineId, String endStationName, String lineName,
+    @Generated(hash = 361015167)
+    public Star(Long mainId, String tableName, Boolean isStar, Long sortId, String id,
+                String localLineId, String endStationName, String lineName,
                 String startStationName, String updateTime) {
         this.mainId = mainId;
         this.tableName = tableName;
@@ -62,6 +62,10 @@ public class Star {
 
     public boolean getIsStar() {
         return this.isStar;
+    }
+
+    public void setIsStar(Boolean isStar) {
+        this.isStar = isStar;
     }
 
     public void setIsStar(boolean isStar) {
@@ -124,5 +128,8 @@ public class Star {
         this.sortId = sortId;
     }
 
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 
 }

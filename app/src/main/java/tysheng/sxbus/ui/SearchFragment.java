@@ -33,6 +33,7 @@ import tysheng.sxbus.db.DbUtil;
 import tysheng.sxbus.db.StarHelper;
 import tysheng.sxbus.net.BusRetrofit;
 import tysheng.sxbus.utils.JsonUtil;
+import tysheng.sxbus.utils.ListUtil;
 import tysheng.sxbus.utils.LogUtil;
 import tysheng.sxbus.utils.RxHelper;
 import tysheng.sxbus.utils.SnackBarUtil;
@@ -78,19 +79,7 @@ public class SearchFragment extends BaseFragment {
             if (TextUtils.isEmpty(mSearchView.getQuery())) {
                 mRecentList = getRecentList();
                 mAdapter.setNewData(mRecentList);
-                if (mRecentList != null && mRecentList.size() != 0 && mAdapter.getFooterLayoutCount() == 0) {
-                    View view = LayoutInflater.from(getContext()).inflate(R.layout.footer_clear, (ViewGroup) getView(), false);
-                    mAdapter.addFooterView(view);
-                    (view.findViewById(R.id.textView)).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            mAdapter.removeAllFooterView();
-                            mRecentList.clear();
-                            mAdapter.notifyDataSetChanged();
-                            mHelper.delete(getRecentList());
-                        }
-                    });
-                }
+                initFooter();
             }
             mSearchView.post(new Runnable() {
                 @Override
@@ -112,24 +101,14 @@ public class SearchFragment extends BaseFragment {
     List<Star> getRecentList() {
         return mHelper.queryBuilder()
                 .where(StarDao.Properties.TableName.eq(Constant.RECENT))
+                .limit(20)
+                .orderDesc(StarDao.Properties.MainId)
                 .list();
     }
 
     private void doNext() {
         mAdapter = new StarAdapter(1, mRecentList);
-        if (mRecentList != null && mRecentList.size() != 0) {
-            View view = LayoutInflater.from(getContext()).inflate(R.layout.footer_clear, (ViewGroup) getView(), false);
-            mAdapter.addFooterView(view);
-            (view.findViewById(R.id.textView)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mAdapter.removeAllFooterView();
-                    mRecentList.clear();
-                    mAdapter.notifyDataSetChanged();
-                    mHelper.delete(getRecentList());
-                }
-            });
-        }
+        initFooter();
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -148,12 +127,19 @@ public class SearchFragment extends BaseFragment {
                     case R.id.star:
                         Star star1 = mAdapter.getItem(i);
                         star1.isStar = true;
-                        star1.setTableName(Constant.STAR);
+
                         Star uni = mHelper.queryBuilder()
-                                .where(StarDao.Properties.Id.eq(star1.getLocalLineId()))
+                                .where(StarDao.Properties.Id.eq(star1.getId()), StarDao.Properties.TableName.eq(Constant.STAR))
                                 .unique();
-                        if (uni == null)
-                            mHelper.saveOrUpdate(star1);
+                        if (uni == null) {
+                            try {
+                                Star s = (Star) star1.clone();
+                                s.setTableName(Constant.STAR);
+                                mHelper.saveOrUpdate(s);
+                            } catch (CloneNotSupportedException e) {
+                                e.printStackTrace();
+                            }
+                        }
                         mAdapter.notifyItemChanged(i);
                         break;
                     default:
@@ -175,6 +161,22 @@ public class SearchFragment extends BaseFragment {
         });
         mSearchView.onActionViewExpanded();
         mSearchView.clearFocus();
+    }
+
+    private void initFooter() {
+        if (!ListUtil.isEmpty(mRecentList) && mAdapter.getFooterLayoutCount() == 0) {
+            View view = LayoutInflater.from(getContext()).inflate(R.layout.footer_clear, (ViewGroup) getView(), false);
+            mAdapter.addFooterView(view);
+            view.findViewById(R.id.textView).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mAdapter.removeAllFooterView();
+                    mRecentList.clear();
+                    mAdapter.notifyDataSetChanged();
+                    mHelper.delete(getRecentList());
+                }
+            });
+        }
     }
 
     @Override
@@ -211,7 +213,7 @@ public class SearchFragment extends BaseFragment {
                         LogUtil.d(s.toString());
                         Status status = JsonUtil.parse(s.status, Status.class);
                         if (status.code == 20306) {
-                            showSnackBar("查询的公交线路不存在", false);
+                            SnackBarUtil.show(mCoordinatorLayout, "查询的公交线路不存在", Snackbar.LENGTH_SHORT);
                         } else if (status.code == 0) {
                             Stars stars = JsonUtil.parse(s.result, Stars.class);
                             mAdapter.setNewData(stars.result);
@@ -221,15 +223,9 @@ public class SearchFragment extends BaseFragment {
                     @Override
                     public void onError(Throwable e) {
                         super.onError(e);
-                        showSnackBar(searchError, false);
+                        SnackBarUtil.show(mCoordinatorLayout, searchError, Snackbar.LENGTH_SHORT);
                     }
                 });
-
-    }
-
-    public void showSnackBar(String msg, boolean isLong) {
-        SnackBarUtil.show(mCoordinatorLayout, msg,
-                isLong ? Snackbar.LENGTH_LONG : Snackbar.LENGTH_SHORT);
     }
 
 }

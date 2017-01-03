@@ -26,8 +26,6 @@ import tysheng.sxbus.dao.StarDao;
 import tysheng.sxbus.db.DbUtil;
 import tysheng.sxbus.db.StarHelper;
 
-import static tysheng.sxbus.R.id.star;
-
 /**
  * 收藏
  * Created by Sty
@@ -60,7 +58,7 @@ public class StarFragment extends BaseFragment {
     List<Star> getStarList() {
         if (mQueryBuilder == null)
             mQueryBuilder = mHelper.queryBuilder()
-                    .where(StarDao.Properties.TableName.eq(Constant.STAR))
+                    .where(StarDao.Properties.TableName.eq(Constant.STAR), StarDao.Properties.IsStar.eq("TRUE"))
                     .orderAsc(StarDao.Properties.SortId);
         return mQueryBuilder
                 .list();
@@ -88,7 +86,7 @@ public class StarFragment extends BaseFragment {
                         ((FragmentCallback) getActivity()).handleCallbackNew(new FragCallback(Constant.WHAT_STAR, mAdapter.getItem(i).id,
                                 mAdapter.getItem(i).lineName + " 前往 " + mAdapter.getItem(i).endStationName));
                         break;
-                    case star:
+                    case R.id.star:
                         Star star = mAdapter.getItem(i);
                         mAdapter.remove(i);
                         mHelper.deleteByKey(star.getMainId());
