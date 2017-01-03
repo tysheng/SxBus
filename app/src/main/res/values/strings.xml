@@ -10,5 +10,9 @@
     <string name="search_error">搜索遇到了点问题</string>
     <string name="running_error">无法获取到车辆信息</string>
     <string name="going_to">正在前往</string>
+    <string name="msg_no_need_update">当前版本已是最新版</string>
+    <string name="msg_checking_update">正在检查新版本...</string>
+    <string name="my_email">353491983@qq.com</string>
+    <string name="msg_alipay_copied">支付宝账号已复制到剪贴板</string>
 
 </resources>

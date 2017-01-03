@@ -1,4 +1,4 @@
-package tysheng.sxbus.ui;
+package tysheng.sxbus.ui.star;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,8 +11,6 @@ import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.chad.library.adapter.base.listener.OnItemDragListener;
 
-import org.greenrobot.greendao.query.QueryBuilder;
-
 import java.util.List;
 
 import butterknife.BindView;
@@ -22,9 +20,6 @@ import tysheng.sxbus.adapter.StarAdapter;
 import tysheng.sxbus.base.BaseFragment;
 import tysheng.sxbus.bean.FragCallback;
 import tysheng.sxbus.bean.Star;
-import tysheng.sxbus.dao.StarDao;
-import tysheng.sxbus.db.DbUtil;
-import tysheng.sxbus.db.StarHelper;
 
 /**
  * 收藏
@@ -38,8 +33,7 @@ public class StarFragment extends BaseFragment {
     RecyclerView mRecyclerView;
     private List<Star> mStarList;
     private StarAdapter mAdapter;
-    private StarHelper mHelper;
-    private QueryBuilder<Star> mQueryBuilder;
+    private StarPresenter mPresenter;
 
     @Override
     protected int getLayoutId() {
@@ -50,36 +44,32 @@ public class StarFragment extends BaseFragment {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (!hidden) {
-            mStarList = getStarList();
+            mStarList = mPresenter.getStarList();
             mAdapter.setNewData(mStarList);
         }
     }
 
-    List<Star> getStarList() {
-        if (mQueryBuilder == null)
-            mQueryBuilder = mHelper.queryBuilder()
-                    .where(StarDao.Properties.TableName.eq(Constant.STAR), StarDao.Properties.IsStar.eq("TRUE"))
-                    .orderAsc(StarDao.Properties.SortId);
-        return mQueryBuilder
-                .list();
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPresenter.onDestroy();
     }
 
     @Override
     protected void initData() {
-        mHelper = DbUtil.getDriverHelper();
-        mStarList = getStarList();
+        mPresenter = new StarPresenter(this);
+        mStarList = mPresenter.getStarList();
         doNext();
     }
 
     private void doNext() {
-        mAdapter = new StarAdapter(0, mStarList);
+        mAdapter = new StarAdapter(mStarList);
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
-        View view = LayoutInflater.from(mActivity).inflate(R.layout.empty_layout, mRecyclerView, false);
-        mAdapter.setEmptyView(view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mAdapter.setEmptyView(LayoutInflater.from(getContext()).inflate(R.layout.empty_layout, mRecyclerView, false));
         mRecyclerView.addOnItemTouchListener(new OnItemChildClickListener() {
             @Override
-            public void SimpleOnItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
+            public void onSimpleItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 switch (view.getId()) {
                     case R.id.number:
                     case R.id.textView:
@@ -89,7 +79,7 @@ public class StarFragment extends BaseFragment {
                     case R.id.star:
                         Star star = mAdapter.getItem(i);
                         mAdapter.remove(i);
-                        mHelper.deleteByKey(star.getMainId());
+                        mPresenter.deleteByKey(star.getMainId());
                     default:
                         break;
                 }
@@ -113,20 +103,9 @@ public class StarFragment extends BaseFragment {
 
             @Override
             public void onItemDragEnd(RecyclerView.ViewHolder viewHolder, int i) {
-                dragEnd();
+                mPresenter.dragEnd(mStarList);
                 viewHolder.itemView.setPressed(false);
             }
         });
     }
-
-    void dragEnd() {
-        mHelper.delete(getStarList());
-        for (int i = 0; i < mStarList.size(); i++) {
-            Star star = mStarList.get(i);
-            star.setSortId((long) i);
-            mHelper.save(star);
-        }
-    }
-
-
 }

@@ -49,20 +49,15 @@ public class MoreFragment extends BaseFragment {
         mToolbar.setTitle(string);
     }
 
-    public void showAlipayFail(String s) {
-        showSnackBar(s, false);
+    private void showAlipayFail(String s) {
+        SnackBarUtil.show(mCoordinatorLayout, s, Snackbar.LENGTH_SHORT);
         ClipboardManager c = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-        c.setPrimaryClip(ClipData.newPlainText("email", "353491983@qq.com"));//设置Clipboard 的内容
-    }
-
-    public void showSnackBar(String msg, boolean isLong) {
-        SnackBarUtil.show(mCoordinatorLayout, msg,
-                isLong ? Snackbar.LENGTH_LONG : Snackbar.LENGTH_SHORT);
+        c.setPrimaryClip(ClipData.newPlainText("email", getString(R.string.my_email)));//设置Clipboard 的内容
     }
 
     public void checkVersionByBaidu() {
         final ProgressDialog dialog = new ProgressDialog(getContext());
-        dialog.setMessage("正在检查新版本...");
+        dialog.setMessage(getString(R.string.msg_checking_update));
         dialog.show();
         BDAutoUpdateSDK.cpUpdateCheck(getContext(), new CPCheckUpdateCallback() {
             @Override
@@ -77,7 +72,7 @@ public class MoreFragment extends BaseFragment {
                                 }
                             });
                 } else {
-                    showSnackBar("当前版本已是最新版", false);
+                    SnackBarUtil.show(mCoordinatorLayout, getString(R.string.msg_no_need_update), Snackbar.LENGTH_SHORT);
                 }
             }
         });
@@ -98,10 +93,10 @@ public class MoreFragment extends BaseFragment {
             case R.id.donate:
                 if (AlipayZeroSdk.hasInstalledAlipayClient(getContext())) {
                     if (!AlipayZeroSdk.startAlipayClient(getActivity())) {
-                        showAlipayFail("支付宝账号已复制到剪贴板");
+                        showAlipayFail(getString(R.string.msg_alipay_copied));
                     }
                 } else
-                    showAlipayFail("支付宝账号已复制到剪贴板");
+                    showAlipayFail(getString(R.string.msg_alipay_copied));
                 break;
             case R.id.check_update:
                 checkVersionByBaidu();

@@ -61,8 +61,7 @@ public class ChooseCityFragment extends DialogFragment {
         recyclerView.setAdapter(adapter);
         recyclerView.addOnItemTouchListener(new OnItemChildClickListener() {
             @Override
-            public void SimpleOnItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
-
+            public void onSimpleItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 if (view.getId() == R.id.textView) {
 //                    helper.put("city", names[i]);
 //                    LogUtil.d("name" + names[i]);

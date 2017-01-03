@@ -27,7 +27,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.main.MainActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"
             android:windowSoftInputMode="adjustPan|stateHidden">
             <intent-filter>

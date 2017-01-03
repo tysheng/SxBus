@@ -26,13 +26,11 @@ import tysheng.sxbus.utils.LogUtil;
 public abstract class BaseFragment extends RxFragment {
     private static final String STATE_SAVE_IS_HIDDEN = "STATE_SAVE_IS_HIDDEN";
     protected View mRootView;
-    protected Activity mActivity;
     private Unbinder mBinder;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mActivity = activity;
         LogUtil.d(getTag() + "onAttach");
     }
 
@@ -96,7 +94,6 @@ public abstract class BaseFragment extends RxFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mActivity = null;
         LogUtil.d(getTag() + "onDetach");
     }
 

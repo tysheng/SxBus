@@ -69,7 +69,7 @@ public class StarDao extends AbstractDao<Star, Long> {
 
         Boolean isStar = entity.getIsStar();
         if (isStar != null) {
-            stmt.bindLong(3, isStar ? 1L : 0L);
+            stmt.bindLong(3, isStar ? 1L: 0L);
         }
 
         Long sortId = entity.getSortId();
@@ -124,7 +124,7 @@ public class StarDao extends AbstractDao<Star, Long> {
 
         Boolean isStar = entity.getIsStar();
         if (isStar != null) {
-            stmt.bindLong(3, isStar ? 1L : 0L);
+            stmt.bindLong(3, isStar ? 1L: 0L);
         }
 
         Long sortId = entity.getSortId();

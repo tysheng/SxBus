@@ -1,4 +1,4 @@
-package tysheng.sxbus.ui;
+package tysheng.sxbus.ui.search;
 
 import android.app.ProgressDialog;
 import android.support.design.widget.CoordinatorLayout;
@@ -15,7 +15,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.BindString;
 import butterknife.BindView;
@@ -23,32 +22,22 @@ import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.StarAdapter;
 import tysheng.sxbus.base.BaseFragment;
+import tysheng.sxbus.base.BaseView;
 import tysheng.sxbus.bean.CallBack;
 import tysheng.sxbus.bean.FragCallback;
 import tysheng.sxbus.bean.Star;
 import tysheng.sxbus.bean.Stars;
 import tysheng.sxbus.bean.Status;
-import tysheng.sxbus.dao.StarDao;
-import tysheng.sxbus.db.DbUtil;
-import tysheng.sxbus.db.StarHelper;
-import tysheng.sxbus.net.BusRetrofit;
 import tysheng.sxbus.utils.JsonUtil;
 import tysheng.sxbus.utils.ListUtil;
 import tysheng.sxbus.utils.LogUtil;
-import tysheng.sxbus.utils.RxHelper;
 import tysheng.sxbus.utils.SnackBarUtil;
-import tysheng.sxbus.utils.StyObserver;
 
 /**
  * Created by Sty
  * Date: 16/8/10 22:52.
  */
-public class SearchFragment extends BaseFragment {
-
-    @BindString(R.string.recent)
-    String mRecent;
-    @BindString(R.string.result)
-    String mResult;
+public class SearchFragment extends BaseFragment implements BaseView<CallBack> {
     @BindString(R.string.search_error)
     String searchError;
     @BindView(R.id.recyclerView)
@@ -60,7 +49,7 @@ public class SearchFragment extends BaseFragment {
     private List<Star> mRecentList;
     private StarAdapter mAdapter;
     private ProgressDialog mDialog;
-    private StarHelper mHelper;
+    private SearchPresenter mPresenter;
 
     @Override
     protected int getLayoutId() {
@@ -77,7 +66,7 @@ public class SearchFragment extends BaseFragment {
         super.onHiddenChanged(hidden);
         if (!hidden) {
             if (TextUtils.isEmpty(mSearchView.getQuery())) {
-                mRecentList = getRecentList();
+                mRecentList = mPresenter.getRecentList();
                 mAdapter.setNewData(mRecentList);
                 initFooter();
             }
@@ -92,54 +81,34 @@ public class SearchFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-        mHelper = DbUtil.getDriverHelper();
-        mRecentList = getRecentList();
-        doNext();
+        mPresenter = new SearchPresenter(this);
+        mRecentList = mPresenter.getRecentList();
+        init();
     }
 
-
-    List<Star> getRecentList() {
-        return mHelper.queryBuilder()
-                .where(StarDao.Properties.TableName.eq(Constant.RECENT))
-                .limit(20)
-                .orderDesc(StarDao.Properties.MainId)
-                .list();
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPresenter.onDestroy();
     }
 
-    private void doNext() {
-        mAdapter = new StarAdapter(1, mRecentList);
+    private void init() {
+        mAdapter = new StarAdapter(mRecentList);
         initFooter();
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
         mRecyclerView.addOnItemTouchListener(new OnItemChildClickListener() {
             @Override
-            public void SimpleOnItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
+            public void onSimpleItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 switch (view.getId()) {
                     case R.id.number:
                     case R.id.textView:
                         ((FragmentCallback) getActivity()).handleCallbackNew(new FragCallback(Constant.WHAT_SEARCH, mAdapter.getItem(i).id,
                                 mAdapter.getItem(i).lineName + " 前往 " + mAdapter.getItem(i).endStationName));
-                        Star star = mAdapter.getItem(i);
-                        star.setTableName(Constant.RECENT);
-                        mHelper.saveOrUpdate(star);
+                        mPresenter.onItemClick(mAdapter.getItem(i));
                         break;
                     case R.id.star:
-                        Star star1 = mAdapter.getItem(i);
-                        star1.isStar = true;
-
-                        Star uni = mHelper.queryBuilder()
-                                .where(StarDao.Properties.Id.eq(star1.getId()), StarDao.Properties.TableName.eq(Constant.STAR))
-                                .unique();
-                        if (uni == null) {
-                            try {
-                                Star s = (Star) star1.clone();
-                                s.setTableName(Constant.STAR);
-                                mHelper.saveOrUpdate(s);
-                            } catch (CloneNotSupportedException e) {
-                                e.printStackTrace();
-                            }
-                        }
+                        mPresenter.onItemClickCollect(mAdapter.getItem(i));
                         mAdapter.notifyItemChanged(i);
                         break;
                     default:
@@ -173,7 +142,7 @@ public class SearchFragment extends BaseFragment {
                     mAdapter.removeAllFooterView();
                     mRecentList.clear();
                     mAdapter.notifyDataSetChanged();
-                    mHelper.delete(getRecentList());
+                    mPresenter.delete();
                 }
             });
         }
@@ -196,36 +165,28 @@ public class SearchFragment extends BaseFragment {
             mDialog.setMessage("正在搜索...");
         }
         mDialog.show();
-        BusRetrofit.get()
-                .numberToSearch(number)
-                .delay(200, TimeUnit.MICROSECONDS)
-                .compose(this.<CallBack>bindToLifecycle())
-                .compose(RxHelper.<CallBack>ioToMain())
-                .subscribe(new StyObserver<CallBack>() {
-                    @Override
-                    public void onTerminate() {
-                        super.onTerminate();
-                        mDialog.dismiss();
-                    }
-
-                    @Override
-                    public void next(CallBack s) {
-                        LogUtil.d(s.toString());
-                        Status status = JsonUtil.parse(s.status, Status.class);
-                        if (status.code == 20306) {
-                            SnackBarUtil.show(mCoordinatorLayout, "查询的公交线路不存在", Snackbar.LENGTH_SHORT);
-                        } else if (status.code == 0) {
-                            Stars stars = JsonUtil.parse(s.result, Stars.class);
-                            mAdapter.setNewData(stars.result);
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        super.onError(e);
-                        SnackBarUtil.show(mCoordinatorLayout, searchError, Snackbar.LENGTH_SHORT);
-                    }
-                });
+        mPresenter.getBusSimple(number);
     }
 
+    @Override
+    public void onSuccess(CallBack callBack) {
+        LogUtil.d(callBack.toString());
+        Status status = JsonUtil.parse(callBack.status, Status.class);
+        if (status.code == 20306) {
+            SnackBarUtil.show(mCoordinatorLayout, "查询的公交线路不存在", Snackbar.LENGTH_SHORT);
+        } else if (status.code == 0) {
+            Stars stars = JsonUtil.parse(callBack.result, Stars.class);
+            mAdapter.setNewData(stars.result);
+        }
+    }
+
+    @Override
+    public void onError(Throwable e) {
+        SnackBarUtil.show(mCoordinatorLayout, searchError, Snackbar.LENGTH_SHORT);
+    }
+
+    @Override
+    public void onTerminate() {
+        mDialog.dismiss();
+    }
 }
