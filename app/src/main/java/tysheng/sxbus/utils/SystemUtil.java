@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -178,5 +179,10 @@ public class SystemUtil {
                 })
                 .subscribeOn(Schedulers.io())
                 .subscribe();
+    }
+
+    public static int dp2px(float dpValue) {
+
+        return (int) (dpValue * Resources.getSystem().getDisplayMetrics().density + 0.5f);
     }
 }

@@ -1,6 +1,10 @@
 package tysheng.sxbus.ui.running;
 
+import android.animation.Animator;
+import android.support.design.widget.FloatingActionButton;
 import android.text.TextUtils;
+import android.view.View;
+import android.view.animation.OvershootInterpolator;
 
 import java.util.List;
 
@@ -13,6 +17,7 @@ import tysheng.sxbus.bean.YueChenBusResult;
 import tysheng.sxbus.utils.JsonUtil;
 import tysheng.sxbus.utils.ListUtil;
 import tysheng.sxbus.utils.LogUtil;
+import tysheng.sxbus.utils.SystemUtil;
 
 /**
  * Created by tysheng
@@ -66,4 +71,34 @@ class RunningModule {
         return stations;
     }
 
+    void popupFab(final FloatingActionButton floatingActionButton) {
+        floatingActionButton.setTranslationY(2 * SystemUtil.dp2px(56));
+        floatingActionButton.animate()
+                .translationY(0)
+                .setInterpolator(new OvershootInterpolator(1.f))
+                .setStartDelay(500L)
+                .setDuration(500L)
+                .setListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        floatingActionButton.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                })
+                .start();
+    }
 }

@@ -1,5 +1,7 @@
 package tysheng.sxbus.ui.running;
 
+import android.support.design.widget.FloatingActionButton;
+
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -61,5 +63,9 @@ class RunningPresenter implements BasePresenter {
     @Override
     public void onDestroy() {
         mView = null;
+    }
+
+    void popupFab(FloatingActionButton floatingActionButton) {
+        mRunningModule.popupFab(floatingActionButton);
     }
 }

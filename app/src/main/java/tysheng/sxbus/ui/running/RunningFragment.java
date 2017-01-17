@@ -77,6 +77,8 @@ public class RunningFragment extends BaseFragment implements RunningView<List<St
                 mPresenter.refresh(id);
             }
         });
+        mPresenter.popupFab(mFloatingActionButton);
+
     }
 
     @Override

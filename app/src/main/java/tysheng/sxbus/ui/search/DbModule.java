@@ -20,7 +20,7 @@ class DbModule implements BaseModule {
     private StarHelper mHelper;
 
     DbModule() {
-        init();
+        mHelper = DbUtil.getDriverHelper();
     }
 
     List<Star> getRecentList() {
@@ -30,11 +30,6 @@ class DbModule implements BaseModule {
                 .orderDesc(StarDao.Properties.MainId)
                 .list();
     }
-
-    private void init() {
-        mHelper = DbUtil.getDriverHelper();
-    }
-
 
     @Override
     public void onDestroy() {

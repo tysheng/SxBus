@@ -39,7 +39,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="24dp"
         android:src="@drawable/ic_refresh_black_24dp"
+        android:visibility="invisible"
         app:layout_anchor="@id/swipeRefreshLayout"
-        app:layout_anchorGravity="right|bottom" />
+        app:layout_anchorGravity="bottom|end" />
 </android.support.design.widget.CoordinatorLayout>
 
