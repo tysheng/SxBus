@@ -25,17 +25,18 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <mainView
+        android:theme="@style/AppTheme.Main">
+        <activity
             android:name=".ui.main.MainActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"
+            android:theme="@style/AppTheme.Launcher"
             android:windowSoftInputMode="adjustPan|stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </mainView>
+        </activity>
 
         <!--百度更新-->
         <meta-data
@@ -45,7 +46,7 @@
             android:name="BDAPPKEY"
             android:value="Mrujsko6nD11OX7XixGmRfE50fBrTmgG" />
 
-        <mainView
+        <activity
             android:name="com.baidu.autoupdatesdk.ConfirmDialoigActivity"
             android:exported="false"
             android:screenOrientation="sensor"
@@ -67,19 +68,33 @@
             android:value="298b176693" />
         <!-- ↓↓↓ 百度移动统计SDK ↓↓↓ -->
         <!-- 是否开启错误日志统计，默认为false -->
-        <meta-data android:name="BaiduMobAd_EXCEPTION_LOG" android:value="true" />
+        <meta-data
+            android:name="BaiduMobAd_EXCEPTION_LOG"
+            android:value="true" />
         <!-- 日志发送策略，可选值：APP_START、ONCE_A_DAY、SET_TIME_INTERVAL，默认为APP_START -->
-        <meta-data android:name="BaiduMobAd_SEND_STRATEGY" android:value="APP_START" />
+        <meta-data
+            android:name="BaiduMobAd_SEND_STRATEGY"
+            android:value="APP_START" />
         <!-- 日志发送策略 为SET_TIME_INTERVAL时，需设定时间间隔(取消下行注释)。取值为1-24的整数，默认为1 -->
-        <meta-data android:name="BaiduMobAd_TIME_INTERVAL" android:value="1" />
+        <meta-data
+            android:name="BaiduMobAd_TIME_INTERVAL"
+            android:value="1" />
         <!-- 日志仅在wifi网络下发送，默认为false -->
-        <meta-data android:name="BaiduMobAd_ONLY_WIFI" android:value="true" />
+        <meta-data
+            android:name="BaiduMobAd_ONLY_WIFI"
+            android:value="true" />
         <!-- 是否获取基站位置信息 ,默认为true-->
-        <meta-data android:name="BaiduMobAd_CELL_LOCATION" android:value="true" />
+        <meta-data
+            android:name="BaiduMobAd_CELL_LOCATION"
+            android:value="true" />
         <!-- 是否获取GPS位置信息，默认为true -->
-        <meta-data android:name="BaiduMobAd_GPS_LOCATION" android:value="false" />
+        <meta-data
+            android:name="BaiduMobAd_GPS_LOCATION"
+            android:value="false" />
         <!-- 是否获取WIFI位置信息，默认为true -->
-        <meta-data android:name="BaiduMobAd_WIFI_LOCATION" android:value="true" />
+        <meta-data
+            android:name="BaiduMobAd_WIFI_LOCATION"
+            android:value="true" />
         <!-- ↑↑↑ 百度移动统计SDK ↑↑↑ -->
     </application>
 

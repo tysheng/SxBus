@@ -25,7 +25,7 @@ import tysheng.sxbus.bean.Star;
  * Date: 16/8/11 21:41.
  */
 
-public class StarFragment extends BaseFragment implements OnItemDragListener {
+public class StarFragment extends BaseFragment implements OnItemDragListener, StarView {
 
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;

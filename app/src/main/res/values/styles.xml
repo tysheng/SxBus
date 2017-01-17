@@ -11,6 +11,14 @@
 
     </style>
 
+    <style name="AppTheme.Launcher" parent="AppTheme">
+        <item name="android:windowBackground">@drawable/layout_launcher</item>
+    </style>
+
+    <style name="AppTheme.Main" parent="AppTheme">
+
+    </style>
+
     <style name="MDButton" parent="Widget.AppCompat.Button.Colored">
         <item name="colorButtonNormal">#2196f3</item>
         <item name="colorAccent">#2196f3</item>

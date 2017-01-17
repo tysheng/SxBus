@@ -12,10 +12,10 @@ import tysheng.sxbus.bean.Star;
  */
 
 class StarPresenter implements BasePresenter {
-    private StarFragment mFragment;
+    private StarView mFragment;
     private DbModule mDbModule;
 
-    StarPresenter(StarFragment fragment) {
+    StarPresenter(StarView fragment) {
         mFragment = fragment;
         mDbModule = new DbModule(this);
     }

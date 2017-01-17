@@ -30,7 +30,7 @@ class MainPresenter {
     private FragmentManager mFragmentManager;
     private int pre;// 0 ,1 ,2 ,3(0跳到running),4(1跳到running)
 
-    MainPresenter(MainActivity mainView, FragmentManager manager) {
+    MainPresenter(MainView mainView, FragmentManager manager) {
         mMainView = mainView;
         mFragmentManager = manager;
     }

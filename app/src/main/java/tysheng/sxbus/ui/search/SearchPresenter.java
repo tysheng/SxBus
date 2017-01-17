@@ -3,7 +3,6 @@ package tysheng.sxbus.ui.search;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import tysheng.sxbus.base.BaseFragment;
 import tysheng.sxbus.base.BasePresenter;
 import tysheng.sxbus.bean.CallBack;
 import tysheng.sxbus.bean.Star;
@@ -18,18 +17,18 @@ import tysheng.sxbus.utils.StyObserver;
  */
 
 class SearchPresenter implements BasePresenter {
-    private SearchView<CallBack> mFragment;
+    private SearchView<CallBack> mView;
     private DbModule mDbModule;
 
-    public SearchPresenter(SearchView<CallBack> fragment) {
-        mFragment = fragment;
-        mDbModule = new DbModule(this);
+    SearchPresenter(SearchView<CallBack> view) {
+        mView = view;
+        mDbModule = new DbModule();
     }
 
     @Override
     public void onDestroy() {
         mDbModule.onDestroy();
-        mFragment = null;
+        mView = null;
     }
 
     List<Star> getRecentList() {
@@ -48,29 +47,30 @@ class SearchPresenter implements BasePresenter {
         mDbModule.delete();
     }
 
-    void getBusSimple(BaseFragment fragment, String number) {
+    void getBusSimple(String number) {
         BusRetrofit.get()
                 .numberToSearch(number)
                 .delay(200, TimeUnit.MICROSECONDS)
-                .compose(fragment.<CallBack>bindToLifecycle())
+                .compose(mView.<CallBack>bind2Lifecycle())
                 .compose(RxHelper.<CallBack>ioToMain())
                 .subscribe(new StyObserver<CallBack>() {
                     @Override
                     public void onTerminate() {
                         super.onTerminate();
-                        mFragment.onTerminate();
+                        mView.onTerminate();
                     }
 
                     @Override
                     public void next(CallBack s) {
-                        mFragment.onSuccess(s);
+                        mView.onSuccess(s);
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         super.onError(e);
-                        mFragment.onError(e);
+                        mView.onError(e);
                     }
                 });
+
     }
 }

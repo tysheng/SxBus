@@ -9,6 +9,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
+import com.trello.rxlifecycle2.LifecycleTransformer;
+
 import java.util.List;
 
 import butterknife.BindString;
@@ -72,7 +74,7 @@ public class RunningFragment extends BaseFragment implements RunningView<List<St
             @Override
             public void run() {
                 mSwipeRefreshLayout.setRefreshing(true);
-                mPresenter.refresh(RunningFragment.this, id);
+                mPresenter.refresh(id);
             }
         });
     }
@@ -107,13 +109,18 @@ public class RunningFragment extends BaseFragment implements RunningView<List<St
         mSwipeRefreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
-                mPresenter.refresh(RunningFragment.this, id);
+                mPresenter.refresh(id);
             }
         }, 100);
     }
 
     @Override
     public void onRefresh() {
-        mPresenter.refresh(this, id);
+        mPresenter.refresh(id);
+    }
+
+    @Override
+    public <T> LifecycleTransformer<T> bind2Lifecycle() {
+        return bindToLifecycle();
     }
 }

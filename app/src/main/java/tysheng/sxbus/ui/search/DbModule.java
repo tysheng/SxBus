@@ -16,13 +16,11 @@ import tysheng.sxbus.db.StarHelper;
  */
 
 class DbModule implements BaseModule {
-    private SearchPresenter mPresenter;
+
     private StarHelper mHelper;
 
-    DbModule(SearchPresenter presenter) {
-        mPresenter = presenter;
+    DbModule() {
         init();
-
     }
 
     List<Star> getRecentList() {
@@ -40,7 +38,7 @@ class DbModule implements BaseModule {
 
     @Override
     public void onDestroy() {
-        mPresenter = null;
+
     }
 
     void onItemClick(Star star) {

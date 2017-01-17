@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
+import com.trello.rxlifecycle2.LifecycleTransformer;
 
 import java.util.List;
 
@@ -80,17 +81,8 @@ public class SearchFragment extends BaseFragment implements tysheng.sxbus.ui.sea
     @Override
     protected void initData() {
         mPresenter = new SearchPresenter(this);
-        init();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mPresenter.onDestroy();
-    }
-
-    private void init() {
-        initAdapter();
+        mAdapter = new StarAdapter(mRecentList = mPresenter.getRecentList());
+        initFooter();
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.addOnItemTouchListener(new OnItemChildClickListener() {
@@ -128,9 +120,10 @@ public class SearchFragment extends BaseFragment implements tysheng.sxbus.ui.sea
         mSearchView.clearFocus();
     }
 
-    private void initAdapter() {
-        mAdapter = new StarAdapter(mRecentList = mPresenter.getRecentList());
-        initFooter();
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPresenter.onDestroy();
     }
 
     private void initFooter() {
@@ -166,7 +159,7 @@ public class SearchFragment extends BaseFragment implements tysheng.sxbus.ui.sea
             mDialog.setMessage("正在搜索...");
         }
         mDialog.show();
-        mPresenter.getBusSimple(this, number);
+        mPresenter.getBusSimple(number);
     }
 
     @Override
@@ -188,5 +181,10 @@ public class SearchFragment extends BaseFragment implements tysheng.sxbus.ui.sea
     @Override
     public void onTerminate() {
         mDialog.dismiss();
+    }
+
+    @Override
+    public <Q> LifecycleTransformer<Q> bind2Lifecycle() {
+        return bindToLifecycle();
     }
 }
