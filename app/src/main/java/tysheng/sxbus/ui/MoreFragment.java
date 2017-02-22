@@ -4,8 +4,10 @@ import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -19,9 +21,11 @@ import com.baidu.autoupdatesdk.CPCheckUpdateCallback;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
 import tysheng.sxbus.base.BaseFragment;
 import tysheng.sxbus.utils.AlipayZeroSdk;
+import tysheng.sxbus.utils.SPHelper;
 import tysheng.sxbus.utils.SnackBarUtil;
 import tysheng.sxbus.utils.SystemUtil;
 import tysheng.sxbus.view.ChooseCityFragment;
@@ -35,6 +39,7 @@ public class MoreFragment extends BaseFragment {
     Toolbar mToolbar;
     @BindView(R.id.coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
+    private SPHelper mSPHelper;
 
     @Override
     protected int getLayoutId() {
@@ -83,8 +88,14 @@ public class MoreFragment extends BaseFragment {
         f.show(getChildFragmentManager(), "");
     }
 
+    private SPHelper getSPHelper() {
+        if (mSPHelper == null) {
+            mSPHelper = new SPHelper(getContext());
+        }
+        return mSPHelper;
+    }
 
-    @OnClick({R.id.feedback, R.id.donate, R.id.check_update, R.id.chooseCity})
+    @OnClick({R.id.feedback, R.id.donate, R.id.check_update, R.id.chooseCity, R.id.stationMode})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.feedback:
@@ -103,6 +114,16 @@ public class MoreFragment extends BaseFragment {
                 break;
             case R.id.chooseCity:
                 chooseCity();
+                break;
+            case R.id.stationMode:
+                new AlertDialog.Builder(getContext())
+                        .setItems(new String[]{"根据站点", "根据距离"}, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                getSPHelper().put(Constant.STATION_MODE, which);
+                            }
+                        })
+                        .show();
                 break;
         }
     }

@@ -8,6 +8,8 @@ import android.view.animation.OvershootInterpolator;
 
 import java.util.List;
 
+import tysheng.sxbus.App;
+import tysheng.sxbus.Constant;
 import tysheng.sxbus.bean.BusLinesResult;
 import tysheng.sxbus.bean.CallBack;
 import tysheng.sxbus.bean.KeQiaoBusResult;
@@ -17,6 +19,7 @@ import tysheng.sxbus.bean.YueChenBusResult;
 import tysheng.sxbus.utils.JsonUtil;
 import tysheng.sxbus.utils.ListUtil;
 import tysheng.sxbus.utils.LogUtil;
+import tysheng.sxbus.utils.SPHelper;
 import tysheng.sxbus.utils.SystemUtil;
 
 /**
@@ -26,9 +29,21 @@ import tysheng.sxbus.utils.SystemUtil;
  */
 
 class RunningModule {
+    private SPHelper mSPHelper;
 
     RunningModule() {
 
+    }
+
+    private SPHelper getSPHelper() {
+        if (mSPHelper == null) {
+            mSPHelper = new SPHelper(App.get());
+        }
+        return mSPHelper;
+    }
+
+    private boolean byStation() {
+        return getSPHelper().get(Constant.STATION_MODE, Constant.BY_DISTANCE) == Constant.BY_STATION;
     }
 
     private double countDistance(double[] i1, double[] i2) {
@@ -43,7 +58,7 @@ class RunningModule {
         //running
         Status status = JsonUtil.parse(busLine.status, Status.class);
         if (status.code == 0 && !ListUtil.isEmpty(stations)) {
-            if (TextUtils.equals("市公交集团公司", finalResult.owner)) {
+            if (TextUtils.equals("市公交集团公司", finalResult.owner) && byStation()) {
                 List<YueChenBusResult> list = JsonUtil.parseArray(busLine.result, YueChenBusResult.class);
                 for (YueChenBusResult result : list) {
                     int station = result.stationSeqNum - 1;

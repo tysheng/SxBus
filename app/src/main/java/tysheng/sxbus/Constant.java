@@ -7,6 +7,9 @@ package tysheng.sxbus;
 public interface Constant {
     String STAR = "STAR";
     String RECENT = "Search";
+    String STATION_MODE = "STATION_MODE";//0根据站点，1根据距离
+    int BY_STATION = 0;
+    int BY_DISTANCE = 1;
 
     int WHAT_STAR = 3;
     int WHAT_SEARCH = 4;

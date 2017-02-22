@@ -57,12 +57,12 @@
 
             <include layout="@layout/divider" />
 
-            <!--<TextView-->
-            <!--android:id="@+id/add_wechat"-->
-            <!--style="@style/MoreTextView"-->
-            <!--android:text="联系作者" />-->
+            <TextView
+                android:id="@+id/stationMode"
+                style="@style/MoreTextView"
+                android:text="车辆信息" />
 
-            <!--<include layout="@layout/divider" />-->
+            <include layout="@layout/divider" />
 
             <TextView
                 android:id="@+id/check_update"
