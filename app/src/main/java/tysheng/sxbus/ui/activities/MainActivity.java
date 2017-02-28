@@ -1,4 +1,4 @@
-package tysheng.sxbus.ui.main;
+package tysheng.sxbus.ui.activities;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,13 +9,14 @@ import tysheng.sxbus.R;
 import tysheng.sxbus.base.BaseActivity;
 import tysheng.sxbus.base.BaseFragment;
 import tysheng.sxbus.bean.FragCallback;
+import tysheng.sxbus.presenter.impl.MainPresenterImpl;
 import tysheng.sxbus.view.PositionBottomNavigationView;
 
 
 public class MainActivity extends BaseActivity implements MainView, PositionBottomNavigationView.onPositionSelectedListener, BaseFragment.FragmentCallback {
     @BindView(R.id.bottom)
     PositionBottomNavigationView mBottom;
-    private MainPresenter mPresenter;
+    private MainPresenterImpl mPresenter;
 
     @Override
     public int getLayoutId() {
@@ -36,7 +37,7 @@ public class MainActivity extends BaseActivity implements MainView, PositionBott
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        mPresenter = new MainPresenter(this, getSupportFragmentManager());
+        mPresenter = new MainPresenterImpl(this, getSupportFragmentManager());
         mPresenter.restorePosition(savedInstanceState);
         mBottom.registerIds(R.id.menu_star, R.id.menu_search, R.id.menu_more);
         mBottom.setOnPositionSelectedListener(this);

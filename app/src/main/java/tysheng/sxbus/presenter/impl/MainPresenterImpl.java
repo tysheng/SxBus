@@ -1,4 +1,4 @@
-package tysheng.sxbus.ui.main;
+package tysheng.sxbus.presenter.impl;
 
 import android.Manifest;
 import android.app.Activity;
@@ -12,10 +12,11 @@ import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import io.reactivex.functions.Consumer;
 import tysheng.sxbus.bean.FragCallback;
-import tysheng.sxbus.ui.MoreFragment;
-import tysheng.sxbus.ui.running.RunningFragment;
-import tysheng.sxbus.ui.search.SearchFragment;
-import tysheng.sxbus.ui.star.StarFragment;
+import tysheng.sxbus.ui.activities.MainView;
+import tysheng.sxbus.ui.fragments.MoreFragment;
+import tysheng.sxbus.ui.fragments.RunningFragment;
+import tysheng.sxbus.ui.fragments.SearchFragment;
+import tysheng.sxbus.ui.fragments.StarFragment;
 import tysheng.sxbus.utils.SnackBarUtil;
 
 /**
@@ -24,13 +25,13 @@ import tysheng.sxbus.utils.SnackBarUtil;
  * Email: tyshengsx@gmail.com
  */
 
-class MainPresenter {
+public class MainPresenterImpl {
     private static final String POSITION = "POSITION";
     private MainView mMainView;
     private FragmentManager mFragmentManager;
     private int pre;// 0 ,1 ,2 ,3(0跳到running),4(1跳到running)
 
-    MainPresenter(MainView mainView, FragmentManager manager) {
+    public MainPresenterImpl(MainView mainView, FragmentManager manager) {
         mMainView = mainView;
         mFragmentManager = manager;
     }
@@ -54,7 +55,7 @@ class MainPresenter {
         }
     }
 
-    void restorePosition(Bundle savedInstanceState) {
+    public void restorePosition(Bundle savedInstanceState) {
         preToCur(savedInstanceState != null ? savedInstanceState.getInt(POSITION) : 0, null);
     }
 
@@ -64,7 +65,7 @@ class MainPresenter {
      * @param cur      现在要跳转的 position
      * @param callback
      */
-    void preToCur(int cur, FragCallback callback) {
+    public void preToCur(int cur, FragCallback callback) {
         Fragment preFrag = mFragmentManager.findFragmentByTag(String.valueOf(pre));
         Fragment to = mFragmentManager.findFragmentByTag(String.valueOf(cur));
         if (to == null) {
@@ -74,11 +75,11 @@ class MainPresenter {
         pre = cur;
     }
 
-    void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(Bundle outState) {
         outState.putInt(POSITION, pre);
     }
 
-    boolean onBackPressed() {
+    public boolean onBackPressed() {
         boolean dispatch = true;
         if (pre == 3 || pre == 4) {
             mFragmentManager.beginTransaction()
@@ -93,7 +94,7 @@ class MainPresenter {
         return dispatch;
     }
 
-    void onPositionSelected(int position) {
+    public void onPositionSelected(int position) {
         int finalPos = position;
         if (position == 0 || position == 1) {
             if (mFragmentManager.findFragmentByTag(String.valueOf(position + 3)) != null) {
@@ -103,7 +104,7 @@ class MainPresenter {
         preToCur(finalPos, null);
     }
 
-    void askPermission(Activity activity, final View v) {
+    public void askPermission(Activity activity, final View v) {
         new RxPermissions(activity)
                 .request(Manifest.permission.READ_PHONE_STATE,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)

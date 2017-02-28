@@ -1,4 +1,4 @@
-package tysheng.sxbus.ui.main;
+package tysheng.sxbus.ui.activities;
 
 import android.support.v4.app.Fragment;
 

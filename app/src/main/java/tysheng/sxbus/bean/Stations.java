@@ -12,4 +12,9 @@ public class Stations {
     public String state;
     public String stationName;
     public String updateTime;
+    public ArriveState arriveState = ArriveState.NotArrive;
+
+    public enum ArriveState {
+        NotArrive, Arriving, Arrived
+    }
 }

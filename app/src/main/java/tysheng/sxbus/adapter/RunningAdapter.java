@@ -2,7 +2,6 @@ package tysheng.sxbus.adapter;
 
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
@@ -25,7 +24,7 @@ public class RunningAdapter extends BaseRecyclerViewAdapter<Stations> {
     protected void convert(StyBaseViewHolder holder, Stations bean) {
         TextView textView = holder.getView(R.id.textView);
         TextView going = holder.getView(R.id.going);
-        if (TextUtils.equals("a", bean.updateTime)) {
+        if (bean.arriveState == Stations.ArriveState.Arriving) {
             textView.setTextColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
             going.setVisibility(View.VISIBLE);
         } else {

@@ -13,19 +13,23 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.baidu.mobstat.StatService;
+import com.trello.rxlifecycle2.LifecycleTransformer;
+import com.trello.rxlifecycle2.android.FragmentEvent;
 import com.trello.rxlifecycle2.components.support.RxFragment;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import tysheng.sxbus.bean.FragCallback;
+import tysheng.sxbus.presenter.base.AbstractPresenter;
 import tysheng.sxbus.utils.LogUtil;
 
 /**
  * Created by shengtianyang on 16/2/22.
  */
-public abstract class BaseFragment extends RxFragment {
+public abstract class BaseFragment<T extends AbstractPresenter> extends RxFragment {
     private static final String STATE_SAVE_IS_HIDDEN = "STATE_SAVE_IS_HIDDEN";
     protected View mRootView;
+    protected T mPresenter;
     private Unbinder mBinder;
 
     @Override
@@ -34,10 +38,13 @@ public abstract class BaseFragment extends RxFragment {
         LogUtil.d(getTag() + "onAttach");
     }
 
+    protected abstract T initPresenter();
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LogUtil.d(getTag() + "onCreate");
+        mPresenter = initPresenter();
         if (savedInstanceState != null) {
             boolean isSupportHidden = savedInstanceState.getBoolean(STATE_SAVE_IS_HIDDEN);
 
@@ -55,6 +62,10 @@ public abstract class BaseFragment extends RxFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(STATE_SAVE_IS_HIDDEN, isHidden());
+    }
+
+    public <R> LifecycleTransformer<R> bindUntilDestroyView() {
+        return bindUntilEvent(FragmentEvent.DESTROY_VIEW);
     }
 
     @Nullable
@@ -88,6 +99,9 @@ public abstract class BaseFragment extends RxFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (mBinder != null)
+            mBinder.unbind();
+        mPresenter.onDestroy();
     }
 
     @Override

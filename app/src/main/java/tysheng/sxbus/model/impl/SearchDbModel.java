@@ -1,13 +1,13 @@
-package tysheng.sxbus.ui.search;
+package tysheng.sxbus.model.impl;
 
 import java.util.List;
 
 import tysheng.sxbus.Constant;
-import tysheng.sxbus.base.BaseModule;
 import tysheng.sxbus.bean.Star;
 import tysheng.sxbus.dao.StarDao;
 import tysheng.sxbus.db.DbUtil;
 import tysheng.sxbus.db.StarHelper;
+import tysheng.sxbus.model.base.BaseModel;
 
 /**
  * Created by tysheng
@@ -15,15 +15,15 @@ import tysheng.sxbus.db.StarHelper;
  * Email: tyshengsx@gmail.com
  */
 
-class DbModule implements BaseModule {
+public class SearchDbModel implements BaseModel {
 
     private StarHelper mHelper;
 
-    DbModule() {
+    public SearchDbModel() {
         mHelper = DbUtil.getDriverHelper();
     }
 
-    List<Star> getRecentList() {
+    public List<Star> getRecentList() {
         return mHelper.queryBuilder()
                 .where(StarDao.Properties.TableName.eq(Constant.RECENT))
                 .limit(20)
@@ -36,12 +36,12 @@ class DbModule implements BaseModule {
 
     }
 
-    void onItemClick(Star star) {
+    public void onItemClick(Star star) {
         star.setTableName(Constant.RECENT);
         mHelper.saveOrUpdate(star);
     }
 
-    void onItemClickCollect(Star item) {
+    public void onItemClickCollect(Star item) {
         item.isStar = true;
 
         Star uni = mHelper.queryBuilder()
@@ -58,7 +58,7 @@ class DbModule implements BaseModule {
         }
     }
 
-    void delete() {
+    public void delete() {
         mHelper.delete(getRecentList());
     }
 }

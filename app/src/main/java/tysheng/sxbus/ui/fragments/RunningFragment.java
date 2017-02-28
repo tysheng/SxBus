@@ -1,4 +1,4 @@
-package tysheng.sxbus.ui.running;
+package tysheng.sxbus.ui.fragments;
 
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -9,17 +9,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
-import com.trello.rxlifecycle2.LifecycleTransformer;
-
-import java.util.List;
-
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.OnClick;
 import tysheng.sxbus.R;
-import tysheng.sxbus.adapter.RunningAdapter;
 import tysheng.sxbus.base.BaseFragment;
-import tysheng.sxbus.bean.Stations;
+import tysheng.sxbus.presenter.impl.RunningPresenterPresenterImpl;
+import tysheng.sxbus.ui.inter.RunningView;
 import tysheng.sxbus.utils.SnackBarUtil;
 
 /**
@@ -28,7 +24,7 @@ import tysheng.sxbus.utils.SnackBarUtil;
  * Email: tyshengsx@gmail.com
  */
 
-public class RunningFragment extends BaseFragment implements RunningView<List<Stations>>, SwipeRefreshLayout.OnRefreshListener {
+public class RunningFragment extends BaseFragment<RunningPresenterPresenterImpl> implements RunningView, SwipeRefreshLayout.OnRefreshListener {
     @BindView(R.id.title)
     TextView mTitle;
     @BindView(R.id.recyclerView)
@@ -41,9 +37,6 @@ public class RunningFragment extends BaseFragment implements RunningView<List<St
     FloatingActionButton mFloatingActionButton;
     @BindString(R.string.running_error)
     String runningError;
-    private String id;
-    private RunningAdapter mRunningAdapter;
-    private RunningPresenter mPresenter;
 
     public static RunningFragment newFragment(String id, String title) {
         RunningFragment fragment = new RunningFragment();
@@ -55,18 +48,21 @@ public class RunningFragment extends BaseFragment implements RunningView<List<St
     }
 
     @Override
+    protected RunningPresenterPresenterImpl initPresenter() {
+        return new RunningPresenterPresenterImpl(this);
+    }
+
+    @Override
     protected int getLayoutId() {
         return R.layout.fragment_running;
     }
 
     @Override
     protected void initData() {
-        mPresenter = new RunningPresenter(this);
-        Bundle bundle = getArguments();
-        id = bundle.getString("0");
-        mTitle.setText(bundle.getString("1"));
-        mRunningAdapter = new RunningAdapter();
-        mRecyclerView.setAdapter(mRunningAdapter);
+        mPresenter.setArgs(getArguments());
+        mTitle.setText(mPresenter.geTitle());
+        mPresenter.initData();
+        mRecyclerView.setAdapter(mPresenter.getAdapter());
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
@@ -74,31 +70,19 @@ public class RunningFragment extends BaseFragment implements RunningView<List<St
             @Override
             public void run() {
                 mSwipeRefreshLayout.setRefreshing(true);
-                mPresenter.refresh(id);
+                mPresenter.refresh();
             }
         });
         mPresenter.popupFab(mFloatingActionButton);
-
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mPresenter.onDestroy();
-    }
-
-    @Override
-    public void onSuccess(List<Stations> list) {
-        mRunningAdapter.setNewData(list);
-    }
-
-    @Override
-    public void onError(Throwable e) {
+    public void onNetworkError(Throwable t) {
         SnackBarUtil.show(mCoordinatorLayout, runningError, Snackbar.LENGTH_LONG);
     }
 
     @Override
-    public void onTerminate() {
+    public void onNetworkTerminate() {
         if (mSwipeRefreshLayout.isRefreshing())
             mSwipeRefreshLayout.setRefreshing(false);
         mSwipeRefreshLayout.setEnabled(false);
@@ -111,18 +95,14 @@ public class RunningFragment extends BaseFragment implements RunningView<List<St
         mSwipeRefreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
-                mPresenter.refresh(id);
+                mPresenter.refresh();
             }
         }, 100);
     }
 
     @Override
     public void onRefresh() {
-        mPresenter.refresh(id);
+        mPresenter.refresh();
     }
 
-    @Override
-    public <T> LifecycleTransformer<T> bind2Lifecycle() {
-        return bindToLifecycle();
-    }
 }

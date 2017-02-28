@@ -1,15 +1,16 @@
-package tysheng.sxbus.ui.star;
+package tysheng.sxbus.model.impl;
 
 import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.List;
 
 import tysheng.sxbus.Constant;
-import tysheng.sxbus.base.BaseModule;
 import tysheng.sxbus.bean.Star;
 import tysheng.sxbus.dao.StarDao;
 import tysheng.sxbus.db.DbUtil;
 import tysheng.sxbus.db.StarHelper;
+import tysheng.sxbus.model.base.BaseModel;
+import tysheng.sxbus.presenter.impl.StarPresenterImpl;
 
 /**
  * Created by tysheng
@@ -17,19 +18,19 @@ import tysheng.sxbus.db.StarHelper;
  * Email: tyshengsx@gmail.com
  */
 
-class DbModule implements BaseModule {
-    private StarPresenter mPresenter;
+public class DbModel implements BaseModel {
+    private StarPresenterImpl mPresenter;
     private StarHelper mHelper;
     private QueryBuilder<Star> mQueryBuilder;
     private List<Star> mStarList;
 
-    DbModule(StarPresenter presenter) {
+    public DbModel(StarPresenterImpl presenter) {
         mPresenter = presenter;
         mHelper = DbUtil.getDriverHelper();
 
     }
 
-    List<Star> getStarList() {
+    public List<Star> getStarList() {
         if (mQueryBuilder == null)
             mQueryBuilder = mHelper.queryBuilder()
                     .where(StarDao.Properties.TableName.eq(Constant.STAR), StarDao.Properties.IsStar.eq("TRUE"))
@@ -43,11 +44,11 @@ class DbModule implements BaseModule {
         mPresenter = null;
     }
 
-    void deleteByKey(Long mainId) {
+    public void deleteByKey(Long mainId) {
         mHelper.deleteByKey(mainId);
     }
 
-    void dragEnd() {
+    public void dragEnd() {
         mHelper.delete(getStarList());
         for (int i = 0; i < mStarList.size(); i++) {
             Star star = mStarList.get(i);

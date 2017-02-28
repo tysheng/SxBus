@@ -1,4 +1,4 @@
-package tysheng.sxbus.base;
+package tysheng.sxbus.model.base;
 
 /**
  * Created by tysheng
@@ -6,6 +6,6 @@ package tysheng.sxbus.base;
  * Email: tyshengsx@gmail.com
  */
 
-public interface BaseModule {
+public interface BaseModel {
     void onDestroy();
 }

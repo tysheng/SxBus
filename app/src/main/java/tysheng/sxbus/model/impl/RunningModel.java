@@ -1,4 +1,4 @@
-package tysheng.sxbus.ui.running;
+package tysheng.sxbus.model.impl;
 
 import android.animation.Animator;
 import android.support.design.widget.FloatingActionButton;
@@ -8,6 +8,8 @@ import android.view.animation.OvershootInterpolator;
 
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.functions.BiFunction;
 import tysheng.sxbus.App;
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.bean.BusLinesResult;
@@ -16,10 +18,13 @@ import tysheng.sxbus.bean.KeQiaoBusResult;
 import tysheng.sxbus.bean.Stations;
 import tysheng.sxbus.bean.Status;
 import tysheng.sxbus.bean.YueChenBusResult;
+import tysheng.sxbus.net.BusRetrofit;
+import tysheng.sxbus.presenter.inter.RunningPresenterInterface;
 import tysheng.sxbus.utils.JsonUtil;
 import tysheng.sxbus.utils.ListUtil;
-import tysheng.sxbus.utils.LogUtil;
+import tysheng.sxbus.utils.RxHelper;
 import tysheng.sxbus.utils.SPHelper;
+import tysheng.sxbus.utils.StyObserver;
 import tysheng.sxbus.utils.SystemUtil;
 
 /**
@@ -28,11 +33,43 @@ import tysheng.sxbus.utils.SystemUtil;
  * Email: tyshengsx@gmail.com
  */
 
-class RunningModule {
+public class RunningModel {
     private SPHelper mSPHelper;
+    private RunningPresenterInterface mInterface;
 
-    RunningModule() {
+    public RunningModel(RunningPresenterInterface anInterface) {
+        mInterface = anInterface;
+    }
 
+    public void refresh(String id) {
+        Observable.zip(BusRetrofit.get().getBusLines(id),
+                BusRetrofit.get().getRunningBus(id),
+                new BiFunction<CallBack, CallBack, List<Stations>>() {
+                    @Override
+                    public List<Stations> apply(CallBack busLines, CallBack busLine) throws Exception {
+                        return zip(busLines, busLine);
+                    }
+                })
+                .compose(mInterface.<List<Stations>>bindUntilDestroyView())
+                .compose(RxHelper.<List<Stations>>ioToMain())
+                .subscribe(new StyObserver<List<Stations>>() {
+                    @Override
+                    public void next(List<Stations> stationses) {
+                        mInterface.onDataSuccess(stationses);
+                    }
+
+                    @Override
+                    public void onTerminate() {
+                        super.onTerminate();
+                        mInterface.onNetworkTerminate();
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        mInterface.onNetworkError(t);
+                        super.onError(t);
+                    }
+                });
     }
 
     private SPHelper getSPHelper() {
@@ -43,7 +80,7 @@ class RunningModule {
     }
 
     private boolean byStation() {
-        return getSPHelper().get(Constant.STATION_MODE, Constant.BY_DISTANCE) == Constant.BY_STATION;
+        return getSPHelper().get(Constant.STATION_MODE, Constant.BY_STATION) == Constant.BY_STATION;
     }
 
     private double countDistance(double[] i1, double[] i2) {
@@ -51,9 +88,8 @@ class RunningModule {
                 + (i1[1] - i2[1]) * (i1[1] - i2[1]);
     }
 
-    List<Stations> zip(CallBack busLines, CallBack busLine) {
+    private List<Stations> zip(CallBack busLines, CallBack busLine) {
         BusLinesResult finalResult = JsonUtil.parse(busLines.result, BusLinesResult.class);
-        LogUtil.d(finalResult.lineName + finalResult.endStationName);
         List<Stations> stations = JsonUtil.parseArray(finalResult.stations, Stations.class);
         //running
         Status status = JsonUtil.parse(busLine.status, Status.class);
@@ -62,8 +98,9 @@ class RunningModule {
                 List<YueChenBusResult> list = JsonUtil.parseArray(busLine.result, YueChenBusResult.class);
                 for (YueChenBusResult result : list) {
                     int station = result.stationSeqNum - 1;
-                    if (station < stations.size())
-                        stations.get(station).updateTime = "a";
+                    if (station < stations.size()) {
+                        stations.get(station).arriveState = Stations.ArriveState.Arriving;
+                    }
                 }
             } else {//县汽运巴士
                 List<KeQiaoBusResult> runningList = JsonUtil.parseArray(busLine.result, KeQiaoBusResult.class);
@@ -79,14 +116,14 @@ class RunningModule {
                             distance = temp;
                         }
                     }
-                    stations.get(station).updateTime = "a";
+                    stations.get(station).arriveState = Stations.ArriveState.Arriving;
                 }
             }
         }
         return stations;
     }
 
-    void popupFab(final FloatingActionButton floatingActionButton) {
+    public void popupFab(final FloatingActionButton floatingActionButton) {
         floatingActionButton.setTranslationY(2 * SystemUtil.dp2px(56));
         floatingActionButton.animate()
                 .translationY(0)
