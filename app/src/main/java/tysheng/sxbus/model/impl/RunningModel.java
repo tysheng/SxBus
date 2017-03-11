@@ -6,22 +6,22 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.functions.BiFunction;
-import tysheng.sxbus.App;
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.bean.BusLinesResult;
 import tysheng.sxbus.bean.CallBack;
-import tysheng.sxbus.bean.KeQiaoBusResult;
 import tysheng.sxbus.bean.Stations;
 import tysheng.sxbus.bean.Status;
 import tysheng.sxbus.bean.YueChenBusResult;
 import tysheng.sxbus.net.BusRetrofit;
-import tysheng.sxbus.presenter.inter.RunningPresenterInterface;
+import tysheng.sxbus.presenter.inter.RunningPresenter;
 import tysheng.sxbus.utils.JsonUtil;
 import tysheng.sxbus.utils.ListUtil;
+import tysheng.sxbus.utils.MapUtil;
 import tysheng.sxbus.utils.RxHelper;
 import tysheng.sxbus.utils.SPHelper;
 import tysheng.sxbus.utils.StyObserver;
@@ -35,9 +35,11 @@ import tysheng.sxbus.utils.SystemUtil;
 
 public class RunningModel {
     private SPHelper mSPHelper;
-    private RunningPresenterInterface mInterface;
+    private RunningPresenter mInterface;
+    private List<YueChenBusResult> mResults;
+    private List<Stations> stations;
 
-    public RunningModel(RunningPresenterInterface anInterface) {
+    public RunningModel(RunningPresenter anInterface) {
         mInterface = anInterface;
     }
 
@@ -72,15 +74,8 @@ public class RunningModel {
                 });
     }
 
-    private SPHelper getSPHelper() {
-        if (mSPHelper == null) {
-            mSPHelper = new SPHelper(App.get());
-        }
-        return mSPHelper;
-    }
-
     private boolean byStation() {
-        return getSPHelper().get(Constant.STATION_MODE, Constant.BY_STATION) == Constant.BY_STATION;
+        return SPHelper.get(Constant.STATION_MODE, Constant.BY_STATION) == Constant.BY_STATION;
     }
 
     private double countDistance(double[] i1, double[] i2) {
@@ -90,27 +85,26 @@ public class RunningModel {
 
     private List<Stations> zip(CallBack busLines, CallBack busLine) {
         BusLinesResult finalResult = JsonUtil.parse(busLines.result, BusLinesResult.class);
-        List<Stations> stations = JsonUtil.parseArray(finalResult.stations, Stations.class);
+        stations = JsonUtil.parseArray(finalResult.stations, Stations.class);
         //running
         Status status = JsonUtil.parse(busLine.status, Status.class);
         if (status.code == 0 && !ListUtil.isEmpty(stations)) {
+            mResults = JsonUtil.parseArray(busLine.result, YueChenBusResult.class);
             if (TextUtils.equals("市公交集团公司", finalResult.owner) && byStation()) {
-                List<YueChenBusResult> list = JsonUtil.parseArray(busLine.result, YueChenBusResult.class);
-                for (YueChenBusResult result : list) {
+                for (YueChenBusResult result : mResults) {
                     int station = result.stationSeqNum - 1;
                     if (station < stations.size()) {
                         stations.get(station).arriveState = Stations.ArriveState.Arriving;
                     }
                 }
             } else {//县汽运巴士
-                List<KeQiaoBusResult> runningList = JsonUtil.parseArray(busLine.result, KeQiaoBusResult.class);
-                for (KeQiaoBusResult result : runningList) {
+                for (YueChenBusResult result : mResults) {
                     double[] i1 = new double[]{result.lng, result.lat};
                     double distance = 2;
                     int station = 0;
                     for (int i = 0; i < stations.size(); i++) {
                         double[] i2 = new double[]{stations.get(i).lng, stations.get(i).lat};
-                        double temp = countDistance(i1, i2);
+                        double temp = countDistance(MapUtil.gpsToBdLatLng(i1), i2);
                         if (temp < distance) {
                             station = i;
                             distance = temp;
@@ -121,6 +115,14 @@ public class RunningModel {
             }
         }
         return stations;
+    }
+
+    public ArrayList<Stations> getStations() {
+        return (ArrayList<Stations>) stations;
+    }
+
+    public ArrayList<YueChenBusResult> getResults() {
+        return (ArrayList<YueChenBusResult>) mResults;
     }
 
     public void popupFab(final FloatingActionButton floatingActionButton) {

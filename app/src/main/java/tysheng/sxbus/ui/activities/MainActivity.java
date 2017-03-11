@@ -27,6 +27,7 @@ public class MainActivity extends BaseActivity implements MainView, PositionBott
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         setTheme(R.style.AppTheme_Main);
         super.onCreate(savedInstanceState);
+
     }
 
     @Override

@@ -3,50 +3,48 @@ package tysheng.sxbus.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import tysheng.sxbus.App;
+
 
 /**
  * Created by shengtianyang on 16/2/22.
  */
 public class SPHelper {
-    private final String SP_NAME = "SP_NAME";
-    private SharedPreferences mSharedPreferences;
+    private static final String SP_NAME = "SP_NAME";
+    private static SharedPreferences mSharedPreferences;
 
-    public SPHelper(Context context) {
-        mSharedPreferences = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
+    private SPHelper() {
     }
 
-    public void put(String key, String value) {
-        SharedPreferences.Editor editor = mSharedPreferences.edit();
+    public static void put(String key, String value) {
+        SharedPreferences.Editor editor = getInstance().edit();
         editor.putString(key, value);
         editor.apply();
     }
 
-    public String get(String key, String defaultValue) {
-        return mSharedPreferences.getString(key, defaultValue);
+    public static String get(String key, String defaultValue) {
+        return getInstance().getString(key, defaultValue);
     }
 
-    public void put(String key, int i) {
-        SharedPreferences.Editor editor = mSharedPreferences.edit();
+    public static void put(String key, int i) {
+        SharedPreferences.Editor editor = getInstance().edit();
         editor.putInt(key, i);
         editor.apply();
     }
 
-    public int get(String key, int s) {
-        return mSharedPreferences.getInt(key, s);
+    private static SharedPreferences getInstance() {
+        if (mSharedPreferences == null) {
+            mSharedPreferences = App.get().getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
+        }
+        return mSharedPreferences;
     }
 
-    public void put(String key, boolean i) {
-        SharedPreferences.Editor editor = mSharedPreferences.edit();
-        editor.putBoolean(key, i);
-        editor.apply();
+    public static int get(String key, int s) {
+        return getInstance().getInt(key, s);
     }
 
-    public boolean get(String key, boolean s) {
-        return mSharedPreferences.getBoolean(key, s);
-    }
-
-    public void clear() {
-        SharedPreferences.Editor editor = mSharedPreferences.edit();
+    public static void clear() {
+        SharedPreferences.Editor editor = getInstance().edit();
         editor.clear().apply();
     }
 }

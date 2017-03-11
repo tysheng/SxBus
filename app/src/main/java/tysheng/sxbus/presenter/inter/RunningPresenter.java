@@ -11,8 +11,10 @@ import tysheng.sxbus.presenter.base.RetrofitErrorInterface;
  * Email: tyshengsx@gmail.com
  */
 
-public interface RunningPresenterInterface extends RetrofitErrorInterface {
+public interface RunningPresenter extends RetrofitErrorInterface {
     void onDataSuccess(List<Stations> stationses);
 
     void refresh();
+
+    void startMap();
 }

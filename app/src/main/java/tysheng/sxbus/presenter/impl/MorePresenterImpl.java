@@ -84,19 +84,12 @@ public class MorePresenterImpl extends AbstractPresenter<MoreView> {
         });
     }
 
-    private SPHelper getSPHelper() {
-        if (mSPHelper == null) {
-            mSPHelper = new SPHelper(getContext());
-        }
-        return mSPHelper;
-    }
-
     public void setStationMode() {
         new AlertDialog.Builder(getContext())
                 .setItems(new String[]{"根据站点", "根据距离"}, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        getSPHelper().put(Constant.STATION_MODE, which);
+                        SPHelper.put(Constant.STATION_MODE, which);
                     }
                 })
                 .show();

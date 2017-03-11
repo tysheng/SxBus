@@ -22,7 +22,6 @@ import tysheng.sxbus.App;
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.ChooseCityAdapter;
 import tysheng.sxbus.bean.CitySection;
-import tysheng.sxbus.utils.SPHelper;
 
 /**
  * Created by Sty
@@ -37,12 +36,10 @@ public class ChooseCityFragment extends DialogFragment {
     };
 
     List<CitySection> mList;
-    SPHelper helper;
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        helper = new SPHelper(getContext());
         mList = new ArrayList<>();
         for (String s : names) {
             CitySection section;

@@ -1,7 +1,6 @@
 package tysheng.sxbus.base;
 
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
@@ -31,12 +30,6 @@ public abstract class BaseFragment<T extends AbstractPresenter> extends RxFragme
     protected View mRootView;
     protected T mPresenter;
     private Unbinder mBinder;
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        LogUtil.d(getTag() + "onAttach");
-    }
 
     protected abstract T initPresenter();
 
@@ -74,41 +67,36 @@ public abstract class BaseFragment<T extends AbstractPresenter> extends RxFragme
         mRootView = inflater.inflate(getLayoutId(), container, false);
         mBinder = ButterKnife.bind(this, mRootView);
         initData();
-        LogUtil.d(getTag() + "onCreateView");
+        LogUtil.d("onCreateView" + toString());
         return mRootView;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        StatService.onResume(this);
+        StatService.onPageStart(getContext(), toString());
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        StatService.onPause(this);
+        StatService.onPageEnd(getContext(), toString());
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        LogUtil.d(getTag() + "onDestroyView");
+        mPresenter.onDestroy();
+        LogUtil.d("onDestroyView " + toString());
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mBinder != null)
-            mBinder.unbind();
-        mPresenter.onDestroy();
+//        if (mBinder != null)
+//            mBinder.unbind();
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        LogUtil.d(getTag() + "onDetach");
-    }
 
     protected void addFragment(@NonNull Fragment from, @NonNull Fragment to, @IdRes int id, String tag, String backStackTag) {
         getFragmentManager()

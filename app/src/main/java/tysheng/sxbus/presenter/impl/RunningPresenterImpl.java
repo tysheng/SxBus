@@ -1,17 +1,22 @@
 package tysheng.sxbus.presenter.impl;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 
 import java.util.List;
 
+import tysheng.sxbus.Constant;
 import tysheng.sxbus.adapter.RunningAdapter;
 import tysheng.sxbus.bean.Stations;
 import tysheng.sxbus.model.impl.RunningModel;
 import tysheng.sxbus.presenter.base.AbstractPresenter;
-import tysheng.sxbus.presenter.inter.RunningPresenterInterface;
+import tysheng.sxbus.presenter.inter.RunningPresenter;
+import tysheng.sxbus.ui.activities.ToolbarActivity;
 import tysheng.sxbus.ui.inter.RunningView;
+import tysheng.sxbus.utils.SPHelper;
 
 /**
  * Created by tysheng
@@ -19,19 +24,47 @@ import tysheng.sxbus.ui.inter.RunningView;
  * Email: tyshengsx@gmail.com
  */
 
-public class RunningPresenterPresenterImpl extends AbstractPresenter<RunningView> implements RunningPresenterInterface {
+public class RunningPresenterImpl extends AbstractPresenter<RunningView> implements RunningPresenter {
     private RunningModel mRunningModel;
     private String title;
     private String id;
     private RunningAdapter mRunningAdapter;
 
-    public RunningPresenterPresenterImpl(RunningView view) {
+    public RunningPresenterImpl(RunningView view) {
         super(view);
         mRunningModel = new RunningModel(this);
     }
 
     public void refresh() {
         mRunningModel.refresh(id);
+    }
+
+    @Override
+    public void startMap() {
+        if (SPHelper.get(Constant.OFFLINE_MAP, 0) == 0) {
+            new AlertDialog.Builder(getContext())
+                    .setTitle("提醒")
+                    .setMessage("第一次查看会下载离线地图，是否继续？")
+                    .setNegativeButton("不了", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .setPositiveButton("继续查看", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            startMapActivity();
+                        }
+                    })
+                    .show();
+        } else {
+            startMapActivity();
+        }
+    }
+
+    private void startMapActivity() {
+        ToolbarActivity.startMap(getContext(), mRunningModel.getResults(), mRunningModel.getStations());
     }
 
     @Override

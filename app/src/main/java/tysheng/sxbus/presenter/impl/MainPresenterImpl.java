@@ -107,7 +107,8 @@ public class MainPresenterImpl {
     public void askPermission(Activity activity, final View v) {
         new RxPermissions(activity)
                 .request(Manifest.permission.READ_PHONE_STATE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.ACCESS_FINE_LOCATION)
                 .subscribe(new Consumer<Boolean>() {
                     @Override
                     public void accept(Boolean aBoolean) throws Exception {

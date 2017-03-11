@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.TextView;
 
 import butterknife.BindString;
@@ -14,7 +15,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import tysheng.sxbus.R;
 import tysheng.sxbus.base.BaseFragment;
-import tysheng.sxbus.presenter.impl.RunningPresenterPresenterImpl;
+import tysheng.sxbus.presenter.impl.RunningPresenterImpl;
 import tysheng.sxbus.ui.inter.RunningView;
 import tysheng.sxbus.utils.SnackBarUtil;
 
@@ -24,7 +25,7 @@ import tysheng.sxbus.utils.SnackBarUtil;
  * Email: tyshengsx@gmail.com
  */
 
-public class RunningFragment extends BaseFragment<RunningPresenterPresenterImpl> implements RunningView, SwipeRefreshLayout.OnRefreshListener {
+public class RunningFragment extends BaseFragment<RunningPresenterImpl> implements RunningView, SwipeRefreshLayout.OnRefreshListener {
     @BindView(R.id.title)
     TextView mTitle;
     @BindView(R.id.recyclerView)
@@ -48,8 +49,8 @@ public class RunningFragment extends BaseFragment<RunningPresenterPresenterImpl>
     }
 
     @Override
-    protected RunningPresenterPresenterImpl initPresenter() {
-        return new RunningPresenterPresenterImpl(this);
+    protected RunningPresenterImpl initPresenter() {
+        return new RunningPresenterImpl(this);
     }
 
     @Override
@@ -88,16 +89,25 @@ public class RunningFragment extends BaseFragment<RunningPresenterPresenterImpl>
         mSwipeRefreshLayout.setEnabled(false);
     }
 
-    @OnClick(R.id.fab)
-    public void onClick() {
-        mSwipeRefreshLayout.setEnabled(true);
-        mSwipeRefreshLayout.setRefreshing(true);
-        mSwipeRefreshLayout.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mPresenter.refresh();
-            }
-        }, 100);
+    @OnClick({R.id.fab, R.id.forMap})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.fab:
+                mSwipeRefreshLayout.setEnabled(true);
+                mSwipeRefreshLayout.setRefreshing(true);
+                mSwipeRefreshLayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mPresenter.refresh();
+                    }
+                }, 100);
+                break;
+            case R.id.forMap:
+                mPresenter.startMap();
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
