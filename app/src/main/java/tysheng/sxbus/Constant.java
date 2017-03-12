@@ -14,4 +14,5 @@ public interface Constant {
     int WHAT_STAR = 3;
     int WHAT_SEARCH = 4;
     String OFFLINE_MAP = "OFFLINE_MAP";
+    String DRAW_STATION = "DRAW_STATION";
 }

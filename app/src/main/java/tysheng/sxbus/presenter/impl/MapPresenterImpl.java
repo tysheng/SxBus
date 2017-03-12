@@ -2,36 +2,28 @@ package tysheng.sxbus.presenter.impl;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.TextView;
 
 import com.baidu.location.BDLocation;
 import com.baidu.mapapi.map.BaiduMap;
-import com.baidu.mapapi.map.BitmapDescriptor;
-import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.InfoWindow;
 import com.baidu.mapapi.map.MapPoi;
 import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.Marker;
-import com.baidu.mapapi.map.MarkerOptions;
-import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
-import com.baidu.mapapi.map.OverlayOptions;
-import com.baidu.mapapi.map.PolylineOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.model.LatLngBounds;
-import com.baidu.mapapi.utils.CoordinateConverter;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import tysheng.sxbus.R;
 import tysheng.sxbus.bean.Stations;
 import tysheng.sxbus.bean.YueChenBusResult;
+import tysheng.sxbus.model.impl.DrawModelImpl;
 import tysheng.sxbus.presenter.base.AbstractPresenter;
+import tysheng.sxbus.presenter.inter.DrawPresenter;
 import tysheng.sxbus.presenter.inter.MapPresenter;
 import tysheng.sxbus.ui.inter.MapView;
 import tysheng.sxbus.utils.LogUtil;
@@ -46,47 +38,23 @@ import tysheng.sxbus.utils.UiUtil;
  * Email: tyshengsx@gmail.com
  */
 
-public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapPresenter {
-    private BitmapDescriptor iconBus, iconStation, iconStart, iconEnd;
+public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapPresenter, DrawPresenter {
+
     private BaiduMap mBaiduMap;
     private ArrayList<YueChenBusResult> mResultList;
     private ArrayList<Stations> mStationsList;
     private InfoWindow mInfoWindow;
+    private DrawModelImpl mDrawModel;
+    private LatLng userClickLatLng;
 
     public MapPresenterImpl(MapView view) {
         super(view);
-    }
-
-    private BitmapDescriptor getBusIcon() {
-        if (iconBus == null) {
-            iconBus = BitmapDescriptorFactory.fromResource(R.drawable.ic_bus);
-        }
-        return iconBus;
-    }
-
-    private BitmapDescriptor getStationIcon() {
-        if (iconStation == null) {
-            iconStation = BitmapDescriptorFactory.fromResource(R.drawable.icon_station);
-        }
-        return iconStation;
-    }
-
-    private BitmapDescriptor getStartIcon() {
-        if (iconStart == null) {
-            iconStart = BitmapDescriptorFactory.fromResource(R.drawable.ic_start);
-        }
-        return iconStart;
-    }
-
-    private BitmapDescriptor getEndIcon() {
-        if (iconEnd == null) {
-            iconEnd = BitmapDescriptorFactory.fromResource(R.drawable.ic_end);
-        }
-        return iconEnd;
+        mDrawModel = new DrawModelImpl(this);
     }
 
     @Override
     public void setArgs(Bundle bundle) {
+        userClickLatLng = bundle.getParcelable("2");
         mResultList = bundle.getParcelableArrayList("0");
         mStationsList = bundle.getParcelableArrayList("1");
     }
@@ -95,62 +63,10 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
     public void initData() {
         mBaiduMap = mView.getMap();
         initMap();
-        List<LatLng> list = new ArrayList<>();
-
-        for (int i = 0; i < mStationsList.size(); i++) {
-            Stations sta = mStationsList.get(i);
-            LatLng ll = new LatLng(sta.lat, sta.lng);
-            list.add(ll);
-            if (i == 0) {
-                //起点
-                OverlayOptions oo = new MarkerOptions().position(ll).icon(getStartIcon()).title(sta.stationName).zIndex(i).perspective(true);
-                mBaiduMap.addOverlay(oo);
-            } else if (i == mStationsList.size() - 1) {
-                //终点
-                OverlayOptions oo = new MarkerOptions().position(ll).icon(getEndIcon()).title(sta.stationName).zIndex(i).perspective(true);
-                mBaiduMap.addOverlay(oo);
-            } else {
-                //站点
-                OverlayOptions oo = new MarkerOptions().position(ll).icon(getStationIcon()).title(sta.stationName).zIndex(i);
-                mBaiduMap.addOverlay(oo);
-            }
-        }
-
-        //连接线
-        OverlayOptions option = new PolylineOptions().points(list).color(ContextCompat.getColor(getContext(), R.color.baidu_blue));
-        mBaiduMap.addOverlay(option);
-
-        //车辆坐标
-        for (int i = 0; i < mResultList.size(); i++) {
-            YueChenBusResult point = mResultList.get(i);
-            LatLng ll = new LatLng(point.lat, point.lng);
-            // 将GPS设备采集的原始GPS坐标转换成百度坐标
-            CoordinateConverter converter = new CoordinateConverter();
-            converter.from(CoordinateConverter.CoordType.GPS);
-            // sourceLatLng待转换坐标
-            converter.coord(ll);
-            LatLng desLatLng = converter.convert();
-            OverlayOptions oo = new MarkerOptions().position(desLatLng).icon(getBusIcon()).zIndex(1000 + i);
-            mBaiduMap.addOverlay(oo);
-        }
-
+        mDrawModel.drawStations(mStationsList);
+        mDrawModel.drawBuses(mResultList);
     }
 
-    private void setPosition(BDLocation location) {
-        // 开启定位图层
-        mBaiduMap.setMyLocationEnabled(true);
-        // 构造定位数据
-        MyLocationData locData = new MyLocationData.Builder()
-                .accuracy(location.getRadius())
-                // 此处设置开发者获取到的方向信息，顺时针0-360
-                .direction(100).latitude(location.getLatitude())
-                .longitude(location.getLongitude()).build();
-        // 设置定位数据
-        mBaiduMap.setMyLocationData(locData);
-        // 设置定位图层的配置（定位模式，是否允许方向信息，用户自定义定位图标）
-        MyLocationConfiguration config = new MyLocationConfiguration(MyLocationConfiguration.LocationMode.NORMAL, true, null);
-        mBaiduMap.setMyLocationConfigeration(config);
-    }
 
     private void initMap() {
         // mBaiduMap.setMapType(BaiduMap.MAP_TYPE_NONE);
@@ -192,15 +108,19 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
                             mBaiduMap.hideInfoWindow();
                         }
                     });
-                } else if (position >= 1000) {
-                    final int realPosition = position - 1000;
-                    YueChenBusResult result = mResultList.get(realPosition);
-                    LogUtil.d(result.stationSeqNum);
+                } else if (position >= 1000 && position < 2000) {
+//                    final int realPosition = position - 1000;
+//                    YueChenBusResult result = mResultList.get(realPosition);
+//                    LogUtil.d(result.stationSeqNum);
                 }
                 return true;
             }
         });
         refreshLocation();
+    }
+
+    private LatLng findClickLocation() {
+        return userClickLatLng;
     }
 
     @Override
@@ -230,7 +150,17 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
                 .direction(100).latitude(latLng.latitude)
                 .longitude(latLng.longitude).build();
         mBaiduMap.setMyLocationData(locData);
-        setCenterPoint(latLng.latitude, latLng.longitude);
+
+        /**
+         * 是否是点击进来的，如果是就跳转过去
+         */
+        LatLng finalLatLng = findClickLocation();
+        if (finalLatLng == null) {
+            finalLatLng = latLng;
+        } else {
+            mDrawModel.drawSinglePlace(finalLatLng);
+        }
+        setCenterPoint(finalLatLng.latitude, finalLatLng.longitude);
     }
 
     @Override
@@ -248,5 +178,15 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
                 setLocation(latLng);
             }
         });
+    }
+
+    @Override
+    public BaiduMap getBaiduMap() {
+        return mBaiduMap;
+    }
+
+    @Override
+    public void drawStations() {
+        mDrawModel.drawStationsClick();
     }
 }

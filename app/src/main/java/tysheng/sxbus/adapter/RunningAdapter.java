@@ -32,5 +32,9 @@ public class RunningAdapter extends BaseRecyclerViewAdapter<Stations> {
             textView.setTextColor(Color.BLACK);
         }
         textView.setText(bean.stationName);
+        int pos = holder.getLayoutPosition();
+        boolean isEven = pos % 2 == 1;
+        holder.setBackgroundColor(R.id.itemRoot, isEven ? Color.WHITE : ContextCompat.getColor(mContext, R.color.grey_100));
+        setListener(holder);
     }
 }

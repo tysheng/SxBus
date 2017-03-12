@@ -9,5 +9,8 @@
         android:orderInCategory="100"
         app:showAsAction="ifRoom"
         tools:ignore="MenuTitle" />
-
+    <item
+        android:id="@+id/action_draw_station"
+        android:title="是否显示每个站点"
+        app:showAsAction="never" />
 </menu>

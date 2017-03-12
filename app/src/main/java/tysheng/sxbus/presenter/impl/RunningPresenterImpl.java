@@ -5,11 +5,15 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+
+import com.baidu.mapapi.model.LatLng;
 
 import java.util.List;
 
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.adapter.RunningAdapter;
+import tysheng.sxbus.base.BaseRecyclerViewAdapter;
 import tysheng.sxbus.bean.Stations;
 import tysheng.sxbus.model.impl.RunningModel;
 import tysheng.sxbus.presenter.base.AbstractPresenter;
@@ -56,22 +60,22 @@ public class RunningPresenterImpl extends AbstractPresenter<RunningView> impleme
                     .setPositiveButton("继续查看", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            startMapActivity();
+                            startMapActivity(null);
                         }
                     })
                     .show();
         } else {
-            startMapActivity();
+            startMapActivity(null);
         }
     }
 
-    private void startMapActivity() {
+    private void startMapActivity(final LatLng latLng) {
         PermissionUtil.requestLocation(getActivity(), new PermissionUtil.Callback() {
             @Override
             public void call(boolean b) {
                 if (b) {
                     if (mRunningModel.getResults() != null && mRunningModel.getStations() != null) {
-                        ToolbarActivity.startMap(getContext(), mRunningModel.getResults(), mRunningModel.getStations());
+                        ToolbarActivity.startMap(getContext(), mRunningModel.getResults(), mRunningModel.getStations(), latLng);
                     } else {
                         SnackBarUtil.show(mView.getRootView(), "数据还未加载完全，请等等");
                     }
@@ -80,7 +84,6 @@ public class RunningPresenterImpl extends AbstractPresenter<RunningView> impleme
                 }
             }
         });
-
     }
 
     @Override
@@ -92,6 +95,15 @@ public class RunningPresenterImpl extends AbstractPresenter<RunningView> impleme
     @Override
     public void initData() {
         mRunningAdapter = new RunningAdapter();
+        mRunningAdapter.setOnItemClickListener(new BaseRecyclerViewAdapter.SimpleItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                super.onItemClick(view, position);
+                Stations stations = mRunningAdapter.getItem(position);
+                LatLng latLng = new LatLng(stations.lat, stations.lng);
+                startMapActivity(latLng);
+            }
+        });
     }
 
     @Override

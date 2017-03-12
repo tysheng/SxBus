@@ -26,6 +26,16 @@ public class SPHelper {
         return getInstance().getString(key, defaultValue);
     }
 
+    public static void put(String key, boolean value) {
+        SharedPreferences.Editor editor = getInstance().edit();
+        editor.putBoolean(key, value);
+        editor.apply();
+    }
+
+    public static boolean get(String key, boolean defaultValue) {
+        return getInstance().getBoolean(key, defaultValue);
+    }
+
     public static void put(String key, int i) {
         SharedPreferences.Editor editor = getInstance().edit();
         editor.putInt(key, i);

@@ -14,4 +14,6 @@ public interface MapView extends BaseView {
     BaiduMap getMap();
 
     void refreshLocation();
+
+    void drawStations();
 }

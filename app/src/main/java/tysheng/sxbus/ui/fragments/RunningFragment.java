@@ -75,6 +75,7 @@ public class RunningFragment extends BaseFragment<RunningPresenterImpl> implemen
             }
         });
         mPresenter.popupFab(mFloatingActionButton);
+
     }
 
     @Override

@@ -13,6 +13,7 @@ import android.view.View;
 import com.baidu.mapapi.map.offline.MKOLUpdateElement;
 import com.baidu.mapapi.map.offline.MKOfflineMap;
 import com.baidu.mapapi.map.offline.MKOfflineMapListener;
+import com.baidu.mapapi.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -41,11 +42,12 @@ public class ToolbarActivity extends BaseActivity implements Toolbar.OnMenuItemC
     private ProgressDialog progressBar;
     private Intent intent;
 
-    public static void startMap(Context context, ArrayList<YueChenBusResult> list, ArrayList<Stations> stations) {
+    public static void startMap(Context context, ArrayList<YueChenBusResult> list, ArrayList<Stations> stations, LatLng latLng) {
         if (list != null && stations != null) {
             Intent intent = new Intent(context, ToolbarActivity.class);
             intent.putExtra("0", list);
             intent.putExtra("1", stations);
+            intent.putExtra("2", latLng);
             context.startActivity(intent);
         }
     }
@@ -80,7 +82,7 @@ public class ToolbarActivity extends BaseActivity implements Toolbar.OnMenuItemC
     }
 
     private void showFragment() {
-        mMapFragment = MapFragment.newInstance(intent.getParcelableArrayListExtra("0"), intent.getParcelableArrayListExtra("1"));
+        mMapFragment = MapFragment.newInstance(intent.getParcelableArrayListExtra("0"), intent.getParcelableArrayListExtra("1"), intent.getParcelableExtra("2"));
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.frameLayout, mMapFragment)
@@ -111,6 +113,11 @@ public class ToolbarActivity extends BaseActivity implements Toolbar.OnMenuItemC
             case R.id.action_refresh:
                 if (mMapFragment != null) {
                     mMapFragment.refreshLocation();
+                }
+                break;
+            case R.id.action_draw_station:
+                if (mMapFragment != null) {
+                    mMapFragment.drawStations();
                 }
                 break;
             default:

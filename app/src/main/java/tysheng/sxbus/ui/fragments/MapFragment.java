@@ -24,10 +24,11 @@ public class MapFragment extends BaseFragment<MapPresenterImpl> implements MapVi
     @BindView(R.id.mapView)
     com.baidu.mapapi.map.MapView mMapView;
 
-    public static MapFragment newInstance(ArrayList<Parcelable> list, ArrayList<Parcelable> stations) {
+    public static MapFragment newInstance(ArrayList<Parcelable> list, ArrayList<Parcelable> stations, Parcelable parcelable) {
         Bundle args = new Bundle();
         args.putParcelableArrayList("0", list);
         args.putParcelableArrayList("1", stations);
+        args.putParcelable("2", parcelable);
         MapFragment fragment = new MapFragment();
         fragment.setArguments(args);
         return fragment;
@@ -80,5 +81,10 @@ public class MapFragment extends BaseFragment<MapPresenterImpl> implements MapVi
     @Override
     public void refreshLocation() {
         mPresenter.refreshLocation();
+    }
+
+    @Override
+    public void drawStations() {
+        mPresenter.drawStations();
     }
 }

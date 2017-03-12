@@ -8,7 +8,7 @@ import android.os.Parcelable;
  * Date: 16/9/17 19:46.
  */
 public class Stations implements Parcelable {
-    public static final Parcelable.Creator<Stations> CREATOR = new Parcelable.Creator<Stations>() {
+    public static final Creator<Stations> CREATOR = new Creator<Stations>() {
         @Override
         public Stations createFromParcel(Parcel source) {
             return new Stations(source);
@@ -26,7 +26,18 @@ public class Stations implements Parcelable {
     public String state;
     public String stationName;
     public String updateTime;
+    /**
+     * Description:到达状态
+     * Creator:  shengtianyang
+     * Update Date:  2017/3/12 14:27
+     */
     public ArriveState arriveState = ArriveState.NotArrive;
+    /**
+     * Description: 查看地图时定位于此
+     * Creator:  shengtianyang
+     * Update Date:  2017/3/12 14:28
+     */
+    public boolean isLocatedHere;
 
     public Stations() {
     }
@@ -41,6 +52,7 @@ public class Stations implements Parcelable {
         this.updateTime = in.readString();
         int tmpArriveState = in.readInt();
         this.arriveState = tmpArriveState == -1 ? null : ArriveState.values()[tmpArriveState];
+        this.isLocatedHere = in.readByte() != 0;
     }
 
     @Override
@@ -58,6 +70,7 @@ public class Stations implements Parcelable {
         dest.writeString(this.stationName);
         dest.writeString(this.updateTime);
         dest.writeInt(this.arriveState == null ? -1 : this.arriveState.ordinal());
+        dest.writeByte(this.isLocatedHere ? (byte) 1 : (byte) 0);
     }
 
     public enum ArriveState {
