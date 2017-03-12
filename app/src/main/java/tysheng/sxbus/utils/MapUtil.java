@@ -21,11 +21,18 @@ import tysheng.sxbus.App;
  */
 
 public class MapUtil implements MKOfflineMapListener {
-    private static LocationClient client;
+    private static MapUtil sUtil;
+    private LocationClient client;
     private MKOfflineMap mOffline;
 
-    public static LocationClient getClient() {
-        return client;
+    private MapUtil() {
+    }
+
+    public static MapUtil getInstance() {
+        if (sUtil == null) {
+            sUtil = new MapUtil();
+        }
+        return sUtil;
     }
 
     public static double[] gpsToBdLatLng(double[] latLng) {
@@ -39,24 +46,29 @@ public class MapUtil implements MKOfflineMapListener {
         return new double[]{desLatLng.latitude, desLatLng.longitude};
     }
 
+    public LocationClient getClient() {
+        return client;
+    }
+
     /**
      * @param listener //结果回调
      */
-    public static void getLocation(BDLocationListener listener) {
-        if (client == null) {
-            // 定位初始化
-            client = new LocationClient(App.get());
-            client.registerLocationListener(listener);
-            LocationClientOption option = new LocationClientOption();
-            option.setOpenGps(true);// 打开gps
-            option.setCoorType("bd09ll"); // 设置坐标类型
+    public void getLocation(BDLocationListener listener) {
+//        if (client == null) {
+//
+//        }
+        // 定位初始化
+        client = new LocationClient(App.get());
+        client.registerLocationListener(listener);
+        LocationClientOption option = new LocationClientOption();
+        option.setOpenGps(true);// 打开gps
+        option.setCoorType("bd09ll"); // 设置坐标类型
 //            option.setScanSpan(5000);
-            option.setIsNeedAddress(true);
-            option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
-            option.setIgnoreKillProcess(false);
-            option.SetIgnoreCacheException(false);
-            client.setLocOption(option);
-        }
+        option.setIsNeedAddress(true);
+        option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
+        option.setIgnoreKillProcess(false);
+        option.SetIgnoreCacheException(false);
+        client.setLocOption(option);
         client.start();
     }
 

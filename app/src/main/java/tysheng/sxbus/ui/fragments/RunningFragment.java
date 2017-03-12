@@ -110,6 +110,7 @@ public class RunningFragment extends BaseFragment<RunningPresenterImpl> implemen
         }
     }
 
+
     @Override
     public void onRefresh() {
         mPresenter.refresh();

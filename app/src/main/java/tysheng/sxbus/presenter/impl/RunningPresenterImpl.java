@@ -16,7 +16,9 @@ import tysheng.sxbus.presenter.base.AbstractPresenter;
 import tysheng.sxbus.presenter.inter.RunningPresenter;
 import tysheng.sxbus.ui.activities.ToolbarActivity;
 import tysheng.sxbus.ui.inter.RunningView;
+import tysheng.sxbus.utils.PermissionUtil;
 import tysheng.sxbus.utils.SPHelper;
+import tysheng.sxbus.utils.SnackBarUtil;
 
 /**
  * Created by tysheng
@@ -64,7 +66,21 @@ public class RunningPresenterImpl extends AbstractPresenter<RunningView> impleme
     }
 
     private void startMapActivity() {
-        ToolbarActivity.startMap(getContext(), mRunningModel.getResults(), mRunningModel.getStations());
+        PermissionUtil.requestLocation(getActivity(), new PermissionUtil.Callback() {
+            @Override
+            public void call(boolean b) {
+                if (b) {
+                    if (mRunningModel.getResults() != null && mRunningModel.getStations() != null) {
+                        ToolbarActivity.startMap(getContext(), mRunningModel.getResults(), mRunningModel.getStations());
+                    } else {
+                        SnackBarUtil.show(mView.getRootView(), "数据还未加载完全，请等等");
+                    }
+                } else {
+                    SnackBarUtil.show(mView.getRootView(), "请开启定位权限");
+                }
+            }
+        });
+
     }
 
     @Override

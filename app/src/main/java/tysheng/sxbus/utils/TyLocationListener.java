@@ -16,8 +16,8 @@ public class TyLocationListener implements BDLocationListener {
 
     @Override
     public void onReceiveLocation(final BDLocation location) {
-        if (MapUtil.getClient() != null) {
-            MapUtil.getClient().stop();
+        if (MapUtil.getInstance().getClient() != null) {
+            MapUtil.getInstance().getClient().stop();
         }
     }
 

@@ -71,6 +71,10 @@ public abstract class BaseFragment<T extends AbstractPresenter> extends RxFragme
         return mRootView;
     }
 
+    public View getRootView() {
+        return mRootView;
+    }
+
     @Override
     public void onResume() {
         super.onResume();

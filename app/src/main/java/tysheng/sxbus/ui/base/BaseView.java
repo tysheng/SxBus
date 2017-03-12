@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.FragmentManager;
+import android.view.View;
 
 import com.trello.rxlifecycle2.LifecycleTransformer;
 
@@ -25,4 +26,6 @@ public interface BaseView {
     void startActivity(Intent intent);
 
     FragmentManager getChildFragmentManager();
+
+    View getRootView();
 }

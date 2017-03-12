@@ -36,6 +36,7 @@ import tysheng.sxbus.presenter.inter.MapPresenter;
 import tysheng.sxbus.ui.inter.MapView;
 import tysheng.sxbus.utils.LogUtil;
 import tysheng.sxbus.utils.MapUtil;
+import tysheng.sxbus.utils.SnackBarUtil;
 import tysheng.sxbus.utils.TyLocationListener;
 import tysheng.sxbus.utils.UiUtil;
 
@@ -46,11 +47,10 @@ import tysheng.sxbus.utils.UiUtil;
  */
 
 public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapPresenter {
-    private BitmapDescriptor iconBus, iconStation;
+    private BitmapDescriptor iconBus, iconStation, iconStart, iconEnd;
     private BaiduMap mBaiduMap;
     private ArrayList<YueChenBusResult> mResultList;
     private ArrayList<Stations> mStationsList;
-    private boolean isFirstInit = true;
     private InfoWindow mInfoWindow;
 
     public MapPresenterImpl(MapView view) {
@@ -71,6 +71,20 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
         return iconStation;
     }
 
+    private BitmapDescriptor getStartIcon() {
+        if (iconStart == null) {
+            iconStart = BitmapDescriptorFactory.fromResource(R.drawable.ic_start);
+        }
+        return iconStart;
+    }
+
+    private BitmapDescriptor getEndIcon() {
+        if (iconEnd == null) {
+            iconEnd = BitmapDescriptorFactory.fromResource(R.drawable.ic_end);
+        }
+        return iconEnd;
+    }
+
     @Override
     public void setArgs(Bundle bundle) {
         mResultList = bundle.getParcelableArrayList("0");
@@ -87,10 +101,21 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
             Stations sta = mStationsList.get(i);
             LatLng ll = new LatLng(sta.lat, sta.lng);
             list.add(ll);
-            //站点
-            OverlayOptions oo = new MarkerOptions().position(ll).icon(getStationIcon()).title(sta.stationName).zIndex(i);
-            mBaiduMap.addOverlay(oo);
+            if (i == 0) {
+                //起点
+                OverlayOptions oo = new MarkerOptions().position(ll).icon(getStartIcon()).title(sta.stationName).zIndex(i).perspective(true);
+                mBaiduMap.addOverlay(oo);
+            } else if (i == mStationsList.size() - 1) {
+                //终点
+                OverlayOptions oo = new MarkerOptions().position(ll).icon(getEndIcon()).title(sta.stationName).zIndex(i).perspective(true);
+                mBaiduMap.addOverlay(oo);
+            } else {
+                //站点
+                OverlayOptions oo = new MarkerOptions().position(ll).icon(getStationIcon()).title(sta.stationName).zIndex(i);
+                mBaiduMap.addOverlay(oo);
+            }
         }
+
         //连接线
         OverlayOptions option = new PolylineOptions().points(list).color(ContextCompat.getColor(getContext(), R.color.baidu_blue));
         mBaiduMap.addOverlay(option);
@@ -146,44 +171,7 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
         LatLng northeast = new LatLng(29.7, 121.0);
         LatLng southwest = new LatLng(30.33, 120.26);
         mBaiduMap.setMapStatusLimits(new LatLngBounds.Builder().include(northeast).include(southwest).build());
-        refreshLocation();
-    }
-
-    @Override
-    public void onDestroy() {
-        mBaiduMap.clear();
-        mBaiduMap.setMyLocationEnabled(false);
-        super.onDestroy();
-    }
-
-    private void setCenterPoint(double lat, double lng) {
-        // 设定中心点坐标
-        LatLng cenpt = new LatLng(lat, lng);
-        // 定义地图状态
-        MapStatus mMapStatus = new MapStatus.Builder().target(cenpt)
-                .zoom(17f).build();
-        // 定义MapStatusUpdate对象，以便描述地图状态将要发生的变化
-        MapStatusUpdate mMapStatusUpdate = MapStatusUpdateFactory
-                .newMapStatus(mMapStatus);
-        // 改变地图状态
-        mBaiduMap.animateMapStatus(mMapStatusUpdate);
-    }
-
-    private void setLocation(final LatLng latLng) {
-
-        if (isFirstInit) {
-            isFirstInit = false;
-            setCenterPoint(latLng.latitude, latLng.longitude);
-        } else {
-            MyLocationData locData = new MyLocationData.Builder()
-                    // 此处设置开发者获取到的方向信息，顺时针0-360
-                    .direction(100).latitude(latLng.latitude)
-                    .longitude(latLng.longitude).build();
-            mBaiduMap.setMyLocationData(locData);
-        }
-
         mBaiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
-
             @Override
             public boolean onMarkerClick(Marker marker) {
                 int position = marker.getZIndex();
@@ -212,15 +200,50 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
                 return true;
             }
         });
+        refreshLocation();
+    }
+
+    @Override
+    public void onDestroy() {
+        mBaiduMap.clear();
+        mBaiduMap.setMyLocationEnabled(false);
+        super.onDestroy();
+    }
+
+    private void setCenterPoint(double lat, double lng) {
+        // 设定中心点坐标
+        LatLng cenpt = new LatLng(lat, lng);
+        // 定义地图状态
+        MapStatus mMapStatus = new MapStatus.Builder().target(cenpt)
+                .zoom(15.5f).build();
+        // 定义MapStatusUpdate对象，以便描述地图状态将要发生的变化
+        MapStatusUpdate mMapStatusUpdate = MapStatusUpdateFactory
+                .newMapStatus(mMapStatus);
+        LogUtil.d(mMapStatus.toString());
+        // 改变地图状态
+        mBaiduMap.setMapStatus(mMapStatusUpdate);
+    }
+
+    private void setLocation(final LatLng latLng) {
+        MyLocationData locData = new MyLocationData.Builder()
+                // 此处设置开发者获取到的方向信息，顺时针0-360
+                .direction(100).latitude(latLng.latitude)
+                .longitude(latLng.longitude).build();
+        mBaiduMap.setMyLocationData(locData);
+        setCenterPoint(latLng.latitude, latLng.longitude);
     }
 
     @Override
     public void refreshLocation() {
-        MapUtil.getLocation(new TyLocationListener() {
+        MapUtil.getInstance().getLocation(new TyLocationListener() {
             @Override
             public void onReceiveLocation(BDLocation location) {
                 super.onReceiveLocation(location);
                 LogUtil.d(getDetail(location));
+                int code = location.getLocType();
+                if (!(code == 161 || code == 66 || code == 61)) {
+                    SnackBarUtil.show(mView.getRootView(), "定位失败%>_<%");
+                }
                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                 setLocation(latLng);
             }

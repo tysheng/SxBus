@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
+import com.baidu.mapapi.SDKInitializer;
+
 import butterknife.BindView;
 import tysheng.sxbus.R;
 import tysheng.sxbus.base.BaseActivity;
@@ -25,9 +27,11 @@ public class MainActivity extends BaseActivity implements MainView, PositionBott
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         setTheme(R.style.AppTheme_Main);
         super.onCreate(savedInstanceState);
-
+        // 初始化百度地图
+        SDKInitializer.initialize(getApplicationContext());
     }
 
     @Override

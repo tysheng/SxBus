@@ -8,15 +8,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
 
-import com.tbruyelle.rxpermissions2.RxPermissions;
-
-import io.reactivex.functions.Consumer;
 import tysheng.sxbus.bean.FragCallback;
 import tysheng.sxbus.ui.activities.MainView;
 import tysheng.sxbus.ui.fragments.MoreFragment;
 import tysheng.sxbus.ui.fragments.RunningFragment;
 import tysheng.sxbus.ui.fragments.SearchFragment;
 import tysheng.sxbus.ui.fragments.StarFragment;
+import tysheng.sxbus.utils.PermissionUtil;
 import tysheng.sxbus.utils.SnackBarUtil;
 
 /**
@@ -105,17 +103,14 @@ public class MainPresenterImpl {
     }
 
     public void askPermission(Activity activity, final View v) {
-        new RxPermissions(activity)
-                .request(Manifest.permission.READ_PHONE_STATE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.ACCESS_FINE_LOCATION)
-                .subscribe(new Consumer<Boolean>() {
+        PermissionUtil.request(activity, new PermissionUtil.Callback() {
                     @Override
-                    public void accept(Boolean aBoolean) throws Exception {
-                        if (!aBoolean) {
+                    public void call(boolean b) {
+                        if (!b) {
                             SnackBarUtil.show(v, "没有这些权限可能会出现问题:(", Snackbar.LENGTH_LONG);
                         }
                     }
-                });
+                }, Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
 }
