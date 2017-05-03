@@ -34,7 +34,6 @@ import tysheng.sxbus.utils.SystemUtil;
  */
 
 public class RunningModel {
-    private SPHelper mSPHelper;
     private RunningPresenter mInterface;
     private List<YueChenBusResult> mResults;
     private List<Stations> stations;

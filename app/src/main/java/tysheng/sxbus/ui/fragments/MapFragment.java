@@ -12,6 +12,7 @@ import butterknife.BindView;
 import tysheng.sxbus.R;
 import tysheng.sxbus.base.BaseFragment;
 import tysheng.sxbus.presenter.impl.MapPresenterImpl;
+import tysheng.sxbus.ui.activities.ToolbarActivity;
 import tysheng.sxbus.ui.inter.MapView;
 
 /**
@@ -32,6 +33,11 @@ public class MapFragment extends BaseFragment<MapPresenterImpl> implements MapVi
         MapFragment fragment = new MapFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void setSubtitle(String subtitle) {
+        ((ToolbarActivity) getActivity()).setSubtitle(subtitle);
     }
 
     @Override

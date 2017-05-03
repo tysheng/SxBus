@@ -27,19 +27,16 @@
             android:orientation="vertical">
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="32dp"
-                android:gravity="center_vertical|bottom"
-                android:paddingLeft="14dp"
-                android:paddingTop="10dp"
-                android:text="当前城市"
-                android:textColor="@color/colorPrimary"
-                android:textSize="12sp" />
+                style="@style/MoreTextViewSub"
+                android:text="当前城市" />
 
             <TextView
                 android:id="@+id/chooseCity"
                 style="@style/MoreTextView"
                 android:text="绍兴" />
+
+            <include layout="@layout/divider" />
+
 
             <include layout="@layout/divider" />
 
@@ -69,6 +66,14 @@
                 style="@style/MoreTextView"
                 android:text="检查更新" />
 
+            <TextView
+                style="@style/MoreTextViewSub"
+                android:text="高级功能" />
+
+            <TextView
+                android:id="@+id/permission"
+                style="@style/MoreTextView"
+                android:text="赋予权限,进行错误日志收集" />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 

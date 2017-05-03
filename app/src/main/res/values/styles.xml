@@ -43,4 +43,14 @@
         <item name="android:foreground">?selectableItemBackground</item>
         <item name="android:paddingLeft">14dp</item>
     </style>
+
+    <style name="MoreTextViewSub">
+        <item name="android:paddingLeft">14dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">32dp</item>
+        <item name="android:gravity">center_vertical|bottom</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textSize">12sp</item>
+    </style>
 </resources>

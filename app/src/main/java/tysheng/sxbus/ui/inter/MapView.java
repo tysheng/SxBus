@@ -11,6 +11,8 @@ import tysheng.sxbus.ui.base.BaseView;
  */
 
 public interface MapView extends BaseView {
+    void setSubtitle(String subtitle);
+
     BaiduMap getMap();
 
     void refreshLocation();

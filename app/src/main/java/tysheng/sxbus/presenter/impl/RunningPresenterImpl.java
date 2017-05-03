@@ -7,8 +7,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.baidu.mapapi.model.LatLng;
-
 import java.util.List;
 
 import tysheng.sxbus.Constant;
@@ -69,13 +67,13 @@ public class RunningPresenterImpl extends AbstractPresenter<RunningView> impleme
         }
     }
 
-    private void startMapActivity(final LatLng latLng) {
+    private void startMapActivity(final Stations stations) {
         PermissionUtil.requestLocation(getActivity(), new PermissionUtil.Callback() {
             @Override
             public void call(boolean b) {
                 if (b) {
                     if (mRunningModel.getResults() != null && mRunningModel.getStations() != null) {
-                        ToolbarActivity.startMap(getContext(), mRunningModel.getResults(), mRunningModel.getStations(), latLng);
+                        ToolbarActivity.startMap(getContext(), mRunningModel.getResults(), mRunningModel.getStations(), stations);
                     } else {
                         SnackBarUtil.show(mView.getRootView(), "数据还未加载完全，请等等");
                     }
@@ -100,8 +98,7 @@ public class RunningPresenterImpl extends AbstractPresenter<RunningView> impleme
             public void onItemClick(View view, int position) {
                 super.onItemClick(view, position);
                 Stations stations = mRunningAdapter.getItem(position);
-                LatLng latLng = new LatLng(stations.lat, stations.lng);
-                startMapActivity(latLng);
+                startMapActivity(stations);
             }
         });
     }

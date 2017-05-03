@@ -30,7 +30,7 @@ import static com.baidu.mapapi.BMapManager.getContext;
 
 public class DrawModelImpl {
     private DrawPresenter mPresenter;
-    private BitmapDescriptor iconBus, iconStation, iconStart, iconEnd, iconClickHere;
+    private BitmapDescriptor iconBus, iconStation, iconStart, iconEnd, iconClickHere, iconLongArrow;
     private List<LatLng> mLatLngs = new ArrayList<>();
     private ArrayList<Stations> stationsList;
     private ArrayList<YueChenBusResult> resultList;
@@ -44,6 +44,13 @@ public class DrawModelImpl {
             iconBus = BitmapDescriptorFactory.fromResource(R.drawable.ic_bus);
         }
         return iconBus;
+    }
+
+    private BitmapDescriptor getLongIcon() {
+        if (iconLongArrow == null) {
+            iconLongArrow = BitmapDescriptorFactory.fromResource(R.drawable.ic_long_arrow_up);
+        }
+        return iconLongArrow;
     }
 
     private BitmapDescriptor getStationIcon() {
@@ -101,13 +108,15 @@ public class DrawModelImpl {
             }
         }
         //连接线
-        OverlayOptions option = new PolylineOptions().points(mLatLngs).color(ContextCompat.getColor(getContext(), R.color.baidu_blue));
+        OverlayOptions option = new PolylineOptions().points(mLatLngs)
+                .color(ContextCompat.getColor(getContext(), R.color.baidu_blue));
         mPresenter.getBaiduMap().addOverlay(option);
     }
 
     public void drawSinglePlace(LatLng latLng) {
         OverlayOptions oo = new MarkerOptions().position(latLng).icon(getClickIcon()).zIndex(10000)
                 .anchor(0.5f, 2f).animateType(MarkerOptions.MarkerAnimateType.grow).draggable(true);
+
         mPresenter.getBaiduMap().addOverlay(oo);
     }
 

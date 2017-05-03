@@ -12,6 +12,8 @@
         android:background="@color/colorPrimary"
         app:navigationIcon="@drawable/ic_arrow_back_black_24dp"
         app:popupTheme="@style/AppTheme.PopupOverlay"
+        app:subtitle="定位中..."
+        app:subtitleTextColor="@color/white"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:titleTextColor="@color/white" />
 

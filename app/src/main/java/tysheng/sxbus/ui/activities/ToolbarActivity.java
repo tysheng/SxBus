@@ -13,7 +13,6 @@ import android.view.View;
 import com.baidu.mapapi.map.offline.MKOLUpdateElement;
 import com.baidu.mapapi.map.offline.MKOfflineMap;
 import com.baidu.mapapi.map.offline.MKOfflineMapListener;
-import com.baidu.mapapi.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -42,7 +41,7 @@ public class ToolbarActivity extends BaseActivity implements Toolbar.OnMenuItemC
     private ProgressDialog progressBar;
     private Intent intent;
 
-    public static void startMap(Context context, ArrayList<YueChenBusResult> list, ArrayList<Stations> stations, LatLng latLng) {
+    public static void startMap(Context context, ArrayList<YueChenBusResult> list, ArrayList<Stations> stations, Stations latLng) {
         if (list != null && stations != null) {
             Intent intent = new Intent(context, ToolbarActivity.class);
             intent.putExtra("0", list);
@@ -105,6 +104,10 @@ public class ToolbarActivity extends BaseActivity implements Toolbar.OnMenuItemC
 
     private void setTitle(String title) {
         mToolbar.setTitle(title);
+    }
+
+    public void setSubtitle(String subtitle) {
+        mToolbar.setSubtitle(subtitle);
     }
 
     @Override

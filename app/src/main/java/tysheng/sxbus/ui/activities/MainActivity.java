@@ -46,7 +46,6 @@ public class MainActivity extends BaseActivity implements MainView, PositionBott
         mPresenter.restorePosition(savedInstanceState);
         mBottom.registerIds(R.id.menu_star, R.id.menu_search, R.id.menu_more);
         mBottom.setOnPositionSelectedListener(this);
-        mPresenter.askPermission(this, mBottom);
     }
 
     @Override

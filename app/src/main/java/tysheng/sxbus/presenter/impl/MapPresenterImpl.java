@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.baidu.location.Address;
 import com.baidu.location.BDLocation;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.InfoWindow;
@@ -45,7 +46,7 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
     private ArrayList<Stations> mStationsList;
     private InfoWindow mInfoWindow;
     private DrawModelImpl mDrawModel;
-    private LatLng userClickLatLng;
+    private Stations mClickStations;
 
     public MapPresenterImpl(MapView view) {
         super(view);
@@ -54,9 +55,12 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
 
     @Override
     public void setArgs(Bundle bundle) {
-        userClickLatLng = bundle.getParcelable("2");
+        mClickStations = bundle.getParcelable("2");
         mResultList = bundle.getParcelableArrayList("0");
         mStationsList = bundle.getParcelableArrayList("1");
+        if (mClickStations != null) {
+            mView.setSubtitle(mClickStations.stationName);
+        }
     }
 
     @Override
@@ -120,7 +124,10 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
     }
 
     private LatLng findClickLocation() {
-        return userClickLatLng;
+        if (mClickStations != null) {
+            return new LatLng(mClickStations.lat, mClickStations.lng);
+        }
+        return null;
     }
 
     @Override
@@ -144,7 +151,8 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
         mBaiduMap.setMapStatus(mMapStatusUpdate);
     }
 
-    private void setLocation(final LatLng latLng) {
+    private void setLocation(final BDLocation location) {
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         MyLocationData locData = new MyLocationData.Builder()
                 // 此处设置开发者获取到的方向信息，顺时针0-360
                 .direction(100).latitude(latLng.latitude)
@@ -157,6 +165,10 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
         LatLng finalLatLng = findClickLocation();
         if (finalLatLng == null) {
             finalLatLng = latLng;
+            Address address = location.getAddress();
+            String sub = address.street + address.streetNumber;
+            LogUtil.d("getAddrStr " + sub);
+            mView.setSubtitle(sub.trim());
         } else {
             mDrawModel.drawSinglePlace(finalLatLng);
         }
@@ -174,8 +186,7 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
                 if (!(code == 161 || code == 66 || code == 61)) {
                     SnackBarUtil.show(mView.getRootView(), "定位失败%>_<%");
                 }
-                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                setLocation(latLng);
+                setLocation(location);
             }
         });
     }

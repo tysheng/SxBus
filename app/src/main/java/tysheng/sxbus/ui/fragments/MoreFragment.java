@@ -61,6 +61,10 @@ public class MoreFragment extends BaseFragment<MorePresenterImpl> implements Mor
             case R.id.stationMode:
                 mPresenter.setStationMode();
                 break;
+            case R.id.permission:
+                mPresenter.askPermission();
+                break;
         }
     }
+
 }

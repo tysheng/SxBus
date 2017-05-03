@@ -1,12 +1,8 @@
 package tysheng.sxbus.presenter.impl;
 
-import android.Manifest;
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.view.View;
 
 import tysheng.sxbus.bean.FragCallback;
 import tysheng.sxbus.ui.activities.MainView;
@@ -14,8 +10,6 @@ import tysheng.sxbus.ui.fragments.MoreFragment;
 import tysheng.sxbus.ui.fragments.RunningFragment;
 import tysheng.sxbus.ui.fragments.SearchFragment;
 import tysheng.sxbus.ui.fragments.StarFragment;
-import tysheng.sxbus.utils.PermissionUtil;
-import tysheng.sxbus.utils.SnackBarUtil;
 
 /**
  * Created by tysheng
@@ -102,15 +96,5 @@ public class MainPresenterImpl {
         preToCur(finalPos, null);
     }
 
-    public void askPermission(Activity activity, final View v) {
-        PermissionUtil.request(activity, new PermissionUtil.Callback() {
-                    @Override
-                    public void call(boolean b) {
-                        if (!b) {
-                            SnackBarUtil.show(v, "没有这些权限可能会出现问题:(", Snackbar.LENGTH_LONG);
-                        }
-                    }
-                }, Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE);
-    }
+
 }
