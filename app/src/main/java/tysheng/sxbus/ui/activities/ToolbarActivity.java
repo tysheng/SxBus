@@ -17,14 +17,14 @@ import com.baidu.mapapi.map.offline.MKOfflineMapListener;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import butterknife.BindView;
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
-import tysheng.sxbus.base.BaseActivity;
+import tysheng.sxbus.base.BaseActivityV2;
 import tysheng.sxbus.bean.Stations;
 import tysheng.sxbus.bean.YueChenBusResult;
+import tysheng.sxbus.databinding.ActivityToolbarBinding;
+import tysheng.sxbus.presenter.base.AbstractPresenter;
 import tysheng.sxbus.ui.fragments.MapFragment;
-import tysheng.sxbus.utils.LogUtil;
 import tysheng.sxbus.utils.SPHelper;
 
 /**
@@ -33,13 +33,11 @@ import tysheng.sxbus.utils.SPHelper;
  * Email: tyshengsx@gmail.com
  */
 
-public class ToolbarActivity extends BaseActivity implements Toolbar.OnMenuItemClickListener, MKOfflineMapListener {
-    @BindView(R.id.toolbar)
-    Toolbar mToolbar;
+public class ToolbarActivity extends BaseActivityV2<AbstractPresenter, ActivityToolbarBinding> implements Toolbar.OnMenuItemClickListener, MKOfflineMapListener {
+
     private MapFragment mMapFragment;
     private MKOfflineMap mOffline;
     private ProgressDialog progressBar;
-    private Intent intent;
 
     public static void startMap(Context context, ArrayList<YueChenBusResult> list, ArrayList<Stations> stations, Stations latLng) {
         if (list != null && stations != null) {
@@ -52,20 +50,22 @@ public class ToolbarActivity extends BaseActivity implements Toolbar.OnMenuItemC
     }
 
     @Override
+    protected AbstractPresenter initPresenter() {
+        return null;
+    }
+
+    @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        binding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
-        mToolbar.inflateMenu(R.menu.menu_toolbar);
-        mToolbar.setOnMenuItemClickListener(this);
-        setTitle("查看定位");
-        intent = getIntent();
+        binding.toolbar.inflateMenu(R.menu.menu_toolbar);
+        binding.toolbar.setOnMenuItemClickListener(this);
         mOffline = new MKOfflineMap();
         mOffline.init(this);
-
         MKOLUpdateElement element = mOffline.getUpdateInfo(293);
         if (element == null) {
             // 开始下载离线地图，传入参数为cityID, cityID表示城市的数字标识。
@@ -74,14 +74,17 @@ public class ToolbarActivity extends BaseActivity implements Toolbar.OnMenuItemC
             progressBar.setTitle("正在下载离线地图");
             progressBar.show();
         } else {
-            LogUtil.d(element.size);
             showFragment();
             setMapHasOffline();
         }
     }
 
     private void showFragment() {
-        mMapFragment = MapFragment.newInstance(intent.getParcelableArrayListExtra("0"), intent.getParcelableArrayListExtra("1"), intent.getParcelableExtra("2"));
+        Intent intent = getIntent();
+        mMapFragment = MapFragment.newInstance(intent.getParcelableArrayListExtra("0"),
+                intent.getParcelableArrayListExtra("1"),
+                intent.getParcelableExtra("2"));
+        setTitle("查看定位");
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.frameLayout, mMapFragment)
@@ -103,11 +106,11 @@ public class ToolbarActivity extends BaseActivity implements Toolbar.OnMenuItemC
     }
 
     private void setTitle(String title) {
-        mToolbar.setTitle(title);
+        binding.toolbar.setTitle(title);
     }
 
     public void setSubtitle(String subtitle) {
-        mToolbar.setSubtitle(subtitle);
+        binding.toolbar.setSubtitle(subtitle);
     }
 
     @Override

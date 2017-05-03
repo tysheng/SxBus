@@ -25,6 +25,10 @@ public abstract class BaseActivity extends RxAppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        normalCreate(savedInstanceState);
+    }
+
+    protected void normalCreate(@Nullable Bundle savedInstanceState) {
         setContentView(getLayoutId());
         ButterKnife.bind(this);
         initData(savedInstanceState);

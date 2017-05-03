@@ -1,14 +1,13 @@
 package tysheng.sxbus.ui.fragments;
 
-import android.support.design.widget.CoordinatorLayout;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import butterknife.BindView;
-import butterknife.OnClick;
 import tysheng.sxbus.R;
-import tysheng.sxbus.base.BaseFragment;
+import tysheng.sxbus.base.BaseFragmentV2;
+import tysheng.sxbus.databinding.FragmentMoreBinding;
 import tysheng.sxbus.presenter.impl.MorePresenterImpl;
 import tysheng.sxbus.ui.inter.MoreView;
 import tysheng.sxbus.utils.SnackBarUtil;
@@ -17,15 +16,17 @@ import tysheng.sxbus.utils.SnackBarUtil;
  * Created by Sty
  * Date: 16/9/11 20:23.
  */
-public class MoreFragment extends BaseFragment<MorePresenterImpl> implements MoreView {
-    @BindView(R.id.toolbar)
-    Toolbar mToolbar;
-    @BindView(R.id.coordinatorLayout)
-    CoordinatorLayout mCoordinatorLayout;
+public class MoreFragment extends BaseFragmentV2<MorePresenterImpl, FragmentMoreBinding> implements MoreView {
 
     @Override
     protected MorePresenterImpl initPresenter() {
         return new MorePresenterImpl(this);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        binding.setPresenter(mPresenter);
     }
 
     @Override
@@ -35,36 +36,11 @@ public class MoreFragment extends BaseFragment<MorePresenterImpl> implements Mor
 
     @Override
     protected void initData() {
-        mToolbar.setTitle(mPresenter.getTitle());
+        binding.toolbar.setTitle(mPresenter.getTitle());
     }
 
     @Override
     public void snackBarShow(String s) {
-        SnackBarUtil.show(mCoordinatorLayout, s, Snackbar.LENGTH_SHORT);
+        SnackBarUtil.show(binding.getRoot(), s, Snackbar.LENGTH_SHORT);
     }
-
-    @OnClick({R.id.feedback, R.id.donate, R.id.check_update, R.id.chooseCity, R.id.stationMode})
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.feedback:
-                mPresenter.feedback();
-                break;
-            case R.id.donate:
-                mPresenter.donate();
-                break;
-            case R.id.check_update:
-                mPresenter.checkVersionByBaidu();
-                break;
-            case R.id.chooseCity:
-                mPresenter.chooseCity();
-                break;
-            case R.id.stationMode:
-                mPresenter.setStationMode();
-                break;
-            case R.id.permission:
-                mPresenter.askPermission();
-                break;
-        }
-    }
-
 }

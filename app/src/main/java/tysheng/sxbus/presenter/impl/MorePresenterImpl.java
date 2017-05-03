@@ -84,7 +84,7 @@ public class MorePresenterImpl extends AbstractPresenter<MoreView> {
         c.setPrimaryClip(ClipData.newPlainText("email", getContext().getString(R.string.my_email)));//设置Clipboard 的内容
     }
 
-    public void checkVersionByBaidu() {
+    public void checkVersion() {
         shareAppShop(getContext(), BuildConfig.APPLICATION_ID);
     }
 
@@ -130,5 +130,9 @@ public class MorePresenterImpl extends AbstractPresenter<MoreView> {
 
     public void feedback() {
         SystemUtil.sendEmail(getContext());
+    }
+
+    public void bikeInfo() {
+
     }
 }
