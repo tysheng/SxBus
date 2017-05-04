@@ -7,7 +7,7 @@ import android.os.Parcelable;
  * Created by Sty
  * Date: 16/9/17 19:46.
  */
-public class Stations implements Parcelable {
+public class Stations implements Parcelable, MapInfo {
     public static final Creator<Stations> CREATOR = new Creator<Stations>() {
         @Override
         public Stations createFromParcel(Parcel source) {
@@ -71,6 +71,21 @@ public class Stations implements Parcelable {
         dest.writeString(this.updateTime);
         dest.writeInt(this.arriveState == null ? -1 : this.arriveState.ordinal());
         dest.writeByte(this.isLocatedHere ? (byte) 1 : (byte) 0);
+    }
+
+    @Override
+    public String getName() {
+        return stationName;
+    }
+
+    @Override
+    public double getLat() {
+        return lat;
+    }
+
+    @Override
+    public double getLng() {
+        return lng;
     }
 
     public enum ArriveState {

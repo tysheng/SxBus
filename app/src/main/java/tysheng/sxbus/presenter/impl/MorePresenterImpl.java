@@ -1,6 +1,7 @@
 package tysheng.sxbus.presenter.impl;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -13,15 +14,29 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
 
+import com.baidu.mapapi.utils.CoordinateConverter;
+
+import java.util.ArrayList;
+
+import io.reactivex.functions.Function;
 import tysheng.sxbus.BuildConfig;
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
+import tysheng.sxbus.bean.AllBike;
+import tysheng.sxbus.bean.BikeStation;
+import tysheng.sxbus.net.BusRetrofit;
 import tysheng.sxbus.presenter.base.AbstractPresenter;
+import tysheng.sxbus.ui.activities.ToolbarActivity;
+import tysheng.sxbus.ui.fragments.MapFragment;
 import tysheng.sxbus.ui.inter.MoreView;
 import tysheng.sxbus.utils.AlipayZeroSdk;
+import tysheng.sxbus.utils.JsonUtil;
+import tysheng.sxbus.utils.MapUtil;
 import tysheng.sxbus.utils.PermissionUtil;
+import tysheng.sxbus.utils.RxHelper;
 import tysheng.sxbus.utils.SPHelper;
 import tysheng.sxbus.utils.SystemUtil;
+import tysheng.sxbus.utils.TyObserver;
 import tysheng.sxbus.view.ChooseCityFragment;
 
 /**
@@ -133,6 +148,48 @@ public class MorePresenterImpl extends AbstractPresenter<MoreView> {
     }
 
     public void bikeInfo() {
+        BusRetrofit.get()
+                .url(MapFragment.BIKE_URL)
+                .map(new Function<String, ArrayList<BikeStation>>() {
+                    @Override
+                    public ArrayList<BikeStation> apply(String callBack) throws Exception {
+                        int start = "var ibike =".length();
+                        String string = callBack.substring(start).trim();
+                        AllBike bike = JsonUtil.parse(string, AllBike.class);
+                        for (BikeStation station : bike.station) {
+                            double[] latLng =
+                                    MapUtil.gpsToBdLatLng(CoordinateConverter.CoordType.COMMON, new double[]{station.getLat(), station.getLng()});
+                            station.lat = latLng[0];
+                            station.lng = latLng[1];
+                        }
+                        return bike.station;
+                    }
+                })
+                .compose(RxHelper.<ArrayList<BikeStation>>flowableIoToMain())
+                .compose(this.<ArrayList<BikeStation>>bindUntilDestroyView())
+                .subscribe(new TyObserver<ArrayList<BikeStation>>() {
+                    ProgressDialog dialog;
 
+                    @Override
+                    protected void onStart() {
+                        super.onStart();
+                        dialog = new ProgressDialog(getContext());
+                        dialog.setMessage("正在加载...");
+                        dialog.show();
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        super.onError(t);
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void next(ArrayList<BikeStation> s) {
+                        super.next(s);
+                        dialog.dismiss();
+                        ToolbarActivity.startMap(getContext(), Constant.BIKE, null, s, null);
+                    }
+                });
     }
 }

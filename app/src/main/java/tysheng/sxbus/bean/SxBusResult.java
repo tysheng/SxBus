@@ -8,7 +8,7 @@ import android.os.Parcelable;
  * Date: 16/9/20 15:38.
  */
 
-public class SxBusResult implements Parcelable {
+public class SxBusResult implements Parcelable, MapInfo {
     public static final Parcelable.Creator<SxBusResult> CREATOR = new Parcelable.Creator<SxBusResult>() {
         @Override
         public SxBusResult createFromParcel(Parcel source) {
@@ -61,5 +61,20 @@ public class SxBusResult implements Parcelable {
         dest.writeString(this.actTime);
         dest.writeString(this.cardId);
         dest.writeByte(this.isArriveDest ? (byte) 1 : (byte) 0);
+    }
+
+    @Override
+    public String getName() {
+        return null;
+    }
+
+    @Override
+    public double getLat() {
+        return lat;
+    }
+
+    @Override
+    public double getLng() {
+        return lng;
     }
 }

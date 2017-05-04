@@ -23,13 +23,14 @@ import tysheng.sxbus.ui.inter.MapView;
 
 public class MapFragment extends BaseFragmentV2<MapPresenterImpl, FragmentMapBinding> implements MapView {
 
-    public static final String BIKE_URL = "http://www.sxbicycle.com/sxmap/ibikestation.asp?id=";
+    public static final String BIKE_URL = "http://www.sxbicycle.com/sxmap/ibikestation.asp";//?id=
 
-    public static MapFragment newInstance(ArrayList<Parcelable> list, ArrayList<Parcelable> stations, Parcelable parcelable) {
+    public static MapFragment newInstance(int type, ArrayList<Parcelable> list, ArrayList<Parcelable> stations, Parcelable parcelable) {
         Bundle args = new Bundle();
         args.putParcelableArrayList("0", list);
         args.putParcelableArrayList("1", stations);
         args.putParcelable("2", parcelable);
+        args.putInt("-1", type);
         MapFragment fragment = new MapFragment();
         fragment.setArguments(args);
         return fragment;

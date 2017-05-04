@@ -30,8 +30,9 @@ public class SearchModelImpl {
         BusRetrofit.get()
                 .numberToSearch(number)
                 .delay(200, TimeUnit.MICROSECONDS)
-                .compose(mPresenter.<CallBack>bindUntilDestroyView())
-                .compose(RxHelper.<CallBack>flowableIoToMain())
+                .compose(mPresenter.<String>bindUntilDestroyView())
+                .compose(RxHelper.<String>flowableIoToMain())
+                .compose(RxHelper.stringIoToCallback())
                 .doOnNext(new Consumer<CallBack>() {
                     @Override
                     public void accept(CallBack callBack) throws Exception {

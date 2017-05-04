@@ -35,15 +35,25 @@ public class MapUtil implements MKOfflineMapListener {
         return sUtil;
     }
 
-    public static double[] gpsToBdLatLng(double[] latLng) {
+    public static double[] gpsToBdLatLng(CoordinateConverter.CoordType type, double[] latLng) {
         LatLng ll = new LatLng(latLng[0], latLng[1]);
         // 将GPS设备采集的原始GPS坐标转换成百度坐标
         CoordinateConverter converter = new CoordinateConverter();
-        converter.from(CoordinateConverter.CoordType.GPS);
+        converter.from(type);
         // sourceLatLng待转换坐标
         converter.coord(ll);
         LatLng desLatLng = converter.convert();
         return new double[]{desLatLng.latitude, desLatLng.longitude};
+    }
+
+    public static LatLng gpsToBdLatLng(LatLng latLng) {
+        // 将GPS设备采集的原始GPS坐标转换成百度坐标
+        CoordinateConverter converter = new CoordinateConverter();
+        converter.from(CoordinateConverter.CoordType.GPS);
+        // sourceLatLng待转换坐标
+        converter.coord(latLng);
+        LatLng desLatLng = converter.convert();
+        return desLatLng;
     }
 
     public LocationClient getClient() {

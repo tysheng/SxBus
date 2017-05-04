@@ -1,12 +1,12 @@
 package tysheng.sxbus.net;
 
-import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
-import retrofit2.converter.fastjson.FastJsonConverterFactory;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import tysheng.sxbus.utils.StringConverterFactory;
 
 /**
  * Created by shengtianyang on 16/3/19.
@@ -26,8 +26,8 @@ public class BusRetrofit {
 
         retrofit = new Retrofit.Builder()
                 .client(client)
-                .addConverterFactory(FastJsonConverterFactory.create())
                 .baseUrl(BusService.BASE_URL)
+                .addConverterFactory(StringConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
 

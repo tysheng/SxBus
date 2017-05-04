@@ -9,15 +9,15 @@ import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.PolylineOptions;
 import com.baidu.mapapi.model.LatLng;
-import com.baidu.mapapi.utils.CoordinateConverter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
-import tysheng.sxbus.bean.Stations;
-import tysheng.sxbus.bean.SxBusResult;
+import tysheng.sxbus.bean.MapInfo;
+import tysheng.sxbus.utils.ListUtil;
+import tysheng.sxbus.utils.MapUtil;
 import tysheng.sxbus.utils.SPHelper;
 
 import static com.baidu.mapapi.BMapManager.getContext;
@@ -32,8 +32,8 @@ public class DrawModelImpl {
 
     private BitmapDescriptor iconBus, iconStation, iconStart, iconEnd, iconClickHere, iconLongArrow;
     private List<LatLng> mLatLngs = new ArrayList<>();
-    private ArrayList<Stations> stationsList;
-    private ArrayList<SxBusResult> resultList;
+    private ArrayList<? extends MapInfo> stationsList;
+    private ArrayList<? extends MapInfo> resultList;
 
     public DrawModelImpl() {
 
@@ -81,36 +81,39 @@ public class DrawModelImpl {
         return iconEnd;
     }
 
-    public void drawStations(BaiduMap baiduMap, ArrayList<Stations> stationsList) {
+    public void drawStations(int type, BaiduMap baiduMap, ArrayList<? extends MapInfo> stationsList) {
         boolean drawStation = SPHelper.get(Constant.DRAW_STATION, true);
         this.stationsList = stationsList;
-        drawStationInternal(baiduMap, stationsList, drawStation, true);
+        drawStationInternal(type, baiduMap, stationsList, drawStation, true);
     }
 
-    private void drawStationInternal(BaiduMap baiduMap, ArrayList<Stations> stationsList, boolean drawStation, boolean startEnd) {
+    private void drawStationInternal(int type, BaiduMap baiduMap, ArrayList<? extends MapInfo> stationsList, boolean drawStation, boolean startEnd) {
         mLatLngs.clear();
         for (int i = 0; i < stationsList.size(); i++) {
-            Stations sta = stationsList.get(i);
-            LatLng ll = new LatLng(sta.lat, sta.lng);
+            MapInfo sta = stationsList.get(i);
+            LatLng ll = new LatLng(sta.getLat(), sta.getLng());
             mLatLngs.add(ll);
-            if (i == 0 && startEnd) {
+            if (i == 0 && startEnd && type != Constant.BIKE) {
                 //起点
-                OverlayOptions oo = new MarkerOptions().position(ll).icon(getStartIcon()).title(sta.stationName).zIndex(i).perspective(true);
+                OverlayOptions oo = new MarkerOptions().position(ll).icon(getStartIcon()).title(sta.getName()).zIndex(i).perspective(true);
                 baiduMap.addOverlay(oo);
-            } else if (i == stationsList.size() - 1 && startEnd) {
+            } else if (i == stationsList.size() - 1 && startEnd && type != Constant.BIKE) {
                 //终点
-                OverlayOptions oo = new MarkerOptions().position(ll).icon(getEndIcon()).title(sta.stationName).zIndex(i).perspective(true);
+                OverlayOptions oo = new MarkerOptions().position(ll).icon(getEndIcon()).title(sta.getName()).zIndex(i).perspective(true);
                 baiduMap.addOverlay(oo);
             } else if (drawStation) {
                 //站点
-                OverlayOptions oo = new MarkerOptions().position(ll).icon(getStationIcon()).title(sta.stationName).zIndex(i);
+                OverlayOptions oo = new MarkerOptions().position(ll).icon(getStationIcon()).title(sta.getName()).zIndex(i);
                 baiduMap.addOverlay(oo);
             }
         }
-        //连接线
-        OverlayOptions option = new PolylineOptions().points(mLatLngs)
-                .color(ContextCompat.getColor(getContext(), R.color.baidu_blue));
-        baiduMap.addOverlay(option);
+        if (type == Constant.BUS) {
+            //连接线
+            OverlayOptions option = new PolylineOptions().points(mLatLngs)
+                    .color(ContextCompat.getColor(getContext(), R.color.baidu_blue));
+            baiduMap.addOverlay(option);
+        }
+
     }
 
     public void drawSinglePlace(BaiduMap baiduMap, LatLng latLng) {
@@ -120,29 +123,27 @@ public class DrawModelImpl {
         baiduMap.addOverlay(oo);
     }
 
-    public void drawBuses(BaiduMap map, ArrayList<SxBusResult> resultList) {
+    public void drawBuses(BaiduMap map, ArrayList<? extends MapInfo> resultList) {
         this.resultList = resultList;
+        if (ListUtil.isEmpty(resultList)) {
+            return;
+        }
         //车辆坐标
         for (int i = 0; i < resultList.size(); i++) {
-            SxBusResult point = resultList.get(i);
-            LatLng ll = new LatLng(point.lat, point.lng);
-            // 将GPS设备采集的原始GPS坐标转换成百度坐标
-            CoordinateConverter converter = new CoordinateConverter();
-            converter.from(CoordinateConverter.CoordType.GPS);
-            // sourceLatLng待转换坐标
-            converter.coord(ll);
-            LatLng desLatLng = converter.convert();
+            MapInfo point = resultList.get(i);
+            LatLng ll = new LatLng(point.getLat(), point.getLng());
+            LatLng desLatLng = MapUtil.gpsToBdLatLng(ll);
             OverlayOptions oo = new MarkerOptions().position(desLatLng).icon(getBusIcon()).zIndex(1000 + i);
             map.addOverlay(oo);
         }
     }
 
-    public void drawStationsClick(BaiduMap map) {
+    public void drawStationsClick(int type, BaiduMap map) {
         final boolean draw = !SPHelper.get(Constant.DRAW_STATION, true);
         SPHelper.put(Constant.DRAW_STATION, draw);
         map.clear();
 
-        drawStationInternal(map, stationsList, draw, true);
+        drawStationInternal(type, map, stationsList, draw, true);
         drawBuses(map, resultList);
     }
 }

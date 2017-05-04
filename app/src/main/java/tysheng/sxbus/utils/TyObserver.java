@@ -6,7 +6,7 @@ import io.reactivex.subscribers.ResourceSubscriber;
  * Created by Sty
  * Date: 16/9/16 09:09.
  */
-public abstract class TyObserver<T> extends ResourceSubscriber<T> {
+public class TyObserver<T> extends ResourceSubscriber<T> {
 
 
     @Override

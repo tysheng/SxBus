@@ -8,8 +8,9 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
-
+import tysheng.sxbus.bean.CallBack;
 
 /**
  * Created by Sty
@@ -32,6 +33,23 @@ public class RxHelper {
             }
         };
     }
+
+    public static FlowableTransformer<String, CallBack> stringIoToCallback() {
+        return new FlowableTransformer<String, CallBack>() {
+            @Override
+            public Publisher<CallBack> apply(Flowable<String> observable) {
+                return observable
+                        .map(new Function<String, CallBack>() {
+                            @Override
+                            public CallBack apply(String string) throws Exception {
+
+                                return JsonUtil.parse(string, CallBack.class);
+                            }
+                        });
+            }
+        };
+    }
+
 
     public static <T> ObservableTransformer<T, T> ioToMain() {
         return new ObservableTransformer<T, T>() {

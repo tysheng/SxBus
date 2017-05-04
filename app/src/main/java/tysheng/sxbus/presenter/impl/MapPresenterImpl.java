@@ -20,8 +20,8 @@ import com.baidu.mapapi.model.LatLngBounds;
 
 import java.util.ArrayList;
 
+import tysheng.sxbus.bean.MapInfo;
 import tysheng.sxbus.bean.Stations;
-import tysheng.sxbus.bean.SxBusResult;
 import tysheng.sxbus.model.impl.DrawModelImpl;
 import tysheng.sxbus.presenter.base.AbstractPresenter;
 import tysheng.sxbus.presenter.inter.MapPresenter;
@@ -41,11 +41,12 @@ import tysheng.sxbus.utils.UiUtil;
 public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapPresenter {
 
     private BaiduMap mBaiduMap;
-    private ArrayList<SxBusResult> mResultList;
-    private ArrayList<Stations> mStationsList;
+    private ArrayList<? extends MapInfo> mResultList;
+    private ArrayList<? extends MapInfo> mStationsList;
     private InfoWindow mInfoWindow;
     private DrawModelImpl mDrawModel;
     private Stations mClickStations;
+    private int type;
 
     public MapPresenterImpl(MapView view) {
         super(view);
@@ -57,6 +58,7 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
         mClickStations = bundle.getParcelable("2");
         mResultList = bundle.getParcelableArrayList("0");
         mStationsList = bundle.getParcelableArrayList("1");
+        type = bundle.getInt("-1");
         if (mClickStations != null) {
             mView.setSubtitle(mClickStations.stationName);
         }
@@ -66,7 +68,7 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
     public void initData() {
         mBaiduMap = mView.getMap();
         initMap();
-        mDrawModel.drawStations(getBaiduMap(), mStationsList);
+        mDrawModel.drawStations(type, getBaiduMap(), mStationsList);
         mDrawModel.drawBuses(getBaiduMap(), mResultList);
     }
 
@@ -95,13 +97,13 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
             public boolean onMarkerClick(Marker marker) {
                 int position = marker.getZIndex();
                 if (position < 1000) {
-                    Stations item = mStationsList.get(position);
+                    MapInfo item = mStationsList.get(position);
                     TextView tv = new TextView(getContext());
                     int padding = UiUtil.dp2px(5f);
                     tv.setPadding(padding, padding, padding, padding);
                     tv.setBackgroundColor(Color.BLACK);
                     tv.setTextColor(Color.WHITE);
-                    tv.setText(item.stationName);
+                    tv.setText(item.getName());
                     LatLng ll = marker.getPosition();
                     mInfoWindow = new InfoWindow(tv, ll, -(UiUtil.dp2px(25)));
                     mBaiduMap.showInfoWindow(mInfoWindow);
@@ -197,6 +199,6 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
 
     @Override
     public void drawStations() {
-        mDrawModel.drawStationsClick(getBaiduMap());
+        mDrawModel.drawStationsClick(type, getBaiduMap());
     }
 }

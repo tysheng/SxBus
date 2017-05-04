@@ -73,7 +73,7 @@ public class RunningPresenterImpl extends AbstractPresenter<RunningView> impleme
             public void call(boolean b) {
                 if (b) {
                     if (mRunningModel.getResults() != null && mRunningModel.getStations() != null) {
-                        ToolbarActivity.startMap(getContext(), mRunningModel.getResults(), mRunningModel.getStations(), stations);
+                        ToolbarActivity.startMap(getContext(), Constant.BUS, mRunningModel.getResults(), mRunningModel.getStations(), stations);
                     } else {
                         SnackBarUtil.show(mView.getRootView(), "数据还未加载完全，请等等");
                     }

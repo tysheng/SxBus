@@ -20,12 +20,15 @@ import java.util.Locale;
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
 import tysheng.sxbus.base.BaseActivityV2;
+import tysheng.sxbus.bean.MapInfo;
 import tysheng.sxbus.bean.Stations;
-import tysheng.sxbus.bean.SxBusResult;
 import tysheng.sxbus.databinding.ActivityToolbarBinding;
 import tysheng.sxbus.presenter.base.AbstractPresenter;
 import tysheng.sxbus.ui.fragments.MapFragment;
 import tysheng.sxbus.utils.SPHelper;
+
+import static tysheng.sxbus.Constant.BIKE;
+import static tysheng.sxbus.Constant.BUS;
 
 /**
  * Created by tysheng
@@ -39,12 +42,13 @@ public class ToolbarActivity extends BaseActivityV2<AbstractPresenter, ActivityT
     private MKOfflineMap mOffline;
     private ProgressDialog progressBar;
 
-    public static void startMap(Context context, ArrayList<SxBusResult> list, ArrayList<Stations> stations, Stations latLng) {
-        if (list != null && stations != null) {
+    public static void startMap(Context context, int type, ArrayList<? extends MapInfo> runningList, ArrayList<? extends MapInfo> totalStations, Stations latLng) {
+        if (totalStations != null) {
             Intent intent = new Intent(context, ToolbarActivity.class);
-            intent.putExtra("0", list);
-            intent.putExtra("1", stations);
+            intent.putExtra("0", runningList);
+            intent.putExtra("1", totalStations);
             intent.putExtra("2", latLng);
+            intent.putExtra("-1", type);
             context.startActivity(intent);
         }
     }
@@ -82,10 +86,16 @@ public class ToolbarActivity extends BaseActivityV2<AbstractPresenter, ActivityT
 
     private void showFragment() {
         Intent intent = getIntent();
-        mMapFragment = MapFragment.newInstance(intent.getParcelableArrayListExtra("0"),
+        int type = intent.getIntExtra("-1", BUS);
+        mMapFragment = MapFragment.newInstance(type, intent.getParcelableArrayListExtra("0"),
                 intent.getParcelableArrayListExtra("1"),
                 intent.getParcelableExtra("2"));
-        setTitle("查看定位");
+        if (type == BUS) {
+            setTitle("查看定位");
+        } else if (type == BIKE) {
+            setTitle("公共自行车");
+        }
+
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.frameLayout, mMapFragment)

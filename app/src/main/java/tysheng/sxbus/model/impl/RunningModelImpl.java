@@ -6,6 +6,8 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
 
+import com.baidu.mapapi.utils.CoordinateConverter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,8 +46,10 @@ public class RunningModelImpl {
     }
 
     public void refresh(String id) {
-        Flowable.zip(BusRetrofit.get().getBusLines(id),
-                BusRetrofit.get().getRunningBus(id),
+        Flowable.zip(BusRetrofit.get().getBusLines(id)
+                        .compose(RxHelper.stringIoToCallback()),
+                BusRetrofit.get().getRunningBus(id)
+                        .compose(RxHelper.stringIoToCallback()),
                 new BiFunction<CallBack, CallBack, List<Stations>>() {
                     @Override
                     public List<Stations> apply(CallBack busLines, CallBack busLine) throws Exception {
@@ -107,7 +111,7 @@ public class RunningModelImpl {
                     int station = 0;
                     for (int i = 0; i < stations.size(); i++) {
                         double[] i2 = new double[]{stations.get(i).lng, stations.get(i).lat};
-                        double temp = countDistance(MapUtil.gpsToBdLatLng(i1), i2);
+                        double temp = countDistance(MapUtil.gpsToBdLatLng(CoordinateConverter.CoordType.GPS, i1), i2);
                         if (temp < distance) {
                             station = i;
                             distance = temp;
