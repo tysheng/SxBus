@@ -8,14 +8,13 @@ import com.baidu.mapapi.SDKInitializer;
 
 import tysheng.sxbus.R;
 import tysheng.sxbus.base.BaseActivityV2;
-import tysheng.sxbus.base.BaseFragment;
+import tysheng.sxbus.base.BaseFragmentV2;
 import tysheng.sxbus.bean.FragCallback;
 import tysheng.sxbus.databinding.ActivityMainBinding;
 import tysheng.sxbus.presenter.impl.MainPresenterImpl;
 import tysheng.sxbus.view.PositionBottomNavigationView;
 
-
-public class MainActivity extends BaseActivityV2<MainPresenterImpl, ActivityMainBinding> implements MainView, PositionBottomNavigationView.onPositionSelectedListener, BaseFragment.FragmentCallback {
+public class MainActivity extends BaseActivityV2<MainPresenterImpl, ActivityMainBinding> implements MainView, PositionBottomNavigationView.onPositionSelectedListener, BaseFragmentV2.FragmentCallback {
     @Override
     public int getLayoutId() {
         return R.layout.activity_main;
@@ -42,6 +41,7 @@ public class MainActivity extends BaseActivityV2<MainPresenterImpl, ActivityMain
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
+        super.initData(savedInstanceState);
         mPresenter.restorePosition(savedInstanceState);
         binding.bottom.registerIds(R.id.menu_star, R.id.menu_search, R.id.menu_more);
         binding.bottom.setOnPositionSelectedListener(this);

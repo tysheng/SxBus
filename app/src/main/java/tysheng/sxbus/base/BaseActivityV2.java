@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.trello.rxlifecycle2.LifecycleTransformer;
 import com.trello.rxlifecycle2.android.ActivityEvent;
@@ -75,7 +74,6 @@ public abstract class BaseActivityV2<T extends AbstractPresenter, Binding extend
 
     @Override
     public View getRootView() {
-        ViewGroup view = (ViewGroup) findViewById(android.R.id.content);
-        return view.getChildAt(0);
+        return binding.getRoot();
     }
 }

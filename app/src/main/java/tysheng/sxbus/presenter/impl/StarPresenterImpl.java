@@ -14,7 +14,7 @@ import java.util.List;
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.StarAdapter;
-import tysheng.sxbus.base.BaseFragment;
+import tysheng.sxbus.base.BaseFragmentV2;
 import tysheng.sxbus.bean.FragCallback;
 import tysheng.sxbus.bean.Star;
 import tysheng.sxbus.model.impl.DbModelImpl;
@@ -79,7 +79,7 @@ public class StarPresenterImpl extends AbstractPresenter<StarView> implements St
         switch (view.getId()) {
             case R.id.number:
             case R.id.textView:
-                ((BaseFragment.FragmentCallback) getActivity()).handleCallbackNew(new FragCallback(Constant.WHAT_STAR, mAdapter.getItem(i).id,
+                ((BaseFragmentV2.FragmentCallback) getActivity()).handleCallbackNew(new FragCallback(Constant.WHAT_STAR, mAdapter.getItem(i).id,
                         mAdapter.getItem(i).lineName + " 前往 " + mAdapter.getItem(i).endStationName));
                 break;
             case R.id.star:

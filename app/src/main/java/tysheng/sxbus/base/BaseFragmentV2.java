@@ -34,4 +34,9 @@ public abstract class BaseFragmentV2<T extends AbstractPresenter, Binding extend
             binding.unbind();
         }
     }
+
+    @Override
+    public View getRootView() {
+        return binding.getRoot();
+    }
 }

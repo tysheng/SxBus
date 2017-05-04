@@ -56,6 +56,7 @@ public class ToolbarActivity extends BaseActivityV2<AbstractPresenter, ActivityT
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
+        super.initData(savedInstanceState);
         binding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

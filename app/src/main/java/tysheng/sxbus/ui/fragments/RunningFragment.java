@@ -6,8 +6,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 
-import butterknife.BindString;
-import butterknife.OnClick;
 import tysheng.sxbus.R;
 import tysheng.sxbus.base.BaseFragmentV2;
 import tysheng.sxbus.databinding.FragmentRunningBinding;
@@ -23,8 +21,7 @@ import tysheng.sxbus.utils.SnackBarUtil;
 
 public class RunningFragment extends BaseFragmentV2<RunningPresenterImpl, FragmentRunningBinding> implements RunningView, SwipeRefreshLayout.OnRefreshListener {
 
-    @BindString(R.string.running_error)
-    String runningError;
+    private String runningError;
 
     public static RunningFragment newFragment(String id, String title) {
         RunningFragment fragment = new RunningFragment();
@@ -47,7 +44,9 @@ public class RunningFragment extends BaseFragmentV2<RunningPresenterImpl, Fragme
 
     @Override
     protected void initData() {
+        binding.setHost(this);
         mPresenter.setArgs(getArguments());
+        runningError = getString(R.string.running_error);
         binding.title.setText(mPresenter.geTitle());
         mPresenter.initData();
         binding.recyclerView.setAdapter(mPresenter.getAdapter());
@@ -62,7 +61,6 @@ public class RunningFragment extends BaseFragmentV2<RunningPresenterImpl, Fragme
             }
         });
         mPresenter.popupFab(binding.fab);
-
     }
 
     @Override
@@ -77,7 +75,6 @@ public class RunningFragment extends BaseFragmentV2<RunningPresenterImpl, Fragme
         binding.swipeRefreshLayout.setEnabled(false);
     }
 
-    @OnClick({R.id.fab, R.id.forMap})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.fab:

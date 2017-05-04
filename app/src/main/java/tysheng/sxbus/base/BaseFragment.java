@@ -7,17 +7,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.baidu.mobstat.StatService;
 import com.trello.rxlifecycle2.LifecycleTransformer;
 import com.trello.rxlifecycle2.android.FragmentEvent;
 import com.trello.rxlifecycle2.components.support.RxFragment;
 
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import tysheng.sxbus.bean.FragCallback;
 import tysheng.sxbus.presenter.base.AbstractPresenter;
 import tysheng.sxbus.utils.LogUtil;
@@ -27,9 +23,7 @@ import tysheng.sxbus.utils.LogUtil;
  */
 public abstract class BaseFragment<T extends AbstractPresenter> extends RxFragment {
     private static final String STATE_SAVE_IS_HIDDEN = "STATE_SAVE_IS_HIDDEN";
-    protected View mRootView;
     protected T mPresenter;
-    private Unbinder mBinder;
 
     protected abstract T initPresenter();
 
@@ -61,18 +55,8 @@ public abstract class BaseFragment<T extends AbstractPresenter> extends RxFragme
         return bindUntilEvent(FragmentEvent.DESTROY_VIEW);
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mRootView = inflater.inflate(getLayoutId(), container, false);
-        mBinder = ButterKnife.bind(this, mRootView);
-        initData();
-        LogUtil.d("onCreateView" + toString());
-        return mRootView;
-    }
-
     public View getRootView() {
-        return mRootView;
+        return null;
     }
 
     @Override
