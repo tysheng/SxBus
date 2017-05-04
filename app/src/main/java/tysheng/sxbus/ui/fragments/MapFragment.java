@@ -38,6 +38,7 @@ public class MapFragment extends BaseFragmentV2<MapPresenterImpl, FragmentMapBin
 
     @Override
     public void setSubtitle(String subtitle) {
+
         ((ToolbarActivity) getActivity()).setSubtitle(subtitle);
     }
 

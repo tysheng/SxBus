@@ -120,8 +120,13 @@ public class ToolbarActivity extends BaseActivityV2<AbstractPresenter, ActivityT
         binding.toolbar.setTitle(title);
     }
 
-    public void setSubtitle(String subtitle) {
-        binding.toolbar.setSubtitle(subtitle);
+    public void setSubtitle(final String subtitle) {
+        binding.toolbar.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                binding.toolbar.setSubtitle(subtitle);
+            }
+        }, 300);
     }
 
     @Override

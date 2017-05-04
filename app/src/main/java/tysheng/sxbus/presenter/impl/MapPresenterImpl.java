@@ -2,6 +2,7 @@ package tysheng.sxbus.presenter.impl;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 
@@ -103,6 +104,7 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
                     tv.setPadding(padding, padding, padding, padding);
                     tv.setBackgroundColor(Color.BLACK);
                     tv.setTextColor(Color.WHITE);
+                    tv.setGravity(Gravity.CENTER);
                     tv.setText(item.getName());
                     LatLng ll = marker.getPosition();
                     mInfoWindow = new InfoWindow(tv, ll, -(UiUtil.dp2px(25)));
@@ -113,11 +115,12 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
                             mBaiduMap.hideInfoWindow();
                         }
                     });
-                } else if (position >= 1000 && position < 2000) {
+                }
+//                else if (position >= 1000 && position < 2000) {
 //                    final int realPosition = position - 1000;
 //                    SxBusResult result = mResultList.get(realPosition);
 //                    LogUtil.d(result.stationSeqNum);
-                }
+//                }
                 return true;
             }
         });
@@ -138,43 +141,6 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
         super.onDestroy();
     }
 
-    private void setCenterPoint(double lat, double lng) {
-        // 设定中心点坐标
-        LatLng cenpt = new LatLng(lat, lng);
-        // 定义地图状态
-        MapStatus mMapStatus = new MapStatus.Builder().target(cenpt)
-                .zoom(15.5f).build();
-        // 定义MapStatusUpdate对象，以便描述地图状态将要发生的变化
-        MapStatusUpdate mMapStatusUpdate = MapStatusUpdateFactory
-                .newMapStatus(mMapStatus);
-        LogUtil.d(mMapStatus.toString());
-        // 改变地图状态
-        mBaiduMap.setMapStatus(mMapStatusUpdate);
-    }
-
-    private void setLocation(final BDLocation location) {
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        MyLocationData locData = new MyLocationData.Builder()
-                // 此处设置开发者获取到的方向信息，顺时针0-360
-                .direction(100).latitude(latLng.latitude)
-                .longitude(latLng.longitude).build();
-        mBaiduMap.setMyLocationData(locData);
-
-        /**
-         * 是否是点击进来的，如果是就跳转过去
-         */
-        LatLng finalLatLng = findClickLocation();
-        if (finalLatLng == null) {
-            finalLatLng = latLng;
-            Address address = location.getAddress();
-            String sub = address.street + address.streetNumber;
-            LogUtil.d("getAddrStr " + sub);
-            mView.setSubtitle(sub.trim());
-        } else {
-            mDrawModel.drawSinglePlace(getBaiduMap(), finalLatLng);
-        }
-        setCenterPoint(finalLatLng.latitude, finalLatLng.longitude);
-    }
 
     @Override
     public void refreshLocation() {
@@ -192,6 +158,46 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
         });
     }
 
+    private void setLocation(final BDLocation location) {
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        MyLocationData locData = new MyLocationData.Builder()
+                // 此处设置开发者获取到的方向信息，顺时针0-360
+                .direction(100).latitude(latLng.latitude)
+                .longitude(latLng.longitude).build();
+        mBaiduMap.setMyLocationData(locData);
+
+        /**
+         * 是否是点击进来的，如果是就跳转过去
+         */
+        LatLng finalLatLng = findClickLocation();
+        String subTitle = null;
+        if (finalLatLng == null) {
+            finalLatLng = latLng;
+            Address address = location.getAddress();
+            subTitle = address.district + address.street;
+        } else {
+            mDrawModel.drawSinglePlace(getBaiduMap(), finalLatLng);
+        }
+        setCenterPoint(subTitle, finalLatLng);
+    }
+
+    private void setCenterPoint(String subTitle, LatLng latLng) {
+        LogUtil.d("setCenterPoint " + latLng.toString());
+        // 设定中心点坐标
+        // 定义地图状态
+        MapStatus mMapStatus = new MapStatus.Builder().target(latLng)
+                .zoom(16.5f).build();
+        // 定义MapStatusUpdate对象，以便描述地图状态将要发生的变化
+        MapStatusUpdate mMapStatusUpdate = MapStatusUpdateFactory
+                .newMapStatus(mMapStatus);
+        // 改变地图状态
+        mBaiduMap.animateMapStatus(mMapStatusUpdate);
+//        MapStatusUpdate update = MapStatusUpdateFactory.newLatLng(latLng);
+//        mBaiduMap.animateMapStatus(update);
+        if (subTitle != null) {
+            mView.setSubtitle(subTitle);
+        }
+    }
 
     private BaiduMap getBaiduMap() {
         return mBaiduMap;

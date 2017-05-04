@@ -6,7 +6,9 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
 
+import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.utils.CoordinateConverter;
+import com.baidu.mapapi.utils.DistanceUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,8 +88,9 @@ public class RunningModelImpl {
     }
 
     private double countDistance(double[] i1, double[] i2) {
-        return (i1[0] - i2[0]) * (i1[0] - i2[0])
-                + (i1[1] - i2[1]) * (i1[1] - i2[1]);
+        return DistanceUtil.getDistance(new LatLng(i1[0], i1[1]), new LatLng(i2[0], i2[1]));
+//        return (i1[0] - i2[0]) * (i1[0] - i2[0])
+//                + (i1[1] - i2[1]) * (i1[1] - i2[1]);
     }
 
     private List<Stations> zip(CallBack busLines, CallBack busLine) {

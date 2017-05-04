@@ -60,7 +60,7 @@ public class BikeStation implements Parcelable, MapInfo {
 
     @Override
     public String getName() {
-        return name + " \n全部 " + capacity + " 可借 " + availBike;
+        return name + "\n 全部 " + capacity + " 辆，可借 " + availBike + " 辆 ";
     }
 
     @Override
