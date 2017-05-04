@@ -29,8 +29,8 @@ import tysheng.sxbus.utils.ListUtil;
 import tysheng.sxbus.utils.MapUtil;
 import tysheng.sxbus.utils.RxHelper;
 import tysheng.sxbus.utils.SPHelper;
-import tysheng.sxbus.utils.SystemUtil;
 import tysheng.sxbus.utils.TyObserver;
+import tysheng.sxbus.utils.UiUtil;
 
 /**
  * Created by tysheng
@@ -136,7 +136,7 @@ public class RunningModelImpl {
     }
 
     public void popupFab(final FloatingActionButton floatingActionButton) {
-        floatingActionButton.setTranslationY(2 * SystemUtil.dp2px(56));
+        floatingActionButton.setTranslationY(2 * UiUtil.dp2px(56));
         floatingActionButton.animate()
                 .translationY(0)
                 .setInterpolator(new OvershootInterpolator(1.f))
