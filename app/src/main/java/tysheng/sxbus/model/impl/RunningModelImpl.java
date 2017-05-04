@@ -22,7 +22,7 @@ import tysheng.sxbus.bean.CallBack;
 import tysheng.sxbus.bean.Stations;
 import tysheng.sxbus.bean.Status;
 import tysheng.sxbus.bean.SxBusResult;
-import tysheng.sxbus.net.BusRetrofit;
+import tysheng.sxbus.model.base.BaseModelImpl;
 import tysheng.sxbus.presenter.inter.RunningPresenter;
 import tysheng.sxbus.utils.JsonUtil;
 import tysheng.sxbus.utils.ListUtil;
@@ -38,7 +38,7 @@ import tysheng.sxbus.utils.UiUtil;
  * Email: tyshengsx@gmail.com
  */
 
-public class RunningModelImpl {
+public class RunningModelImpl extends BaseModelImpl {
     private RunningPresenter mPresenter;
     private List<SxBusResult> mResults;
     private List<Stations> stations;
@@ -48,9 +48,9 @@ public class RunningModelImpl {
     }
 
     public void refresh(String id) {
-        Flowable.zip(BusRetrofit.get().getBusLines(id)
+        Flowable.zip(mBusService.getBusLines(id)
                         .compose(RxHelper.stringIoToCallback()),
-                BusRetrofit.get().getRunningBus(id)
+                mBusService.getRunningBus(id)
                         .compose(RxHelper.stringIoToCallback()),
                 new BiFunction<CallBack, CallBack, List<Stations>>() {
                     @Override

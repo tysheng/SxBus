@@ -17,7 +17,7 @@ import tysheng.sxbus.adapter.StarAdapter;
 import tysheng.sxbus.base.BaseFragmentV2;
 import tysheng.sxbus.bean.FragCallback;
 import tysheng.sxbus.bean.Star;
-import tysheng.sxbus.model.impl.DbModelImpl;
+import tysheng.sxbus.model.impl.DbModelImplImpl;
 import tysheng.sxbus.presenter.base.AbstractPresenter;
 import tysheng.sxbus.presenter.inter.StarPresenter;
 import tysheng.sxbus.ui.inter.StarView;
@@ -29,12 +29,12 @@ import tysheng.sxbus.ui.inter.StarView;
  */
 
 public class StarPresenterImpl extends AbstractPresenter<StarView> implements StarPresenter, OnItemDragListener {
-    private DbModelImpl mDbModel;
+    private DbModelImplImpl mDbModel;
     private StarAdapter mAdapter;
 
     public StarPresenterImpl(StarView view) {
         super(view);
-        mDbModel = new DbModelImpl();
+        mDbModel = new DbModelImplImpl();
     }
 
     private List<Star> getStarList() {

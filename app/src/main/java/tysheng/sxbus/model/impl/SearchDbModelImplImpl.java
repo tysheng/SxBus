@@ -5,9 +5,8 @@ import java.util.List;
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.bean.Star;
 import tysheng.sxbus.dao.StarDao;
-import tysheng.sxbus.db.DbUtil;
-import tysheng.sxbus.db.StarHelper;
 import tysheng.sxbus.model.base.BaseModel;
+import tysheng.sxbus.model.base.BaseModelImpl;
 
 /**
  * Created by tysheng
@@ -15,13 +14,7 @@ import tysheng.sxbus.model.base.BaseModel;
  * Email: tyshengsx@gmail.com
  */
 
-public class SearchDbModelImpl implements BaseModel {
-
-    private StarHelper mHelper;
-
-    public SearchDbModelImpl() {
-        mHelper = DbUtil.getDriverHelper();
-    }
+public class SearchDbModelImplImpl extends BaseModelImpl implements BaseModel {
 
     public List<Star> getRecentList() {
         return mHelper.queryBuilder()

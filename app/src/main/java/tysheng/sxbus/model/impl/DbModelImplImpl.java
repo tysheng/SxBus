@@ -7,9 +7,8 @@ import java.util.List;
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.bean.Star;
 import tysheng.sxbus.dao.StarDao;
-import tysheng.sxbus.db.DbUtil;
-import tysheng.sxbus.db.StarHelper;
 import tysheng.sxbus.model.base.BaseModel;
+import tysheng.sxbus.model.base.BaseModelImpl;
 
 /**
  * Created by tysheng
@@ -17,15 +16,9 @@ import tysheng.sxbus.model.base.BaseModel;
  * Email: tyshengsx@gmail.com
  */
 
-public class DbModelImpl implements BaseModel {
-    private StarHelper mHelper;
+public class DbModelImplImpl extends BaseModelImpl implements BaseModel {
     private QueryBuilder<Star> mQueryBuilder;
     private List<Star> mStarList;
-
-    public DbModelImpl() {
-        mHelper = DbUtil.getDriverHelper();
-
-    }
 
     public List<Star> getStarList() {
         if (mQueryBuilder == null)

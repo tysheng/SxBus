@@ -8,7 +8,6 @@ import android.net.Uri;
 
 import java.io.IOException;
 
-import tysheng.sxbus.App;
 import tysheng.sxbus.BuildConfig;
 
 
@@ -33,8 +32,8 @@ public class SystemUtil {
      *
      * @return
      */
-    public static boolean isNetworkAvailable() {
-        ConnectivityManager cm = (ConnectivityManager) App.get().getSystemService(Context.CONNECTIVITY_SERVICE);
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo info = cm.getActiveNetworkInfo();
         return info != null && info.isAvailable();
     }

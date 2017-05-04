@@ -90,4 +90,6 @@ dependencies {
     compile 'org.greenrobot:greendao:3.2.0'
     compile files('libs/BaiduLBS_Android.jar')
     compile 'com.alibaba:fastjson:1.1.56.android'
+    compile 'com.google.dagger:dagger:2.11-rc2'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.11-rc2'
 }

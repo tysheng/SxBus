@@ -1,21 +1,28 @@
-package tysheng.sxbus.net;
-
+package tysheng.sxbus.di.module;
 
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Singleton;
+
+import dagger.Module;
+import dagger.Provides;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import tysheng.sxbus.net.BusService;
 import tysheng.sxbus.utils.StringConverterFactory;
 
 /**
- * Created by shengtianyang on 16/3/19.
+ * Created by tysheng
+ * Date: 2017/5/4 16:32.
+ * Email: tyshengsx@gmail.com
  */
-public class BusRetrofit {
-    private static BusService sService = null;
-    private static volatile Retrofit retrofit = null;
+@Module
+public class NetModule {
 
-    private static void init() {
+    @Singleton
+    @Provides
+    Retrofit provideRetrofit() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         final int TIME_MAX = 10;
         builder.readTimeout(TIME_MAX, TimeUnit.SECONDS);
@@ -24,26 +31,20 @@ public class BusRetrofit {
 
         OkHttpClient client = builder.build();
 
-        retrofit = new Retrofit.Builder()
+        Retrofit retrofit = new Retrofit.Builder()
                 .client(client)
                 .baseUrl(BusService.BASE_URL)
                 .addConverterFactory(StringConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
+        return retrofit;
+    }
 
+    @Singleton
+    @Provides
+    public BusService provideBusService(Retrofit retrofit) {
+        return retrofit.create(BusService.class);
     }
 
 
-    public static BusService get() {
-        if (sService == null) {
-            synchronized (BusRetrofit.class) {
-                if (sService == null) {
-                    init();
-                }
-                sService = retrofit.create(BusService.class);
-            }
-        }
-        return sService;
-    }
 }
-

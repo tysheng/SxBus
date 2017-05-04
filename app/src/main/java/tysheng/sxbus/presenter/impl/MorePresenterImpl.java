@@ -18,13 +18,17 @@ import com.baidu.mapapi.utils.CoordinateConverter;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 import io.reactivex.functions.Function;
+import tysheng.sxbus.App;
 import tysheng.sxbus.BuildConfig;
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
 import tysheng.sxbus.bean.AllBike;
 import tysheng.sxbus.bean.BikeStation;
-import tysheng.sxbus.net.BusRetrofit;
+import tysheng.sxbus.di.component.DaggerUniverseComponent;
+import tysheng.sxbus.net.BusService;
 import tysheng.sxbus.presenter.base.AbstractPresenter;
 import tysheng.sxbus.ui.activities.ToolbarActivity;
 import tysheng.sxbus.ui.fragments.MapFragment;
@@ -47,8 +51,15 @@ import tysheng.sxbus.view.ChooseCityFragment;
 
 public class MorePresenterImpl extends AbstractPresenter<MoreView> {
 
+    @Inject
+    BusService mBusService;
+
     public MorePresenterImpl(MoreView view) {
         super(view);
+        DaggerUniverseComponent.builder()
+                .applicationComponent(((App) getActivity().getApplication()).getApplicationComponent())
+                .build()
+                .inject(this);
     }
 
     /**
@@ -57,7 +68,7 @@ public class MorePresenterImpl extends AbstractPresenter<MoreView> {
      * @param context     承载跳转的Activity
      * @param packageName 所需下载（评论）的应用包名
      */
-    public static void shareAppShop(Context context, String packageName) {
+    private void shareAppShop(Context context, String packageName) {
         try {
 //            Uri uri = Uri.parse("market://details?id=" + packageName);
 //            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
@@ -93,7 +104,7 @@ public class MorePresenterImpl extends AbstractPresenter<MoreView> {
 
     }
 
-    public void showAlipayFail(String s) {
+    private void showAlipayFail(String s) {
         mView.snackBarShow(s);
         ClipboardManager c = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
         c.setPrimaryClip(ClipData.newPlainText("email", getContext().getString(R.string.my_email)));//设置Clipboard 的内容
@@ -148,7 +159,7 @@ public class MorePresenterImpl extends AbstractPresenter<MoreView> {
     }
 
     public void bikeInfo() {
-        BusRetrofit.get()
+        mBusService
                 .url(MapFragment.BIKE_URL)
                 .map(new Function<String, ArrayList<BikeStation>>() {
                     @Override

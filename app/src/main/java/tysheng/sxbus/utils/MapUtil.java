@@ -1,6 +1,8 @@
 package tysheng.sxbus.utils;
 
 
+import android.content.Context;
+
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
@@ -11,8 +13,6 @@ import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.utils.CoordinateConverter;
 
 import java.util.ArrayList;
-
-import tysheng.sxbus.App;
 
 /**
  * Created by tysheng
@@ -56,19 +56,19 @@ public class MapUtil implements MKOfflineMapListener {
         return desLatLng;
     }
 
-    public LocationClient getClient() {
+    LocationClient getClient() {
         return client;
     }
 
     /**
      * @param listener //结果回调
      */
-    public void getLocation(BDLocationListener listener) {
+    public void getLocation(Context context, BDLocationListener listener) {
 //        if (client == null) {
 //
 //        }
         // 定位初始化
-        client = new LocationClient(App.get());
+        client = new LocationClient(context);
         client.registerLocationListener(listener);
         LocationClientOption option = new LocationClientOption();
         option.setOpenGps(true);// 打开gps

@@ -144,7 +144,7 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
 
     @Override
     public void refreshLocation() {
-        MapUtil.getInstance().getLocation(new TyLocationListener() {
+        MapUtil.getInstance().getLocation(getContext().getApplicationContext(), new TyLocationListener() {
             @Override
             public void onReceiveLocation(BDLocation location) {
                 super.onReceiveLocation(location);

@@ -11,7 +11,7 @@ import tysheng.sxbus.bean.Star;
  */
 
 public class StarHelper extends BaseDbHelper<Star, Long> {
-    StarHelper(AbstractDao<Star, Long> dao) {
+    public StarHelper(AbstractDao<Star, Long> dao) {
         super(dao);
     }
 }

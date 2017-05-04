@@ -42,7 +42,6 @@ public class RxHelper {
                         .map(new Function<String, CallBack>() {
                             @Override
                             public CallBack apply(String string) throws Exception {
-
                                 return JsonUtil.parse(string, CallBack.class);
                             }
                         });

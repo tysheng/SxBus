@@ -6,10 +6,9 @@ import io.reactivex.functions.Consumer;
 import tysheng.sxbus.bean.CallBack;
 import tysheng.sxbus.bean.Stars;
 import tysheng.sxbus.bean.Status;
-import tysheng.sxbus.net.BusRetrofit;
+import tysheng.sxbus.model.base.BaseModelImpl;
 import tysheng.sxbus.presenter.inter.SearchPresenter;
 import tysheng.sxbus.utils.JsonUtil;
-import tysheng.sxbus.utils.LogUtil;
 import tysheng.sxbus.utils.RxHelper;
 import tysheng.sxbus.utils.TyObserver;
 
@@ -19,15 +18,15 @@ import tysheng.sxbus.utils.TyObserver;
  * Email: tyshengsx@gmail.com
  */
 
-public class SearchModelImpl {
+public class SearchModelImplImpl extends BaseModelImpl {
     private SearchPresenter mPresenter;
 
-    public SearchModelImpl(SearchPresenter anPresenter) {
+    public SearchModelImplImpl(SearchPresenter anPresenter) {
         mPresenter = anPresenter;
     }
 
     public void getBusSimple(String number) {
-        BusRetrofit.get()
+        mBusService
                 .numberToSearch(number)
                 .delay(200, TimeUnit.MICROSECONDS)
                 .compose(mPresenter.<String>bindUntilDestroyView())
@@ -36,7 +35,6 @@ public class SearchModelImpl {
                 .doOnNext(new Consumer<CallBack>() {
                     @Override
                     public void accept(CallBack callBack) throws Exception {
-                        LogUtil.d(callBack.toString());
                         Status status = JsonUtil.parse(callBack.status, Status.class);
                         if (status.code == 20306) {
                             mPresenter.onCodeError();
