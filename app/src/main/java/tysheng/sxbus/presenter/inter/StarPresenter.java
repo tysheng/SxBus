@@ -2,25 +2,19 @@ package tysheng.sxbus.presenter.inter;
 
 import android.view.View;
 
-import java.util.List;
-
 import tysheng.sxbus.adapter.StarAdapter;
-import tysheng.sxbus.bean.Star;
-import tysheng.sxbus.presenter.base.RetrofitErrorInterface;
+import tysheng.sxbus.presenter.base.BaseFragmentPresenter;
 
 /**
  * Created by tysheng
- * Date: 2017/2/28 16:14.
+ * Date: 2017/2/28 20:04.
  * Email: tyshengsx@gmail.com
  */
 
-public interface SearchPresenterInterface extends RetrofitErrorInterface {
+public interface StarPresenter extends BaseFragmentPresenter {
 
-    void setNewData(List<Star> stars);
 
     void setNewDataFromRecent();
-
-    void initFooter();
 
     StarAdapter getAdapter();
 

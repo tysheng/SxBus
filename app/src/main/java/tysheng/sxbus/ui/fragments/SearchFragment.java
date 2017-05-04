@@ -1,8 +1,6 @@
 package tysheng.sxbus.ui.fragments;
 
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.view.View;
@@ -10,22 +8,16 @@ import android.view.View;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 
-import butterknife.BindView;
 import tysheng.sxbus.R;
-import tysheng.sxbus.base.BaseFragment;
+import tysheng.sxbus.base.BaseFragmentV2;
+import tysheng.sxbus.databinding.FragmentSearchBinding;
 import tysheng.sxbus.presenter.impl.SearchPresenterImpl;
 
 /**
  * Created by Sty
  * Date: 16/8/10 22:52.
  */
-public class SearchFragment extends BaseFragment<SearchPresenterImpl> implements tysheng.sxbus.ui.inter.SearchView {
-    @BindView(R.id.recyclerView)
-    RecyclerView mRecyclerView;
-    @BindView(R.id.coordinatorLayout)
-    CoordinatorLayout mCoordinatorLayout;
-    @BindView(R.id.searchView)
-    SearchView mSearchView;
+public class SearchFragment extends BaseFragmentV2<SearchPresenterImpl, FragmentSearchBinding> implements tysheng.sxbus.ui.inter.SearchView {
 
     @Override
     protected int getLayoutId() {
@@ -41,36 +33,36 @@ public class SearchFragment extends BaseFragment<SearchPresenterImpl> implements
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (!hidden) {
-            if (TextUtils.isEmpty(mSearchView.getQuery())) {
+            if (TextUtils.isEmpty(binding.searchView.getQuery())) {
                 mPresenter.setNewDataFromRecent();
             }
-            mSearchView.post(new Runnable() {
+            binding.searchView.post(new Runnable() {
                 @Override
                 public void run() {
-                    mSearchView.clearFocus();
+                    binding.searchView.clearFocus();
                 }
             });
         }
     }
 
     @Override
-    public CoordinatorLayout getCoordinatorLayout() {
-        return mCoordinatorLayout;
+    public View getCoordinatorLayout() {
+        return binding.getRoot();
     }
 
     @Override
     protected void initData() {
         mPresenter = new SearchPresenterImpl(this);
         mPresenter.initData();
-        mRecyclerView.setAdapter(mPresenter.getAdapter());
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRecyclerView.addOnItemTouchListener(new OnItemChildClickListener() {
+        binding.recyclerView.setAdapter(mPresenter.getAdapter());
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.recyclerView.addOnItemTouchListener(new OnItemChildClickListener() {
             @Override
             public void onSimpleItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 mPresenter.onSimpleItemChildClick(view, i);
             }
         });
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 getBusSimple(query);
@@ -82,8 +74,8 @@ public class SearchFragment extends BaseFragment<SearchPresenterImpl> implements
                 return false;
             }
         });
-        mSearchView.onActionViewExpanded();
-        mSearchView.clearFocus();
+        binding.searchView.onActionViewExpanded();
+        binding.searchView.clearFocus();
     }
 
     @Override
@@ -94,13 +86,13 @@ public class SearchFragment extends BaseFragment<SearchPresenterImpl> implements
     @Override
     public void onResume() {
         super.onResume();
-        if (mSearchView != null) {
-            mSearchView.clearFocus();
+        if (binding.searchView != null) {
+            binding.searchView.clearFocus();
         }
     }
 
     private void getBusSimple(String number) {
-        mSearchView.clearFocus();
+        binding.searchView.clearFocus();
         mPresenter.getBusSimple(number);
     }
 

@@ -21,10 +21,9 @@ import com.baidu.mapapi.model.LatLngBounds;
 import java.util.ArrayList;
 
 import tysheng.sxbus.bean.Stations;
-import tysheng.sxbus.bean.YueChenBusResult;
+import tysheng.sxbus.bean.SxBusResult;
 import tysheng.sxbus.model.impl.DrawModelImpl;
 import tysheng.sxbus.presenter.base.AbstractPresenter;
-import tysheng.sxbus.presenter.inter.DrawPresenter;
 import tysheng.sxbus.presenter.inter.MapPresenter;
 import tysheng.sxbus.ui.inter.MapView;
 import tysheng.sxbus.utils.LogUtil;
@@ -39,10 +38,10 @@ import tysheng.sxbus.utils.UiUtil;
  * Email: tyshengsx@gmail.com
  */
 
-public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapPresenter, DrawPresenter {
+public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapPresenter {
 
     private BaiduMap mBaiduMap;
-    private ArrayList<YueChenBusResult> mResultList;
+    private ArrayList<SxBusResult> mResultList;
     private ArrayList<Stations> mStationsList;
     private InfoWindow mInfoWindow;
     private DrawModelImpl mDrawModel;
@@ -50,7 +49,7 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
 
     public MapPresenterImpl(MapView view) {
         super(view);
-        mDrawModel = new DrawModelImpl(this);
+        mDrawModel = new DrawModelImpl();
     }
 
     @Override
@@ -67,8 +66,8 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
     public void initData() {
         mBaiduMap = mView.getMap();
         initMap();
-        mDrawModel.drawStations(mStationsList);
-        mDrawModel.drawBuses(mResultList);
+        mDrawModel.drawStations(getBaiduMap(), mStationsList);
+        mDrawModel.drawBuses(getBaiduMap(), mResultList);
     }
 
 
@@ -114,7 +113,7 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
                     });
                 } else if (position >= 1000 && position < 2000) {
 //                    final int realPosition = position - 1000;
-//                    YueChenBusResult result = mResultList.get(realPosition);
+//                    SxBusResult result = mResultList.get(realPosition);
 //                    LogUtil.d(result.stationSeqNum);
                 }
                 return true;
@@ -170,7 +169,7 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
             LogUtil.d("getAddrStr " + sub);
             mView.setSubtitle(sub.trim());
         } else {
-            mDrawModel.drawSinglePlace(finalLatLng);
+            mDrawModel.drawSinglePlace(getBaiduMap(), finalLatLng);
         }
         setCenterPoint(finalLatLng.latitude, finalLatLng.longitude);
     }
@@ -191,13 +190,13 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
         });
     }
 
-    @Override
-    public BaiduMap getBaiduMap() {
+
+    private BaiduMap getBaiduMap() {
         return mBaiduMap;
     }
 
     @Override
     public void drawStations() {
-        mDrawModel.drawStationsClick();
+        mDrawModel.drawStationsClick(getBaiduMap());
     }
 }

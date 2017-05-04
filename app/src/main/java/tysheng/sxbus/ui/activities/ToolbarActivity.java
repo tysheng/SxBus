@@ -21,7 +21,7 @@ import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
 import tysheng.sxbus.base.BaseActivityV2;
 import tysheng.sxbus.bean.Stations;
-import tysheng.sxbus.bean.YueChenBusResult;
+import tysheng.sxbus.bean.SxBusResult;
 import tysheng.sxbus.databinding.ActivityToolbarBinding;
 import tysheng.sxbus.presenter.base.AbstractPresenter;
 import tysheng.sxbus.ui.fragments.MapFragment;
@@ -39,7 +39,7 @@ public class ToolbarActivity extends BaseActivityV2<AbstractPresenter, ActivityT
     private MKOfflineMap mOffline;
     private ProgressDialog progressBar;
 
-    public static void startMap(Context context, ArrayList<YueChenBusResult> list, ArrayList<Stations> stations, Stations latLng) {
+    public static void startMap(Context context, ArrayList<SxBusResult> list, ArrayList<Stations> stations, Stations latLng) {
         if (list != null && stations != null) {
             Intent intent = new Intent(context, ToolbarActivity.class);
             intent.putExtra("0", list);

@@ -6,28 +6,28 @@ import android.support.v4.app.Fragment;
 
 import com.baidu.mapapi.SDKInitializer;
 
-import butterknife.BindView;
 import tysheng.sxbus.R;
-import tysheng.sxbus.base.BaseActivity;
+import tysheng.sxbus.base.BaseActivityV2;
 import tysheng.sxbus.base.BaseFragment;
 import tysheng.sxbus.bean.FragCallback;
+import tysheng.sxbus.databinding.ActivityMainBinding;
 import tysheng.sxbus.presenter.impl.MainPresenterImpl;
 import tysheng.sxbus.view.PositionBottomNavigationView;
 
 
-public class MainActivity extends BaseActivity implements MainView, PositionBottomNavigationView.onPositionSelectedListener, BaseFragment.FragmentCallback {
-    @BindView(R.id.bottom)
-    PositionBottomNavigationView mBottom;
-    private MainPresenterImpl mPresenter;
-
+public class MainActivity extends BaseActivityV2<MainPresenterImpl, ActivityMainBinding> implements MainView, PositionBottomNavigationView.onPositionSelectedListener, BaseFragment.FragmentCallback {
     @Override
     public int getLayoutId() {
         return R.layout.activity_main;
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected MainPresenterImpl initPresenter() {
+        return new MainPresenterImpl(this, getSupportFragmentManager());
+    }
 
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         setTheme(R.style.AppTheme_Main);
         super.onCreate(savedInstanceState);
         // 初始化百度地图
@@ -42,10 +42,9 @@ public class MainActivity extends BaseActivity implements MainView, PositionBott
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        mPresenter = new MainPresenterImpl(this, getSupportFragmentManager());
         mPresenter.restorePosition(savedInstanceState);
-        mBottom.registerIds(R.id.menu_star, R.id.menu_search, R.id.menu_more);
-        mBottom.setOnPositionSelectedListener(this);
+        binding.bottom.registerIds(R.id.menu_star, R.id.menu_search, R.id.menu_more);
+        binding.bottom.setOnPositionSelectedListener(this);
     }
 
     @Override
@@ -57,7 +56,7 @@ public class MainActivity extends BaseActivity implements MainView, PositionBott
 
     @Override
     public void setCurrentPosition(int pos) {
-        mBottom.setCurrentPosition(pos);
+        binding.bottom.setCurrentPosition(pos);
     }
 
     @Override

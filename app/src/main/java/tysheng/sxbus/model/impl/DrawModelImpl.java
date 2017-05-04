@@ -2,6 +2,7 @@ package tysheng.sxbus.model.impl;
 
 import android.support.v4.content.ContextCompat;
 
+import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.MarkerOptions;
@@ -16,8 +17,7 @@ import java.util.List;
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
 import tysheng.sxbus.bean.Stations;
-import tysheng.sxbus.bean.YueChenBusResult;
-import tysheng.sxbus.presenter.inter.DrawPresenter;
+import tysheng.sxbus.bean.SxBusResult;
 import tysheng.sxbus.utils.SPHelper;
 
 import static com.baidu.mapapi.BMapManager.getContext;
@@ -29,14 +29,14 @@ import static com.baidu.mapapi.BMapManager.getContext;
  */
 
 public class DrawModelImpl {
-    private DrawPresenter mPresenter;
+
     private BitmapDescriptor iconBus, iconStation, iconStart, iconEnd, iconClickHere, iconLongArrow;
     private List<LatLng> mLatLngs = new ArrayList<>();
     private ArrayList<Stations> stationsList;
-    private ArrayList<YueChenBusResult> resultList;
+    private ArrayList<SxBusResult> resultList;
 
-    public DrawModelImpl(DrawPresenter presenter) {
-        mPresenter = presenter;
+    public DrawModelImpl() {
+
     }
 
     private BitmapDescriptor getBusIcon() {
@@ -81,13 +81,13 @@ public class DrawModelImpl {
         return iconEnd;
     }
 
-    public void drawStations(ArrayList<Stations> stationsList) {
+    public void drawStations(BaiduMap baiduMap, ArrayList<Stations> stationsList) {
         boolean drawStation = SPHelper.get(Constant.DRAW_STATION, true);
         this.stationsList = stationsList;
-        drawStationInternal(stationsList, drawStation, true);
+        drawStationInternal(baiduMap, stationsList, drawStation, true);
     }
 
-    private void drawStationInternal(ArrayList<Stations> stationsList, boolean drawStation, boolean startEnd) {
+    private void drawStationInternal(BaiduMap baiduMap, ArrayList<Stations> stationsList, boolean drawStation, boolean startEnd) {
         mLatLngs.clear();
         for (int i = 0; i < stationsList.size(); i++) {
             Stations sta = stationsList.get(i);
@@ -96,35 +96,35 @@ public class DrawModelImpl {
             if (i == 0 && startEnd) {
                 //起点
                 OverlayOptions oo = new MarkerOptions().position(ll).icon(getStartIcon()).title(sta.stationName).zIndex(i).perspective(true);
-                mPresenter.getBaiduMap().addOverlay(oo);
+                baiduMap.addOverlay(oo);
             } else if (i == stationsList.size() - 1 && startEnd) {
                 //终点
                 OverlayOptions oo = new MarkerOptions().position(ll).icon(getEndIcon()).title(sta.stationName).zIndex(i).perspective(true);
-                mPresenter.getBaiduMap().addOverlay(oo);
+                baiduMap.addOverlay(oo);
             } else if (drawStation) {
                 //站点
                 OverlayOptions oo = new MarkerOptions().position(ll).icon(getStationIcon()).title(sta.stationName).zIndex(i);
-                mPresenter.getBaiduMap().addOverlay(oo);
+                baiduMap.addOverlay(oo);
             }
         }
         //连接线
         OverlayOptions option = new PolylineOptions().points(mLatLngs)
                 .color(ContextCompat.getColor(getContext(), R.color.baidu_blue));
-        mPresenter.getBaiduMap().addOverlay(option);
+        baiduMap.addOverlay(option);
     }
 
-    public void drawSinglePlace(LatLng latLng) {
+    public void drawSinglePlace(BaiduMap baiduMap, LatLng latLng) {
         OverlayOptions oo = new MarkerOptions().position(latLng).icon(getClickIcon()).zIndex(10000)
                 .anchor(0.5f, 2f).animateType(MarkerOptions.MarkerAnimateType.grow).draggable(true);
 
-        mPresenter.getBaiduMap().addOverlay(oo);
+        baiduMap.addOverlay(oo);
     }
 
-    public void drawBuses(ArrayList<YueChenBusResult> resultList) {
+    public void drawBuses(BaiduMap map, ArrayList<SxBusResult> resultList) {
         this.resultList = resultList;
         //车辆坐标
         for (int i = 0; i < resultList.size(); i++) {
-            YueChenBusResult point = resultList.get(i);
+            SxBusResult point = resultList.get(i);
             LatLng ll = new LatLng(point.lat, point.lng);
             // 将GPS设备采集的原始GPS坐标转换成百度坐标
             CoordinateConverter converter = new CoordinateConverter();
@@ -133,16 +133,16 @@ public class DrawModelImpl {
             converter.coord(ll);
             LatLng desLatLng = converter.convert();
             OverlayOptions oo = new MarkerOptions().position(desLatLng).icon(getBusIcon()).zIndex(1000 + i);
-            mPresenter.getBaiduMap().addOverlay(oo);
+            map.addOverlay(oo);
         }
     }
 
-    public void drawStationsClick() {
+    public void drawStationsClick(BaiduMap map) {
         final boolean draw = !SPHelper.get(Constant.DRAW_STATION, true);
         SPHelper.put(Constant.DRAW_STATION, draw);
-        mPresenter.getBaiduMap().clear();
+        map.clear();
 
-        drawStationInternal(stationsList, draw, true);
-        drawBuses(resultList);
+        drawStationInternal(map, stationsList, draw, true);
+        drawBuses(map, resultList);
     }
 }

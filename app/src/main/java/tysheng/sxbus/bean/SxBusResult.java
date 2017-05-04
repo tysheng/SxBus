@@ -8,16 +8,16 @@ import android.os.Parcelable;
  * Date: 16/9/20 15:38.
  */
 
-public class YueChenBusResult implements Parcelable {
-    public static final Parcelable.Creator<YueChenBusResult> CREATOR = new Parcelable.Creator<YueChenBusResult>() {
+public class SxBusResult implements Parcelable {
+    public static final Parcelable.Creator<SxBusResult> CREATOR = new Parcelable.Creator<SxBusResult>() {
         @Override
-        public YueChenBusResult createFromParcel(Parcel source) {
-            return new YueChenBusResult(source);
+        public SxBusResult createFromParcel(Parcel source) {
+            return new SxBusResult(source);
         }
 
         @Override
-        public YueChenBusResult[] newArray(int size) {
-            return new YueChenBusResult[size];
+        public SxBusResult[] newArray(int size) {
+            return new SxBusResult[size];
         }
     };
     public String busId;
@@ -30,10 +30,10 @@ public class YueChenBusResult implements Parcelable {
     public String cardId;
     public boolean isArriveDest;
 
-    public YueChenBusResult() {
+    public SxBusResult() {
     }
 
-    protected YueChenBusResult(Parcel in) {
+    protected SxBusResult(Parcel in) {
         this.busId = in.readString();
         this.lng = in.readDouble();
         this.lat = in.readDouble();

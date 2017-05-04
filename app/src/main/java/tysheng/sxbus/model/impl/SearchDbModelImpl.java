@@ -15,11 +15,11 @@ import tysheng.sxbus.model.base.BaseModel;
  * Email: tyshengsx@gmail.com
  */
 
-public class SearchDbModel implements BaseModel {
+public class SearchDbModelImpl implements BaseModel {
 
     private StarHelper mHelper;
 
-    public SearchDbModel() {
+    public SearchDbModelImpl() {
         mHelper = DbUtil.getDriverHelper();
     }
 

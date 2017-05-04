@@ -1,6 +1,5 @@
 package tysheng.sxbus.ui.inter;
 
-import android.support.design.widget.CoordinatorLayout;
 import android.view.View;
 
 /**
@@ -13,5 +12,5 @@ public interface SearchView extends tysheng.sxbus.ui.base.BaseView {
 
     View getView();
 
-    CoordinatorLayout getCoordinatorLayout();
+    View getCoordinatorLayout();
 }

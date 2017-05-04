@@ -13,7 +13,7 @@ import tysheng.sxbus.Constant;
 import tysheng.sxbus.adapter.RunningAdapter;
 import tysheng.sxbus.base.BaseRecyclerViewAdapter;
 import tysheng.sxbus.bean.Stations;
-import tysheng.sxbus.model.impl.RunningModel;
+import tysheng.sxbus.model.impl.RunningModelImpl;
 import tysheng.sxbus.presenter.base.AbstractPresenter;
 import tysheng.sxbus.presenter.inter.RunningPresenter;
 import tysheng.sxbus.ui.activities.ToolbarActivity;
@@ -29,14 +29,14 @@ import tysheng.sxbus.utils.SnackBarUtil;
  */
 
 public class RunningPresenterImpl extends AbstractPresenter<RunningView> implements RunningPresenter {
-    private RunningModel mRunningModel;
+    private RunningModelImpl mRunningModel;
     private String title;
     private String id;
     private RunningAdapter mRunningAdapter;
 
     public RunningPresenterImpl(RunningView view) {
         super(view);
-        mRunningModel = new RunningModel(this);
+        mRunningModel = new RunningModelImpl(this);
     }
 
     public void refresh() {

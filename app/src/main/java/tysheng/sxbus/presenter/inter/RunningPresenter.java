@@ -3,7 +3,7 @@ package tysheng.sxbus.presenter.inter;
 import java.util.List;
 
 import tysheng.sxbus.bean.Stations;
-import tysheng.sxbus.presenter.base.RetrofitErrorInterface;
+import tysheng.sxbus.presenter.base.RetrofitError;
 
 /**
  * Created by tysheng
@@ -11,7 +11,7 @@ import tysheng.sxbus.presenter.base.RetrofitErrorInterface;
  * Email: tyshengsx@gmail.com
  */
 
-public interface RunningPresenter extends RetrofitErrorInterface {
+public interface RunningPresenter extends RetrofitError {
     void onDataSuccess(List<Stations> stationses);
 
     void refresh();

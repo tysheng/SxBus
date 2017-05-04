@@ -8,9 +8,9 @@ import com.baidu.mapapi.map.BaiduMap;
 
 import java.util.ArrayList;
 
-import butterknife.BindView;
 import tysheng.sxbus.R;
-import tysheng.sxbus.base.BaseFragment;
+import tysheng.sxbus.base.BaseFragmentV2;
+import tysheng.sxbus.databinding.FragmentMapBinding;
 import tysheng.sxbus.presenter.impl.MapPresenterImpl;
 import tysheng.sxbus.ui.activities.ToolbarActivity;
 import tysheng.sxbus.ui.inter.MapView;
@@ -21,9 +21,9 @@ import tysheng.sxbus.ui.inter.MapView;
  * Email: tyshengsx@gmail.com
  */
 
-public class MapFragment extends BaseFragment<MapPresenterImpl> implements MapView {
-    @BindView(R.id.mapView)
-    com.baidu.mapapi.map.MapView mMapView;
+public class MapFragment extends BaseFragmentV2<MapPresenterImpl, FragmentMapBinding> implements MapView {
+
+    public static final String BIKE_URL = "http://www.sxbicycle.com/sxmap/ibikestation.asp?id=";
 
     public static MapFragment newInstance(ArrayList<Parcelable> list, ArrayList<Parcelable> stations, Parcelable parcelable) {
         Bundle args = new Bundle();
@@ -48,7 +48,7 @@ public class MapFragment extends BaseFragment<MapPresenterImpl> implements MapVi
     @Override
     public void onResume() {
         super.onResume();
-        mMapView.onResume();
+        binding.mapView.onResume();
     }
 
     @Override
@@ -60,13 +60,13 @@ public class MapFragment extends BaseFragment<MapPresenterImpl> implements MapVi
     @Override
     public void onPause() {
         super.onPause();
-        mMapView.onPause();
+        binding.mapView.onPause();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mMapView.onDestroy();
+        binding.mapView.onDestroy();
     }
 
     @Override
@@ -81,7 +81,7 @@ public class MapFragment extends BaseFragment<MapPresenterImpl> implements MapVi
 
     @Override
     public BaiduMap getMap() {
-        return mMapView.getMap();
+        return binding.mapView.getMap();
     }
 
     @Override

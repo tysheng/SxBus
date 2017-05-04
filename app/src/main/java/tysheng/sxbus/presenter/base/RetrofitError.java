@@ -6,7 +6,7 @@ package tysheng.sxbus.presenter.base;
  * Email: tyshengsx@gmail.com
  */
 
-public interface RetrofitErrorInterface extends BaseFragmentPresenter {
+public interface RetrofitError extends BaseFragmentPresenter {
     void onNetworkError(Throwable t);
 
     void onCodeError();

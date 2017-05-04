@@ -7,9 +7,9 @@ import android.view.View;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 
-import butterknife.BindView;
 import tysheng.sxbus.R;
-import tysheng.sxbus.base.BaseFragment;
+import tysheng.sxbus.base.BaseFragmentV2;
+import tysheng.sxbus.databinding.FragmentStarBinding;
 import tysheng.sxbus.presenter.impl.StarPresenterImpl;
 import tysheng.sxbus.ui.inter.StarView;
 
@@ -19,9 +19,7 @@ import tysheng.sxbus.ui.inter.StarView;
  * Date: 16/8/11 21:41.
  */
 
-public class StarFragment extends BaseFragment<StarPresenterImpl> implements StarView {
-    @BindView(R.id.recyclerView)
-    RecyclerView mRecyclerView;
+public class StarFragment extends BaseFragmentV2<StarPresenterImpl, FragmentStarBinding> implements StarView {
 
     @Override
     protected int getLayoutId() {
@@ -38,7 +36,7 @@ public class StarFragment extends BaseFragment<StarPresenterImpl> implements Sta
 
     @Override
     public RecyclerView getRecyclerView() {
-        return mRecyclerView;
+        return binding.recyclerView;
     }
 
     @Override
@@ -48,10 +46,10 @@ public class StarFragment extends BaseFragment<StarPresenterImpl> implements Sta
 
     @Override
     protected void initData() {
-        mRecyclerView.setAdapter(mPresenter.getAdapter());
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.recyclerView.setAdapter(mPresenter.getAdapter());
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mPresenter.setEmptyView();
-        mRecyclerView.addOnItemTouchListener(new OnItemChildClickListener() {
+        binding.recyclerView.addOnItemTouchListener(new OnItemChildClickListener() {
             @Override
             public void onSimpleItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 mPresenter.onSimpleItemChildClick(view, i);

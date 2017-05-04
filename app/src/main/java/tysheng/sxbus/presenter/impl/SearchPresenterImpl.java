@@ -15,10 +15,10 @@ import tysheng.sxbus.adapter.StarAdapter;
 import tysheng.sxbus.base.BaseFragment;
 import tysheng.sxbus.bean.FragCallback;
 import tysheng.sxbus.bean.Star;
-import tysheng.sxbus.model.impl.SearchDbModel;
-import tysheng.sxbus.model.impl.SearchModel;
+import tysheng.sxbus.model.impl.SearchDbModelImpl;
+import tysheng.sxbus.model.impl.SearchModelImpl;
 import tysheng.sxbus.presenter.base.AbstractPresenter;
-import tysheng.sxbus.presenter.inter.SearchPresenterInterface;
+import tysheng.sxbus.presenter.inter.SearchPresenter;
 import tysheng.sxbus.ui.inter.SearchView;
 import tysheng.sxbus.utils.ListUtil;
 import tysheng.sxbus.utils.SnackBarUtil;
@@ -29,17 +29,17 @@ import tysheng.sxbus.utils.SnackBarUtil;
  * Email: tyshengsx@gmail.com
  */
 
-public class SearchPresenterImpl extends AbstractPresenter<SearchView> implements SearchPresenterInterface {
-    private SearchDbModel mDbModule;
-    private SearchModel mSearchModel;
+public class SearchPresenterImpl extends AbstractPresenter<SearchView> implements SearchPresenter {
+    private SearchDbModelImpl mDbModule;
+    private SearchModelImpl mSearchModel;
     private List<Star> mRecentList;
     private StarAdapter mAdapter;
     private ProgressDialog mDialog;
 
     public SearchPresenterImpl(SearchView view) {
         super(view);
-        mDbModule = new SearchDbModel();
-        mSearchModel = new SearchModel(this);
+        mDbModule = new SearchDbModelImpl();
+        mSearchModel = new SearchModelImpl(this);
     }
 
     @Override

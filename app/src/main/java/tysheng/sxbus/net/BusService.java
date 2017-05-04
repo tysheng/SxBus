@@ -1,6 +1,6 @@
 package tysheng.sxbus.net;
 
-import io.reactivex.Observable;
+import io.reactivex.Flowable;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import tysheng.sxbus.bean.CallBack;
@@ -17,14 +17,14 @@ public interface BusService {
     String HTTP_ADDRESS_URL = "http://www.iwaybook.com/server-ue2/rest/servers-v2/";//330600
 
     @GET("{code}")
-    Observable<HttpAdd> getAddress(@Path("code") String code);
+    Flowable<HttpAdd> getAddress(@Path("code") String code);
 
     @GET("buslines/simple/" + MAIL_CODE + "/{number}/0/20")
-    Observable<CallBack> numberToSearch(@Path("number") String number);
+    Flowable<CallBack> numberToSearch(@Path("number") String number);
 
     @GET("buslines/" + MAIL_CODE + "/{code}")
-    Observable<CallBack> getBusLines(@Path("code") String code);
+    Flowable<CallBack> getBusLines(@Path("code") String code);
 
     @GET("buses/busline/" + MAIL_CODE + "/{code}")
-    Observable<CallBack> getRunningBus(@Path("code") String code);
+    Flowable<CallBack> getRunningBus(@Path("code") String code);
 }

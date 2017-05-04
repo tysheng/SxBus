@@ -10,7 +10,6 @@ import tysheng.sxbus.dao.StarDao;
 import tysheng.sxbus.db.DbUtil;
 import tysheng.sxbus.db.StarHelper;
 import tysheng.sxbus.model.base.BaseModel;
-import tysheng.sxbus.presenter.impl.StarPresenterImpl;
 
 /**
  * Created by tysheng
@@ -18,14 +17,12 @@ import tysheng.sxbus.presenter.impl.StarPresenterImpl;
  * Email: tyshengsx@gmail.com
  */
 
-public class DbModel implements BaseModel {
-    private StarPresenterImpl mPresenter;
+public class DbModelImpl implements BaseModel {
     private StarHelper mHelper;
     private QueryBuilder<Star> mQueryBuilder;
     private List<Star> mStarList;
 
-    public DbModel(StarPresenterImpl presenter) {
-        mPresenter = presenter;
+    public DbModelImpl() {
         mHelper = DbUtil.getDriverHelper();
 
     }
@@ -41,7 +38,6 @@ public class DbModel implements BaseModel {
 
     @Override
     public void onDestroy() {
-        mPresenter = null;
     }
 
     public void deleteByKey(Long mainId) {

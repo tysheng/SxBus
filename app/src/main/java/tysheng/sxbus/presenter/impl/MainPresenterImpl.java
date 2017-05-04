@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
 import tysheng.sxbus.bean.FragCallback;
+import tysheng.sxbus.presenter.base.AbstractPresenter;
 import tysheng.sxbus.ui.activities.MainView;
 import tysheng.sxbus.ui.fragments.MoreFragment;
 import tysheng.sxbus.ui.fragments.RunningFragment;
@@ -17,20 +18,29 @@ import tysheng.sxbus.ui.fragments.StarFragment;
  * Email: tyshengsx@gmail.com
  */
 
-public class MainPresenterImpl {
+public class MainPresenterImpl extends AbstractPresenter<MainView> {
     private static final String POSITION = "POSITION";
-    private MainView mMainView;
     private FragmentManager mFragmentManager;
     private int pre;// 0 ,1 ,2 ,3(0跳到running),4(1跳到running)
 
     public MainPresenterImpl(MainView mainView, FragmentManager manager) {
-        mMainView = mainView;
+        super(mainView);
         mFragmentManager = manager;
+    }
+
+    @Override
+    public void setArgs(Bundle bundle) {
+
+    }
+
+    @Override
+    public void initData() {
+
     }
 
     public void onDestroy() {
         mFragmentManager = null;
-        mMainView = null;
+        super.onDestroy();
     }
 
     private Fragment getFragmentInstance(int pos, FragCallback callback) {
@@ -63,7 +73,7 @@ public class MainPresenterImpl {
         if (to == null) {
             to = getFragmentInstance(cur, callback);
         }
-        mMainView.jumpFragment(preFrag, to, String.valueOf(cur));
+        mView.jumpFragment(preFrag, to, String.valueOf(cur));
         pre = cur;
     }
 
@@ -80,7 +90,7 @@ public class MainPresenterImpl {
                     .commit();
             dispatch = false;
         } else if (pre != 0) {
-            mMainView.setCurrentPosition(0);
+            mView.setCurrentPosition(0);
             dispatch = false;
         }
         return dispatch;

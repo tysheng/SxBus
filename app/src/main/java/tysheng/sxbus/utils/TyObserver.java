@@ -1,12 +1,12 @@
 package tysheng.sxbus.utils;
 
-import io.reactivex.observers.DisposableObserver;
+import io.reactivex.subscribers.ResourceSubscriber;
 
 /**
  * Created by Sty
  * Date: 16/9/16 09:09.
  */
-public abstract class StyObserver<T> extends DisposableObserver<T> {
+public abstract class TyObserver<T> extends ResourceSubscriber<T> {
 
 
     @Override
@@ -15,7 +15,9 @@ public abstract class StyObserver<T> extends DisposableObserver<T> {
         onTerminate();
     }
 
-    public abstract void next(T t);
+    public void next(T t) {
+
+    }
 
     public void onTerminate() {
 

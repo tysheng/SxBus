@@ -15,7 +15,6 @@ public class BusRetrofit {
     private static BusService sService = null;
     private static volatile Retrofit retrofit = null;
 
-
     private static void init() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         final int TIME_MAX = 10;

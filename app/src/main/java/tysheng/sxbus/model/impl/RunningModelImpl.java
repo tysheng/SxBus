@@ -9,14 +9,15 @@ import android.view.animation.OvershootInterpolator;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Observable;
+import io.reactivex.Flowable;
 import io.reactivex.functions.BiFunction;
+import io.reactivex.functions.Consumer;
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.bean.BusLinesResult;
 import tysheng.sxbus.bean.CallBack;
 import tysheng.sxbus.bean.Stations;
 import tysheng.sxbus.bean.Status;
-import tysheng.sxbus.bean.YueChenBusResult;
+import tysheng.sxbus.bean.SxBusResult;
 import tysheng.sxbus.net.BusRetrofit;
 import tysheng.sxbus.presenter.inter.RunningPresenter;
 import tysheng.sxbus.utils.JsonUtil;
@@ -24,8 +25,8 @@ import tysheng.sxbus.utils.ListUtil;
 import tysheng.sxbus.utils.MapUtil;
 import tysheng.sxbus.utils.RxHelper;
 import tysheng.sxbus.utils.SPHelper;
-import tysheng.sxbus.utils.StyObserver;
 import tysheng.sxbus.utils.SystemUtil;
+import tysheng.sxbus.utils.TyObserver;
 
 /**
  * Created by tysheng
@@ -33,17 +34,17 @@ import tysheng.sxbus.utils.SystemUtil;
  * Email: tyshengsx@gmail.com
  */
 
-public class RunningModel {
-    private RunningPresenter mInterface;
-    private List<YueChenBusResult> mResults;
+public class RunningModelImpl {
+    private RunningPresenter mPresenter;
+    private List<SxBusResult> mResults;
     private List<Stations> stations;
 
-    public RunningModel(RunningPresenter anInterface) {
-        mInterface = anInterface;
+    public RunningModelImpl(RunningPresenter anPresenter) {
+        mPresenter = anPresenter;
     }
 
     public void refresh(String id) {
-        Observable.zip(BusRetrofit.get().getBusLines(id),
+        Flowable.zip(BusRetrofit.get().getBusLines(id),
                 BusRetrofit.get().getRunningBus(id),
                 new BiFunction<CallBack, CallBack, List<Stations>>() {
                     @Override
@@ -51,24 +52,27 @@ public class RunningModel {
                         return zip(busLines, busLine);
                     }
                 })
-                .compose(mInterface.<List<Stations>>bindUntilDestroyView())
-                .compose(RxHelper.<List<Stations>>ioToMain())
-                .subscribe(new StyObserver<List<Stations>>() {
+                .compose(mPresenter.<List<Stations>>bindUntilDestroyView())
+                .compose(RxHelper.<List<Stations>>flowableIoToMain())
+                .doOnNext(new Consumer<List<Stations>>() {
                     @Override
-                    public void next(List<Stations> stationses) {
-                        mInterface.onDataSuccess(stationses);
+                    public void accept(List<Stations> stationses) throws Exception {
+                        mPresenter.onDataSuccess(stationses);
                     }
-
+                })
+                .doOnError(new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        mPresenter.onNetworkError(throwable);
+                    }
+                })
+                .subscribe(new TyObserver<List<Stations>>() {
                     @Override
                     public void onTerminate() {
                         super.onTerminate();
-                        mInterface.onNetworkTerminate();
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-                        mInterface.onNetworkError(t);
-                        super.onError(t);
+                        if (mPresenter != null) {
+                            mPresenter.onNetworkTerminate();
+                        }
                     }
                 });
     }
@@ -88,16 +92,16 @@ public class RunningModel {
         //running
         Status status = JsonUtil.parse(busLine.status, Status.class);
         if (status.code == 0 && !ListUtil.isEmpty(stations)) {
-            mResults = JsonUtil.parseArray(busLine.result, YueChenBusResult.class);
+            mResults = JsonUtil.parseArray(busLine.result, SxBusResult.class);
             if (TextUtils.equals("市公交集团公司", finalResult.owner) && byStation()) {
-                for (YueChenBusResult result : mResults) {
+                for (SxBusResult result : mResults) {
                     int station = result.stationSeqNum - 1;
                     if (station < stations.size()) {
                         stations.get(station).arriveState = Stations.ArriveState.Arriving;
                     }
                 }
             } else {//县汽运巴士
-                for (YueChenBusResult result : mResults) {
+                for (SxBusResult result : mResults) {
                     double[] i1 = new double[]{result.lng, result.lat};
                     double distance = 2;
                     int station = 0;
@@ -120,8 +124,8 @@ public class RunningModel {
         return (ArrayList<Stations>) stations;
     }
 
-    public ArrayList<YueChenBusResult> getResults() {
-        return (ArrayList<YueChenBusResult>) mResults;
+    public ArrayList<SxBusResult> getResults() {
+        return (ArrayList<SxBusResult>) mResults;
     }
 
     public void popupFab(final FloatingActionButton floatingActionButton) {
