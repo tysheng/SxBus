@@ -33,6 +33,7 @@ import tysheng.sxbus.di.component.DaggerUniverseComponent;
 import tysheng.sxbus.net.BusService;
 import tysheng.sxbus.presenter.base.AbstractPresenter;
 import tysheng.sxbus.ui.activities.MapActivity;
+import tysheng.sxbus.ui.fragments.ListDialogFragment;
 import tysheng.sxbus.ui.fragments.MapFragment;
 import tysheng.sxbus.ui.inter.MoreView;
 import tysheng.sxbus.utils.AlipayZeroSdk;
@@ -43,7 +44,6 @@ import tysheng.sxbus.utils.RxHelper;
 import tysheng.sxbus.utils.SPHelper;
 import tysheng.sxbus.utils.SystemUtil;
 import tysheng.sxbus.utils.TyObserver;
-import tysheng.sxbus.view.ChooseCityFragment;
 
 /**
  * Created by tysheng
@@ -148,7 +148,7 @@ public class MorePresenterImpl extends AbstractPresenter<MoreView> {
     }
 
     private void chooseCity(int i) {
-        ChooseCityFragment f = ChooseCityFragment.newInstance(i);
+        ListDialogFragment f = ListDialogFragment.newInstance(i);
         f.show(getChildFragmentManager(), "");
     }
 
@@ -230,7 +230,7 @@ public class MorePresenterImpl extends AbstractPresenter<MoreView> {
     public void onItemClick(int internalPosition) {
         switch (internalPosition) {
             case 0:
-                chooseCity(ChooseCityFragment.CHOOSE_CITY);
+                chooseCity(ListDialogFragment.CHOOSE_CITY);
                 break;
             case 1:
                 bikeInfo();
@@ -251,7 +251,7 @@ public class MorePresenterImpl extends AbstractPresenter<MoreView> {
                 askPermission();
                 break;
             case 7:
-                chooseCity(ChooseCityFragment.OPEN_SOURCE);
+                chooseCity(ListDialogFragment.OPEN_SOURCE);
                 break;
             default:
                 break;

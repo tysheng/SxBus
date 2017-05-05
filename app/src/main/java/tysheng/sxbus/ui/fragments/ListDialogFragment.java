@@ -1,4 +1,4 @@
-package tysheng.sxbus.view;
+package tysheng.sxbus.ui.fragments;
 
 import android.app.Dialog;
 import android.databinding.DataBindingUtil;
@@ -31,7 +31,7 @@ import tysheng.sxbus.databinding.FragmentStarBinding;
  * Created by Sty
  * Date: 16/9/15 10:15.
  */
-public class ChooseCityFragment extends DialogFragment {
+public class ListDialogFragment extends DialogFragment {
 
     public static final int CHOOSE_CITY = 0, OPEN_SOURCE = 1;
     public static String[] names = new String[]{
@@ -54,10 +54,10 @@ public class ChooseCityFragment extends DialogFragment {
             "A fast JSON parser/generator for Java"
     };
 
-    public static ChooseCityFragment newInstance(int type) {
+    public static ListDialogFragment newInstance(int type) {
         Bundle args = new Bundle();
         args.putInt("0", type);
-        ChooseCityFragment fragment = new ChooseCityFragment();
+        ListDialogFragment fragment = new ListDialogFragment();
         fragment.setArguments(args);
         return fragment;
     }
