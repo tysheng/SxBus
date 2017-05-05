@@ -17,6 +17,7 @@ import android.text.style.RelativeSizeSpan;
 import com.baidu.mapapi.utils.CoordinateConverter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -27,6 +28,7 @@ import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
 import tysheng.sxbus.bean.AllBike;
 import tysheng.sxbus.bean.BikeStation;
+import tysheng.sxbus.bean.More;
 import tysheng.sxbus.di.component.DaggerUniverseComponent;
 import tysheng.sxbus.net.BusService;
 import tysheng.sxbus.presenter.base.AbstractPresenter;
@@ -101,7 +103,25 @@ public class MorePresenterImpl extends AbstractPresenter<MoreView> {
 
     @Override
     public void initData() {
+        mView.setTitle(getTitle());
+        List<More> list = new ArrayList<>();
+        list.add(createMore(More.HAS_SUB, true, "绍兴", "当前城市"));
+        list.add(createMore(More.SIMPLE, true, "公共自行车", null));
+        list.add(createMore(More.SIMPLE, true, "反馈", null));
+        list.add(createMore(More.SIMPLE, true, "赞赏作者", null));
+        list.add(createMore(More.SIMPLE, false, "检查更新", null));
+        list.add(createMore(More.HAS_SUB, true, "切换两种到站模式,仅限市公交", "到站模式"));
+        list.add(createMore(More.HAS_SUB, true, "帮助开发者进行错误日志收集", "日志收集"));
+        mView.setMoreList(list);
+    }
 
+    private More createMore(int type, boolean divider, String main, String sub) {
+        More more = new More();
+        more.hasDivider = divider;
+        more.main = main;
+        more.topSub = sub;
+        more.type = type;
+        return more;
     }
 
     private void showAlipayFail(String s) {
@@ -110,11 +130,11 @@ public class MorePresenterImpl extends AbstractPresenter<MoreView> {
         c.setPrimaryClip(ClipData.newPlainText("email", getContext().getString(R.string.my_email)));//设置Clipboard 的内容
     }
 
-    public void checkVersion() {
+    private void checkVersion() {
         shareAppShop(getContext(), BuildConfig.APPLICATION_ID);
     }
 
-    public void setStationMode() {
+    private void setStationMode() {
         new AlertDialog.Builder(getContext())
                 .setItems(new String[]{"根据站点", "根据距离"}, new DialogInterface.OnClickListener() {
                     @Override
@@ -125,12 +145,12 @@ public class MorePresenterImpl extends AbstractPresenter<MoreView> {
                 .show();
     }
 
-    public void chooseCity() {
+    private void chooseCity() {
         ChooseCityFragment f = new ChooseCityFragment();
         f.show(getChildFragmentManager(), "");
     }
 
-    public void donate() {
+    private void donate() {
         if (AlipayZeroSdk.hasInstalledAlipayClient(getContext())) {
             if (!AlipayZeroSdk.startAlipayClient(getActivity())) {
                 showAlipayFail(getContext().getString(R.string.msg_alipay_copied));
@@ -140,7 +160,7 @@ public class MorePresenterImpl extends AbstractPresenter<MoreView> {
         }
     }
 
-    public void askPermission() {
+    private void askPermission() {
         PermissionUtil.request(getActivity(), new PermissionUtil.Callback() {
                     @Override
                     public void call(boolean b) {
@@ -154,11 +174,11 @@ public class MorePresenterImpl extends AbstractPresenter<MoreView> {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
 
-    public void feedback() {
+    private void feedback() {
         SystemUtil.sendEmail(getContext());
     }
 
-    public void bikeInfo() {
+    private void bikeInfo() {
         mBusService
                 .url(MapFragment.BIKE_URL)
                 .map(new Function<String, ArrayList<BikeStation>>() {
@@ -202,5 +222,33 @@ public class MorePresenterImpl extends AbstractPresenter<MoreView> {
                         ToolbarActivity.startMap(getContext(), Constant.BIKE, null, s, null);
                     }
                 });
+    }
+
+    public void onItemClick(int position) {
+        switch (position) {
+            case 0:
+                chooseCity();
+                break;
+            case 1:
+                bikeInfo();
+                break;
+            case 2:
+                feedback();
+                break;
+            case 3:
+                donate();
+                break;
+            case 4:
+                checkVersion();
+                break;
+            case 5:
+                setStationMode();
+                break;
+            case 6:
+                askPermission();
+                break;
+            default:
+                break;
+        }
     }
 }

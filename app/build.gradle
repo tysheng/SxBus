@@ -25,8 +25,8 @@ android {
         applicationId "tysheng.sxbus"
         minSdkVersion 14
         targetSdkVersion 25
-        versionCode 32
-        versionName "3.2"
+        versionCode 33
+        versionName "3.3"
         resConfigs "zh"
         ndk {
             //设置支持的SO库架构

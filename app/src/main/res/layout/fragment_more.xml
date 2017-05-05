@@ -3,11 +3,9 @@
 
     <data>
 
-        <import type="tysheng.sxbus.presenter.impl.MorePresenterImpl" />
-
         <variable
-            name="presenter"
-            type="tysheng.sxbus.presenter.impl.MorePresenterImpl" />
+            name="adapter"
+            type="tysheng.sxbus.adapter.MoreAdapter" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout
@@ -26,81 +24,12 @@
 
         </android.support.v7.widget.Toolbar>
 
-        <android.support.v4.widget.NestedScrollView
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="?actionBarSize">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <TextView
-                    style="@style/MoreTextViewSub"
-                    android:text="当前城市" />
-
-                <TextView
-                    android:id="@+id/chooseCity"
-                    style="@style/MoreTextView"
-                    android:onClick="@{(v)->presenter.chooseCity()}"
-                    android:text="绍兴" />
-
-                <include layout="@layout/divider" />
-
-                <TextView
-                    android:id="@+id/publicBike"
-                    style="@style/MoreTextView"
-                    android:onClick="@{(v)->presenter.bikeInfo()}"
-                    android:text="公共自行车" />
-
-                <include layout="@layout/divider" />
-
-
-                <TextView
-                    android:id="@+id/feedback"
-                    style="@style/MoreTextView"
-                    android:onClick="@{(v)->presenter.feedback()}"
-                    android:text="反馈" />
-
-                <include layout="@layout/divider" />
-
-                <TextView
-                    android:id="@+id/donate"
-                    style="@style/MoreTextView"
-                    android:onClick="@{(v)->presenter.donate()}"
-                    android:text="赞赏作者" />
-
-                <include layout="@layout/divider" />
-
-                <TextView
-                    android:id="@+id/stationMode"
-                    style="@style/MoreTextView"
-                    android:onClick="@{(v)->presenter.setStationMode()}"
-                    android:text="车辆信息" />
-
-                <include layout="@layout/divider" />
-
-                <TextView
-                    android:id="@+id/check_update"
-                    style="@style/MoreTextView"
-                    android:onClick="@{(v)->presenter.checkVersion()}"
-                    android:text="检查更新" />
-
-                <TextView
-                    style="@style/MoreTextViewSub"
-                    android:text="高级功能" />
-
-                <TextView
-                    android:id="@+id/permission"
-                    style="@style/MoreTextView"
-                    android:onClick="@{(v)->presenter.askPermission()}"
-                    android:text="日志收集" />
-
-                <include layout="@layout/divider" />
-
-            </LinearLayout>
-        </android.support.v4.widget.NestedScrollView>
+            android:layout_marginTop="?actionBarSize"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
 
     </android.support.design.widget.CoordinatorLayout>
 </layout>
