@@ -9,12 +9,17 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.Lazy;
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.StarAdapter;
 import tysheng.sxbus.base.BaseFragmentV2;
 import tysheng.sxbus.bean.FragCallback;
 import tysheng.sxbus.bean.Star;
+import tysheng.sxbus.di.component.DaggerSearchComponent;
+import tysheng.sxbus.di.module.SearchModule;
 import tysheng.sxbus.model.impl.SearchDbModelImplImpl;
 import tysheng.sxbus.model.impl.SearchModelImplImpl;
 import tysheng.sxbus.presenter.base.AbstractPresenter;
@@ -30,16 +35,24 @@ import tysheng.sxbus.utils.SnackBarUtil;
  */
 
 public class SearchPresenterImpl extends AbstractPresenter<SearchView> implements SearchPresenter {
-    private SearchDbModelImplImpl mDbModule;
-    private SearchModelImplImpl mSearchModel;
+    @Inject
+    SearchDbModelImplImpl mDbModule;
+    @Inject
+    SearchModelImplImpl mSearchModel;
+
+    @Inject
+    StarAdapter mAdapter;
+    @Inject
+    Lazy<ProgressDialog> mDialog;
     private List<Star> mRecentList;
-    private StarAdapter mAdapter;
-    private ProgressDialog mDialog;
 
     public SearchPresenterImpl(SearchView view) {
         super(view);
-        mDbModule = new SearchDbModelImplImpl();
-        mSearchModel = new SearchModelImplImpl(this);
+        DaggerSearchComponent.builder()
+                .universeComponent(getUniverseComponent())
+                .searchModule(new SearchModule(this))
+                .build()
+                .inject(this);
     }
 
     @Override
@@ -67,7 +80,8 @@ public class SearchPresenterImpl extends AbstractPresenter<SearchView> implement
 
     @Override
     public void initData() {
-        mAdapter = new StarAdapter(mRecentList = getRecentList());
+        mRecentList = getRecentList();
+        mAdapter.setNewData(mRecentList);
         initFooter();
     }
 
@@ -98,26 +112,23 @@ public class SearchPresenterImpl extends AbstractPresenter<SearchView> implement
         }
     }
 
-    void onItemClick(Star item) {
+    private void onItemClick(Star item) {
         mDbModule.onItemClick(item);
     }
 
-    void onItemClickCollect(Star item) {
+    private void onItemClickCollect(Star item) {
         mDbModule.onItemClickCollect(item);
     }
 
-    void delete() {
+    private void delete() {
         mDbModule.delete();
     }
 
     public void getBusSimple(String number) {
-        if (mAdapter.getFooterLayoutCount() != 0)
+        if (mAdapter.getFooterLayoutCount() != 0) {
             mAdapter.removeAllFooterView();
-        if (mDialog == null) {
-            mDialog = new ProgressDialog(getContext());
-            mDialog.setMessage("正在搜索...");
         }
-        mDialog.show();
+        mDialog.get().show();
         mSearchModel.getBusSimple(number);
     }
 
@@ -149,6 +160,6 @@ public class SearchPresenterImpl extends AbstractPresenter<SearchView> implement
 
     @Override
     public void onNetworkTerminate() {
-        mDialog.dismiss();
+        mDialog.get().dismiss();
     }
 }

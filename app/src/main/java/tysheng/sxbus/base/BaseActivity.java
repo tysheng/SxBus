@@ -13,7 +13,10 @@ import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
 import java.util.List;
 
+import tysheng.sxbus.App;
 import tysheng.sxbus.R;
+import tysheng.sxbus.di.component.DaggerUniverseComponent;
+import tysheng.sxbus.di.component.UniverseComponent;
 import tysheng.sxbus.utils.ListUtil;
 
 /**
@@ -30,6 +33,12 @@ public abstract class BaseActivity extends RxAppCompatActivity {
     protected void normalCreate(@Nullable Bundle savedInstanceState) {
         setContentView(getLayoutId());
         initData(savedInstanceState);
+    }
+
+    public UniverseComponent getUniverseComponent() {
+        return DaggerUniverseComponent.builder()
+                .applicationComponent(((App) getApplication()).getApplicationComponent())
+                .build();
     }
 
     @Override

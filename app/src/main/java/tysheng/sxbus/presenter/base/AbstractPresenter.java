@@ -7,6 +7,8 @@ import android.support.v4.app.FragmentManager;
 
 import com.trello.rxlifecycle2.LifecycleTransformer;
 
+import tysheng.sxbus.base.BaseActivity;
+import tysheng.sxbus.di.component.UniverseComponent;
 import tysheng.sxbus.ui.base.BaseView;
 
 /**
@@ -25,6 +27,10 @@ public abstract class AbstractPresenter<T extends BaseView> implements BaseFragm
     @Override
     public Activity getActivity() {
         return mView.getActivity();
+    }
+
+    protected UniverseComponent getUniverseComponent() {
+        return ((BaseActivity) getActivity()).getUniverseComponent();
     }
 
     @Override

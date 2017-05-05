@@ -78,13 +78,6 @@ public abstract class BaseFragment<T extends AbstractPresenter> extends RxFragme
         LogUtil.d("onDestroyView " + toString());
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-//        if (mBinder != null)
-//            mBinder.unbind();
-    }
-
 
     protected void addFragment(@NonNull Fragment from, @NonNull Fragment to, @IdRes int id, String tag, String backStackTag) {
         getFragmentManager()

@@ -9,10 +9,14 @@ import android.view.View;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.adapter.RunningAdapter;
 import tysheng.sxbus.base.BaseRecyclerViewAdapter;
 import tysheng.sxbus.bean.Stations;
+import tysheng.sxbus.di.component.DaggerRunningComponent;
+import tysheng.sxbus.di.module.RunningModule;
 import tysheng.sxbus.model.impl.RunningModelImpl;
 import tysheng.sxbus.presenter.base.AbstractPresenter;
 import tysheng.sxbus.presenter.inter.RunningPresenter;
@@ -29,14 +33,20 @@ import tysheng.sxbus.utils.SnackBarUtil;
  */
 
 public class RunningPresenterImpl extends AbstractPresenter<RunningView> implements RunningPresenter {
-    private RunningModelImpl mRunningModel;
+    @Inject
+    RunningModelImpl mRunningModel;
+    @Inject
+    RunningAdapter mRunningAdapter;
     private String title;
     private String id;
-    private RunningAdapter mRunningAdapter;
 
     public RunningPresenterImpl(RunningView view) {
         super(view);
-        mRunningModel = new RunningModelImpl(this);
+        DaggerRunningComponent.builder()
+                .universeComponent(getUniverseComponent())
+                .runningModule(new RunningModule(this))
+                .build()
+                .inject(this);
     }
 
     public void refresh() {
@@ -92,7 +102,6 @@ public class RunningPresenterImpl extends AbstractPresenter<RunningView> impleme
 
     @Override
     public void initData() {
-        mRunningAdapter = new RunningAdapter();
         mRunningAdapter.setOnItemClickListener(new BaseRecyclerViewAdapter.SimpleItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -103,18 +112,13 @@ public class RunningPresenterImpl extends AbstractPresenter<RunningView> impleme
         });
     }
 
-    @Override
-    public void onDestroy() {
-        mView = null;
-    }
-
     public void popupFab(FloatingActionButton floatingActionButton) {
         mRunningModel.popupFab(floatingActionButton);
     }
 
     @Override
-    public void onDataSuccess(List<Stations> stationses) {
-        mRunningAdapter.setNewData(stationses);
+    public void onDataSuccess(List<Stations> stationsList) {
+        mRunningAdapter.setNewData(stationsList);
     }
 
     @Override

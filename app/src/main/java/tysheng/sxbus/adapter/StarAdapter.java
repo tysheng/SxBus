@@ -20,6 +20,11 @@ public class StarAdapter extends BaseItemDraggableAdapter<Star, StyBaseViewHolde
         super(R.layout.item_star, data);
     }
 
+    public StarAdapter() {
+        super(R.layout.item_star, null);
+    }
+
+
     @Override
     protected void convert(StyBaseViewHolder holder, Star bean) {
         holder.setText(R.id.textView, bean.startStationName + " - " + bean.endStationName)
