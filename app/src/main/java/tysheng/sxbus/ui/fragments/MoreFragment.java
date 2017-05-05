@@ -41,7 +41,7 @@ public class MoreFragment extends BaseFragmentV2<MorePresenterImpl, FragmentMore
             @Override
             public void onItemClick(View view, int position) {
                 super.onItemClick(view, position);
-                mPresenter.onItemClick(position);
+                mPresenter.onItemClick(binding.getAdapter().getData().get(position).internalPosition);
             }
         });
         mPresenter.initData();

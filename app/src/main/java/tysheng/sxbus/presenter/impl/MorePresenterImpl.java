@@ -32,7 +32,7 @@ import tysheng.sxbus.bean.More;
 import tysheng.sxbus.di.component.DaggerUniverseComponent;
 import tysheng.sxbus.net.BusService;
 import tysheng.sxbus.presenter.base.AbstractPresenter;
-import tysheng.sxbus.ui.activities.ToolbarActivity;
+import tysheng.sxbus.ui.activities.MapActivity;
 import tysheng.sxbus.ui.fragments.MapFragment;
 import tysheng.sxbus.ui.inter.MoreView;
 import tysheng.sxbus.utils.AlipayZeroSdk;
@@ -105,22 +105,24 @@ public class MorePresenterImpl extends AbstractPresenter<MoreView> {
     public void initData() {
         mView.setTitle(getTitle());
         List<More> list = new ArrayList<>();
-        list.add(createMore(More.HAS_SUB, true, "绍兴", "当前城市"));
-        list.add(createMore(More.SIMPLE, true, "公共自行车", null));
-        list.add(createMore(More.SIMPLE, true, "反馈", null));
-        list.add(createMore(More.SIMPLE, true, "赞赏作者", null));
-        list.add(createMore(More.SIMPLE, false, "检查更新", null));
-        list.add(createMore(More.HAS_SUB, true, "切换两种到站模式,仅限市公交", "到站模式"));
-        list.add(createMore(More.HAS_SUB, true, "帮助开发者进行错误日志收集", "日志收集"));
+        list.add(createMore(More.HAS_SUB, true, "绍兴", "当前城市", 0));
+        list.add(createMore(More.SIMPLE, true, "公共自行车", null, 1));
+        list.add(createMore(More.SIMPLE, true, "反馈", null, 2));
+        list.add(createMore(More.SIMPLE, true, "赞赏作者", null, 3));
+        list.add(createMore(More.SIMPLE, true, "检查更新", null, 4));
+        list.add(createMore(More.SIMPLE, false, "开源库", null, 7));
+        list.add(createMore(More.HAS_SUB, true, "切换两种到站模式,仅限市公交", "到站模式", 5));
+        list.add(createMore(More.HAS_SUB, true, "帮助开发者进行错误日志收集", "日志收集", 6));
         mView.setMoreList(list);
     }
 
-    private More createMore(int type, boolean divider, String main, String sub) {
+    private More createMore(int type, boolean divider, String main, String sub, int pos) {
         More more = new More();
         more.hasDivider = divider;
         more.main = main;
         more.topSub = sub;
         more.type = type;
+        more.internalPosition = pos;
         return more;
     }
 
@@ -145,8 +147,8 @@ public class MorePresenterImpl extends AbstractPresenter<MoreView> {
                 .show();
     }
 
-    private void chooseCity() {
-        ChooseCityFragment f = new ChooseCityFragment();
+    private void chooseCity(int i) {
+        ChooseCityFragment f = ChooseCityFragment.newInstance(i);
         f.show(getChildFragmentManager(), "");
     }
 
@@ -219,15 +221,16 @@ public class MorePresenterImpl extends AbstractPresenter<MoreView> {
                     public void next(ArrayList<BikeStation> s) {
                         super.next(s);
                         dialog.dismiss();
-                        ToolbarActivity.startMap(getContext(), Constant.BIKE, null, s, null);
+                        MapActivity.startMap(getContext(), Constant.BIKE, null, s, null);
                     }
                 });
     }
 
-    public void onItemClick(int position) {
-        switch (position) {
+
+    public void onItemClick(int internalPosition) {
+        switch (internalPosition) {
             case 0:
-                chooseCity();
+                chooseCity(ChooseCityFragment.CHOOSE_CITY);
                 break;
             case 1:
                 bikeInfo();
@@ -246,6 +249,9 @@ public class MorePresenterImpl extends AbstractPresenter<MoreView> {
                 break;
             case 6:
                 askPermission();
+                break;
+            case 7:
+                chooseCity(ChooseCityFragment.OPEN_SOURCE);
                 break;
             default:
                 break;

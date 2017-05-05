@@ -16,5 +16,7 @@ public class More {
     public String main;
     public String topSub;
 
+    public int internalPosition;
+
 
 }

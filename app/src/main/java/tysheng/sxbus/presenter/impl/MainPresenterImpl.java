@@ -6,11 +6,11 @@ import android.support.v4.app.FragmentManager;
 
 import tysheng.sxbus.bean.FragCallback;
 import tysheng.sxbus.presenter.base.AbstractPresenter;
-import tysheng.sxbus.ui.activities.MainView;
 import tysheng.sxbus.ui.fragments.MoreFragment;
 import tysheng.sxbus.ui.fragments.RunningFragment;
 import tysheng.sxbus.ui.fragments.SearchFragment;
 import tysheng.sxbus.ui.fragments.StarFragment;
+import tysheng.sxbus.ui.inter.MainView;
 
 /**
  * Created by tysheng

@@ -20,7 +20,7 @@ import tysheng.sxbus.di.module.RunningModule;
 import tysheng.sxbus.model.impl.RunningModelImpl;
 import tysheng.sxbus.presenter.base.AbstractPresenter;
 import tysheng.sxbus.presenter.inter.RunningPresenter;
-import tysheng.sxbus.ui.activities.ToolbarActivity;
+import tysheng.sxbus.ui.activities.MapActivity;
 import tysheng.sxbus.ui.inter.RunningView;
 import tysheng.sxbus.utils.PermissionUtil;
 import tysheng.sxbus.utils.SPHelper;
@@ -83,7 +83,7 @@ public class RunningPresenterImpl extends AbstractPresenter<RunningView> impleme
             public void call(boolean b) {
                 if (b) {
                     if (mRunningModel.getResults() != null && mRunningModel.getStations() != null) {
-                        ToolbarActivity.startMap(getContext(), Constant.BUS, mRunningModel.getResults(), mRunningModel.getStations(), stations);
+                        MapActivity.startMap(getContext(), Constant.BUS, mRunningModel.getResults(), mRunningModel.getStations(), stations);
                     } else {
                         SnackBarUtil.show(mView.getRootView(), "数据还未加载完全，请等等");
                     }
