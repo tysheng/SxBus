@@ -2,7 +2,6 @@ package tysheng.sxbus.presenter.inter;
 
 import android.view.View;
 
-import tysheng.sxbus.adapter.StarAdapter;
 import tysheng.sxbus.presenter.base.BaseFragmentPresenter;
 
 /**
@@ -15,8 +14,6 @@ public interface StarPresenter extends BaseFragmentPresenter {
 
 
     void setNewDataFromRecent();
-
-    StarAdapter getAdapter();
 
     void onSimpleItemChildClick(View view, int i);
 }

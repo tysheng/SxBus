@@ -15,19 +15,19 @@ import com.chad.library.adapter.base.BaseViewHolder;
  * Email: tyshengsx@gmail.com
  */
 
-public class StyBaseViewHolder extends BaseViewHolder {
-    public StyBaseViewHolder(View view) {
+public class TyViewHolder extends BaseViewHolder {
+    public TyViewHolder(View view) {
         super(view);
     }
 
-    public StyBaseViewHolder addOnClickListeners(int... viewIds) {
+    public TyViewHolder addOnClickListeners(int... viewIds) {
         for (int id : viewIds) {
             addOnClickListener(id);
         }
         return this;
     }
 
-    public StyBaseViewHolder addOnLongClickListeners(int... viewIds) {
+    public TyViewHolder addOnLongClickListeners(int... viewIds) {
         for (int id : viewIds) {
             addOnLongClickListener(id);
         }
@@ -35,14 +35,14 @@ public class StyBaseViewHolder extends BaseViewHolder {
     }
 
 
-    public StyBaseViewHolder setColorFilter(@IdRes int viewId, @ColorInt int color) {
+    public TyViewHolder setColorFilter(@IdRes int viewId, @ColorInt int color) {
         ImageView view = getView(viewId);
         view.setColorFilter(color);
         return this;
     }
 
 
-    public StyBaseViewHolder setTextAndVisible(@IdRes int viewId, String text) {
+    public TyViewHolder setTextAndVisible(@IdRes int viewId, String text) {
         TextView textView = getView(viewId);
         if (TextUtils.isEmpty(text)) {
             textView.setVisibility(View.GONE);
@@ -54,7 +54,7 @@ public class StyBaseViewHolder extends BaseViewHolder {
     }
 
 
-    public StyBaseViewHolder setTextAndVisibleFront(@IdRes int viewId, String text, String frontExtra) {
+    public TyViewHolder setTextAndVisibleFront(@IdRes int viewId, String text, String frontExtra) {
         TextView textView = getView(viewId);
         if (TextUtils.isEmpty(text)) {
             textView.setVisibility(View.GONE);
@@ -65,7 +65,7 @@ public class StyBaseViewHolder extends BaseViewHolder {
         return this;
     }
 
-    public StyBaseViewHolder setTextAndVisibleBehind(@IdRes int viewId, String text, String behindExtra) {
+    public TyViewHolder setTextAndVisibleBehind(@IdRes int viewId, String text, String behindExtra) {
         TextView textView = getView(viewId);
         if (TextUtils.isEmpty(text)) {
             textView.setVisibility(View.GONE);

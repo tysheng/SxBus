@@ -24,7 +24,7 @@ import tysheng.sxbus.utils.ListUtil;
  * Date: 16/9/18 09:18.
  * Email: tyshengsx@gmail.com
  */
-public abstract class BaseRecyclerViewAdapter<T> extends BaseQuickAdapter<T, StyBaseViewHolder> {
+public abstract class BaseRecyclerViewAdapter<T> extends BaseQuickAdapter<T, TyViewHolder> {
 
     private OnItemClickListener mOnItemClickListener;
 
@@ -37,8 +37,8 @@ public abstract class BaseRecyclerViewAdapter<T> extends BaseQuickAdapter<T, Sty
     }
 
     @Override
-    protected StyBaseViewHolder createBaseViewHolder(View view) {
-        return new StyBaseViewHolder(view);
+    protected TyViewHolder createBaseViewHolder(View view) {
+        return new TyViewHolder(view);
     }
 
     public void onEmptyView(ViewGroup parent) {
@@ -204,11 +204,11 @@ public abstract class BaseRecyclerViewAdapter<T> extends BaseQuickAdapter<T, Sty
      * @param viewHolder viewHolder
      * @see #convert(BaseViewHolder, Object)
      */
-    protected void setListener(final StyBaseViewHolder viewHolder) {
+    protected void setListener(final TyViewHolder viewHolder) {
         setListener(viewHolder, false);
     }
 
-    protected void setListener(final StyBaseViewHolder viewHolder, boolean setLong) {
+    protected void setListener(final TyViewHolder viewHolder, boolean setLong) {
         if (!isEnabled(viewHolder.getItemViewType())) return;
         viewHolder.getConvertView().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -242,13 +242,13 @@ public abstract class BaseRecyclerViewAdapter<T> extends BaseQuickAdapter<T, Sty
      * @param ids        one or more
      * @see #convert(BaseViewHolder, Object)
      */
-    protected void setChildListener(final StyBaseViewHolder viewHolder, int... ids) {
+    protected void setChildListener(final TyViewHolder viewHolder, int... ids) {
         for (int id : ids) {
             setChildListener(viewHolder, id, false);
         }
     }
 
-    protected void setChildListener(final StyBaseViewHolder viewHolder, int id, boolean setLong) {
+    protected void setChildListener(final TyViewHolder viewHolder, int id, boolean setLong) {
         if (!isEnabled(viewHolder.getItemViewType())) return;
         View view = viewHolder.getView(id);
         view.setOnClickListener(new View.OnClickListener() {

@@ -20,6 +20,7 @@ import tysheng.sxbus.bean.FragCallback;
 import tysheng.sxbus.bean.Star;
 import tysheng.sxbus.di.component.DaggerSearchComponent;
 import tysheng.sxbus.di.module.SearchModule;
+import tysheng.sxbus.di.module.StarModule;
 import tysheng.sxbus.model.impl.SearchDbModelImplImpl;
 import tysheng.sxbus.model.impl.SearchModelImplImpl;
 import tysheng.sxbus.presenter.base.AbstractPresenter;
@@ -51,6 +52,7 @@ public class SearchPresenterImpl extends AbstractPresenter<SearchView> implement
         DaggerSearchComponent.builder()
                 .universeComponent(getUniverseComponent())
                 .searchModule(new SearchModule(this))
+                .starModule(new StarModule())
                 .build()
                 .inject(this);
     }

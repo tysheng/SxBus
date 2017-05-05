@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import tysheng.sxbus.R;
 import tysheng.sxbus.base.BaseRecyclerViewAdapter;
-import tysheng.sxbus.base.StyBaseViewHolder;
+import tysheng.sxbus.base.TyViewHolder;
 import tysheng.sxbus.bean.Stations;
 
 
@@ -21,7 +21,7 @@ public class RunningAdapter extends BaseRecyclerViewAdapter<Stations> {
     }
 
     @Override
-    protected void convert(StyBaseViewHolder holder, Stations bean) {
+    protected void convert(TyViewHolder holder, Stations bean) {
         TextView textView = holder.getView(R.id.textView);
         TextView going = holder.getView(R.id.going);
         if (bean.arriveState == Stations.ArriveState.Arriving) {

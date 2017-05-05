@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 
 import dagger.Module;
 import dagger.Provides;
-import tysheng.sxbus.adapter.StarAdapter;
 import tysheng.sxbus.di.PerPresenter;
 import tysheng.sxbus.model.impl.SearchDbModelImplImpl;
 import tysheng.sxbus.model.impl.SearchModelImplImpl;
@@ -36,12 +35,6 @@ public class SearchModule {
         ProgressDialog dialog = new ProgressDialog(presenter.getContext());
         dialog.setMessage("正在搜索...");
         return dialog;
-    }
-
-    @PerPresenter
-    @Provides
-    public StarAdapter provideStarAdapter() {
-        return new StarAdapter();
     }
 
     @PerPresenter

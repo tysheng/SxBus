@@ -35,27 +35,26 @@ public class ChooseCityFragment extends DialogFragment {
             "浙江省", "杭州", "温州", "绍兴", "衢州", "诸暨", "湖南省", "湘潭", "祁阳", "辽宁省", "锦州", "葫芦岛"
     };
 
-    List<CitySection> mList;
-
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        mList = new ArrayList<>();
+        List<CitySection> list = new ArrayList<>();
         for (String s : names) {
-            CitySection section;
+            CitySection section = new CitySection(s);
             if (s.endsWith("省")) {
-                section = new CitySection(true, s);
+                section.type = 1;
             } else {
-                section = new CitySection(s);
+                section.type = 0;
             }
-            mList.add(section);
+            list.add(section);
         }
         View view = LayoutInflater.from(getActivity())
                 .inflate(R.layout.fragment_star, (ViewGroup) getView());
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        ChooseCityAdapter adapter = new ChooseCityAdapter(mList);
+        ChooseCityAdapter adapter = new ChooseCityAdapter();
         recyclerView.setAdapter(adapter);
+        adapter.setData(list);
         recyclerView.addOnItemTouchListener(new OnItemChildClickListener() {
             @Override
             public void onSimpleItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {

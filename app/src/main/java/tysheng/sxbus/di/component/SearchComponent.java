@@ -3,6 +3,7 @@ package tysheng.sxbus.di.component;
 import dagger.Component;
 import tysheng.sxbus.di.PerPresenter;
 import tysheng.sxbus.di.module.SearchModule;
+import tysheng.sxbus.di.module.StarModule;
 import tysheng.sxbus.presenter.impl.SearchPresenterImpl;
 import tysheng.sxbus.presenter.inter.SearchPresenter;
 
@@ -12,7 +13,7 @@ import tysheng.sxbus.presenter.inter.SearchPresenter;
  * Email: tyshengsx@gmail.com
  */
 @PerPresenter
-@Component(dependencies = UniverseComponent.class, modules = SearchModule.class)
+@Component(dependencies = UniverseComponent.class, modules = {SearchModule.class, StarModule.class})
 public interface SearchComponent {
     SearchPresenter getSearchPresenter();
 

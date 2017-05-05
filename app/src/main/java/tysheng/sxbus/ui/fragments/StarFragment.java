@@ -1,11 +1,6 @@
 package tysheng.sxbus.ui.fragments;
 
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
-
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 
 import tysheng.sxbus.R;
 import tysheng.sxbus.base.BaseFragmentV2;
@@ -35,26 +30,13 @@ public class StarFragment extends BaseFragmentV2<StarPresenterImpl, FragmentStar
     }
 
     @Override
-    public RecyclerView getRecyclerView() {
-        return binding.recyclerView;
-    }
-
-    @Override
     protected StarPresenterImpl initPresenter() {
         return new StarPresenterImpl(this);
     }
 
     @Override
     protected void initData() {
-        binding.recyclerView.setAdapter(mPresenter.getAdapter());
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mPresenter.setEmptyView();
-        binding.recyclerView.addOnItemTouchListener(new OnItemChildClickListener() {
-            @Override
-            public void onSimpleItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
-                mPresenter.onSimpleItemChildClick(view, i);
-            }
-        });
-        mPresenter.initData();
+        mPresenter.bindAdapter(binding.recyclerView);
     }
 }

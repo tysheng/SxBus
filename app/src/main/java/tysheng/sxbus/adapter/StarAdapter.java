@@ -8,14 +8,14 @@ import com.chad.library.adapter.base.BaseItemDraggableAdapter;
 import java.util.List;
 
 import tysheng.sxbus.R;
-import tysheng.sxbus.base.StyBaseViewHolder;
+import tysheng.sxbus.base.TyViewHolder;
 import tysheng.sxbus.bean.Star;
 
 /**
  * Created by Sty
  * Date: 16/8/10 22:07.
  */
-public class StarAdapter extends BaseItemDraggableAdapter<Star, StyBaseViewHolder> {
+public class StarAdapter extends BaseItemDraggableAdapter<Star, TyViewHolder> {
     public StarAdapter(List<Star> data) {
         super(R.layout.item_star, data);
     }
@@ -24,9 +24,8 @@ public class StarAdapter extends BaseItemDraggableAdapter<Star, StyBaseViewHolde
         super(R.layout.item_star, null);
     }
 
-
     @Override
-    protected void convert(StyBaseViewHolder holder, Star bean) {
+    protected void convert(TyViewHolder holder, Star bean) {
         holder.setText(R.id.textView, bean.startStationName + " - " + bean.endStationName)
                 .setText(R.id.number, bean.lineName)
                 .setImageResource(R.id.star, bean.isStar ? R.drawable.star_yes : R.drawable.star_no);
@@ -34,7 +33,7 @@ public class StarAdapter extends BaseItemDraggableAdapter<Star, StyBaseViewHolde
     }
 
     @Override
-    protected StyBaseViewHolder createBaseViewHolder(View view) {
-        return new StyBaseViewHolder(view);
+    protected TyViewHolder createBaseViewHolder(View view) {
+        return new TyViewHolder(view);
     }
 }

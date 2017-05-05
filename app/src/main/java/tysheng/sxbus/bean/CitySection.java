@@ -1,17 +1,15 @@
 package tysheng.sxbus.bean;
 
-import com.chad.library.adapter.base.entity.SectionEntity;
-
 /**
  * Created by Sty
  * Date: 16/9/15 10:21.
  */
-public class CitySection extends SectionEntity<String> {
-    public CitySection(boolean isHeader, String header) {
-        super(isHeader, header);
-    }
+public class CitySection {
+    public String name;
 
-    public CitySection(String s) {
-        super(s);
+    public int type;
+
+    public CitySection(String name) {
+        this.name = name;
     }
 }

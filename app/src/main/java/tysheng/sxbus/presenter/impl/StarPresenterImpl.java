@@ -3,13 +3,15 @@ package tysheng.sxbus.presenter.impl;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.view.LayoutInflater;
 import android.view.View;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.chad.library.adapter.base.listener.OnItemDragListener;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
@@ -17,6 +19,8 @@ import tysheng.sxbus.adapter.StarAdapter;
 import tysheng.sxbus.base.BaseFragmentV2;
 import tysheng.sxbus.bean.FragCallback;
 import tysheng.sxbus.bean.Star;
+import tysheng.sxbus.di.component.DaggerStarComponent;
+import tysheng.sxbus.di.module.StarModule;
 import tysheng.sxbus.model.impl.DbModelImplImpl;
 import tysheng.sxbus.presenter.base.AbstractPresenter;
 import tysheng.sxbus.presenter.inter.StarPresenter;
@@ -29,12 +33,18 @@ import tysheng.sxbus.ui.inter.StarView;
  */
 
 public class StarPresenterImpl extends AbstractPresenter<StarView> implements StarPresenter, OnItemDragListener {
-    private DbModelImplImpl mDbModel;
-    private StarAdapter mAdapter;
+    @Inject
+    DbModelImplImpl mDbModel;
+    @Inject
+    StarAdapter mAdapter;
 
     public StarPresenterImpl(StarView view) {
         super(view);
-        mDbModel = new DbModelImplImpl();
+        DaggerStarComponent.builder()
+                .universeComponent(getUniverseComponent())
+                .starModule(new StarModule())
+                .build()
+                .inject(this);
     }
 
     private List<Star> getStarList() {
@@ -48,12 +58,7 @@ public class StarPresenterImpl extends AbstractPresenter<StarView> implements St
 
     @Override
     public void initData() {
-        ItemDragAndSwipeCallback itemDragAndSwipeCallback = new ItemDragAndSwipeCallback(mAdapter);
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemDragAndSwipeCallback);
-        itemTouchHelper.attachToRecyclerView(mView.getRecyclerView());
-        // 开启拖拽
-        mAdapter.enableDragItem(itemTouchHelper, R.id.textView, true);
-        mAdapter.setOnItemDragListener(this);
+
     }
 
     private void deleteByKey(Long mainId) {
@@ -70,29 +75,22 @@ public class StarPresenterImpl extends AbstractPresenter<StarView> implements St
     }
 
     @Override
-    public StarAdapter getAdapter() {
-        return mAdapter = new StarAdapter(getStarList());
-    }
-
-    @Override
     public void onSimpleItemChildClick(View view, int i) {
+        final Star star = mAdapter.getItem(i);
         switch (view.getId()) {
             case R.id.number:
             case R.id.textView:
-                ((BaseFragmentV2.FragmentCallback) getActivity()).handleCallbackNew(new FragCallback(Constant.WHAT_STAR, mAdapter.getItem(i).id,
-                        mAdapter.getItem(i).lineName + " 前往 " + mAdapter.getItem(i).endStationName));
+                ((BaseFragmentV2.FragmentCallback) getActivity())
+                        .handleCallbackNew(new FragCallback(
+                                Constant.WHAT_STAR, star.id, star.lineName + " 前往 " + star.endStationName
+                        ));
                 break;
             case R.id.star:
-                Star star = mAdapter.getItem(i);
                 mAdapter.remove(i);
                 deleteByKey(star.getMainId());
             default:
                 break;
         }
-    }
-
-    public void setEmptyView() {
-        mAdapter.setEmptyView(LayoutInflater.from(getContext()).inflate(R.layout.empty_layout, mView.getRecyclerView(), false));
     }
 
     @Override
@@ -109,5 +107,23 @@ public class StarPresenterImpl extends AbstractPresenter<StarView> implements St
     public void onItemDragEnd(RecyclerView.ViewHolder viewHolder, int i) {
         dragEnd();
         viewHolder.itemView.setPressed(false);
+    }
+
+    public void bindAdapter(RecyclerView recyclerView) {
+        mAdapter.bindToRecyclerView(recyclerView);
+        setNewDataFromRecent();
+        mAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                onSimpleItemChildClick(view, position);
+            }
+        });
+        mAdapter.setEmptyView(R.layout.empty_layout);
+        ItemDragAndSwipeCallback itemDragAndSwipeCallback = new ItemDragAndSwipeCallback(mAdapter);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemDragAndSwipeCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+        // 开启拖拽
+        mAdapter.enableDragItem(itemTouchHelper, R.id.textView, true);
+        mAdapter.setOnItemDragListener(this);
     }
 }
