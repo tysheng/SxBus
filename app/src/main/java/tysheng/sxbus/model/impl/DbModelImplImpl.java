@@ -18,14 +18,13 @@ import tysheng.sxbus.model.base.BaseModelImpl;
 
 public class DbModelImplImpl extends BaseModelImpl implements BaseModel {
     private QueryBuilder<Star> mQueryBuilder;
-    private List<Star> mStarList;
 
     public List<Star> getStarList() {
         if (mQueryBuilder == null)
             mQueryBuilder = mHelper.queryBuilder()
                     .where(StarDao.Properties.TableName.eq(Constant.STAR), StarDao.Properties.IsStar.eq("TRUE"))
                     .orderAsc(StarDao.Properties.SortId);
-        return mStarList = mQueryBuilder
+        return mQueryBuilder
                 .list();
     }
 
@@ -37,10 +36,10 @@ public class DbModelImplImpl extends BaseModelImpl implements BaseModel {
         mHelper.deleteByKey(mainId);
     }
 
-    public void dragEnd() {
+    public void dragEnd(List<Star> data) {
         mHelper.delete(getStarList());
-        for (int i = 0; i < mStarList.size(); i++) {
-            Star star = mStarList.get(i);
+        for (int i = 0; i < data.size(); i++) {
+            Star star = data.get(i);
             star.setSortId((long) i);
             mHelper.save(star);
         }

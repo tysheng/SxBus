@@ -65,10 +65,6 @@ public class StarPresenterImpl extends AbstractPresenter<StarView> implements St
         mDbModel.deleteByKey(mainId);
     }
 
-    private void dragEnd() {
-        mDbModel.dragEnd();
-    }
-
     @Override
     public void setNewDataFromRecent() {
         mAdapter.setNewData(getStarList());
@@ -105,7 +101,7 @@ public class StarPresenterImpl extends AbstractPresenter<StarView> implements St
 
     @Override
     public void onItemDragEnd(RecyclerView.ViewHolder viewHolder, int i) {
-        dragEnd();
+        mDbModel.dragEnd(mAdapter.getData());
         viewHolder.itemView.setPressed(false);
     }
 
