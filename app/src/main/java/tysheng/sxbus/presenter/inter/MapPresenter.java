@@ -9,7 +9,6 @@ import tysheng.sxbus.presenter.base.BaseFragmentPresenter;
  */
 
 public interface MapPresenter extends BaseFragmentPresenter {
-    void refreshLocation();
 
-    void drawStations();
+    void onMenuItemClick(int itemId);
 }

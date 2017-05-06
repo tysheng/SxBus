@@ -4,8 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
-import com.baidu.mapapi.SDKInitializer;
-
 import tysheng.sxbus.R;
 import tysheng.sxbus.base.BaseActivityV2;
 import tysheng.sxbus.base.BaseFragmentV2;
@@ -30,8 +28,6 @@ public class MainActivity extends BaseActivityV2<MainPresenterImpl, ActivityMain
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         setTheme(R.style.AppTheme_Main);
         super.onCreate(savedInstanceState);
-        // 初始化百度地图
-        SDKInitializer.initialize(getApplicationContext());
     }
 
     @Override

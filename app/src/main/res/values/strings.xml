@@ -15,5 +15,7 @@
     <string name="my_email">353491983@qq.com</string>
     <string name="msg_alipay_copied">支付宝账号已复制到剪贴板</string>
     <string name="busline_not_exist">查询的公交线路不存在</string>
+    <string name="locating">定位中...</string>
+    <string name="locate_fail"><![CDATA[定位失败%>_<%]]></string>
 
 </resources>

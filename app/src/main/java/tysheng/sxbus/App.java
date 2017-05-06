@@ -2,6 +2,9 @@ package tysheng.sxbus;
 
 import android.app.Application;
 
+import com.baidu.mapapi.SDKInitializer;
+import com.tencent.bugly.crashreport.CrashReport;
+
 import org.greenrobot.greendao.query.QueryBuilder;
 
 import tysheng.sxbus.di.component.ApplicationComponent;
@@ -28,6 +31,16 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
+        CrashReport.UserStrategy strategy = null;
+        if (BuildConfig.DEBUG) {
+            strategy = new CrashReport.UserStrategy(getApplicationContext());
+            strategy.setAppChannel("coolapk");
+            strategy.setAppPackageName(BuildConfig.APPLICATION_ID);
+            strategy.setAppVersion(BuildConfig.VERSION_NAME + ".dev");
+        }
+        // Bugly sdk
+        CrashReport.initCrashReport(getApplicationContext(), "66733354ef", BuildConfig.DEBUG, strategy);
+        CrashReport.setIsDevelopmentDevice(getApplicationContext(), BuildConfig.DEBUG);
         mApplicationComponent = DaggerApplicationComponent.builder()
                 .applicationModule(new ApplicationModule(this))
                 .daoModule(new DaoModule())
@@ -37,6 +50,8 @@ public class App extends Application {
         if (BuildConfig.DEBUG) {
             enableQueryBuilderLog();
         }
+        // 初始化百度地图
+        SDKInitializer.initialize(getApplicationContext());
     }
 
     public ApplicationComponent getApplicationComponent() {

@@ -77,3 +77,7 @@
 public static java.lang.String TABLENAME;
 }
 -keep class **$Properties
+
+#bugly
+-dontwarn com.tencent.bugly.**
+-keep public class com.tencent.bugly.**{*;}

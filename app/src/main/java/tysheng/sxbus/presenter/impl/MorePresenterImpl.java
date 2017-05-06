@@ -214,13 +214,17 @@ public class MorePresenterImpl extends AbstractPresenter<MoreView> {
                     @Override
                     public void onError(Throwable t) {
                         super.onError(t);
-                        dialog.dismiss();
+                        if (dialog != null) {
+                            dialog.dismiss();
+                        }
                     }
 
                     @Override
                     public void next(ArrayList<BikeStation> s) {
                         super.next(s);
-                        dialog.dismiss();
+                        if (dialog != null) {
+                            dialog.dismiss();
+                        }
                         MapActivity.startMap(getContext(), Constant.BIKE, null, s, null);
                     }
                 });

@@ -39,7 +39,7 @@ public class MapActivity extends ToolbarActivity<AbstractPresenter> implements M
 
     public static void startMap(Context context, int type, ArrayList<? extends MapInfo> runningList, ArrayList<? extends MapInfo> totalStations, Stations latLng) {
         if (totalStations != null) {
-            Intent intent = new Intent(context, ToolbarActivity.class);
+            Intent intent = new Intent(context, MapActivity.class);
             intent.putExtra("0", runningList);
             intent.putExtra("1", totalStations);
             intent.putExtra("2", latLng);
@@ -59,7 +59,7 @@ public class MapActivity extends ToolbarActivity<AbstractPresenter> implements M
         } else if (type == BIKE) {
             setTitle("公共自行车");
         }
-        setSubtitle("定位中...");
+        setSubtitle(getString(R.string.locating));
         replaceFragment(mMapFragment);
     }
 
@@ -131,20 +131,10 @@ public class MapActivity extends ToolbarActivity<AbstractPresenter> implements M
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_refresh:
-                if (mMapFragment != null) {
-                    mMapFragment.refreshLocation();
-                }
-                break;
-            case R.id.action_draw_station:
-                if (mMapFragment != null) {
-                    mMapFragment.drawStations();
-                }
-                break;
-            default:
-                break;
+        if (mMapFragment != null) {
+            mMapFragment.onMenuItemClick(item.getItemId());
         }
+
         return false;
     }
 

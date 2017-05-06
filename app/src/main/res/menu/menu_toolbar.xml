@@ -11,6 +11,14 @@
         tools:ignore="MenuTitle" />
     <item
         android:id="@+id/action_draw_station"
-        android:title="是否显示每个站点"
+        android:title="站点显示/隐藏"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_switch_traffic"
+        android:title="实时路况"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_switch_heat"
+        android:title="热力图"
         app:showAsAction="never" />
 </menu>

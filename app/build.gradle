@@ -92,4 +92,5 @@ dependencies {
     compile 'com.alibaba:fastjson:1.1.56.android'
     compile 'com.google.dagger:dagger:2.11-rc2'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.11-rc2'
+    compile 'com.tencent.bugly:crashreport:2.6.0'
 }

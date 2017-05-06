@@ -3,6 +3,7 @@ package tysheng.sxbus.ui.fragments;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.view.View;
 
 import com.baidu.mapapi.map.BaiduMap;
 
@@ -78,6 +79,12 @@ public class MapFragment extends BaseFragmentV2<MapPresenterImpl, FragmentMapBin
     @Override
     protected void initData() {
         mPresenter.initData();
+        binding.fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.setToMyLocation();
+            }
+        });
     }
 
     @Override
@@ -85,13 +92,7 @@ public class MapFragment extends BaseFragmentV2<MapPresenterImpl, FragmentMapBin
         return binding.mapView.getMap();
     }
 
-    @Override
-    public void refreshLocation() {
-        mPresenter.refreshLocation();
-    }
-
-    @Override
-    public void drawStations() {
-        mPresenter.drawStations();
+    public void onMenuItemClick(int itemId) {
+        mPresenter.onMenuItemClick(itemId);
     }
 }

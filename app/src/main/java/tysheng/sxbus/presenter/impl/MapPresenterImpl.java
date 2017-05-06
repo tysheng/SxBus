@@ -2,6 +2,7 @@ package tysheng.sxbus.presenter.impl;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
@@ -21,6 +22,7 @@ import com.baidu.mapapi.model.LatLngBounds;
 
 import java.util.ArrayList;
 
+import tysheng.sxbus.R;
 import tysheng.sxbus.bean.MapInfo;
 import tysheng.sxbus.bean.Stations;
 import tysheng.sxbus.model.impl.DrawModelImpl;
@@ -44,10 +46,10 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
     private BaiduMap mBaiduMap;
     private ArrayList<? extends MapInfo> mResultList;
     private ArrayList<? extends MapInfo> mStationsList;
-    private InfoWindow mInfoWindow;
     private DrawModelImpl mDrawModel;
     private Stations mClickStations;
     private int type;
+    private String locating, locateFail;
 
     public MapPresenterImpl(MapView view) {
         super(view);
@@ -60,6 +62,8 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
         mResultList = bundle.getParcelableArrayList("0");
         mStationsList = bundle.getParcelableArrayList("1");
         type = bundle.getInt("-1");
+        locating = getContext().getString(R.string.locating);
+        locateFail = getContext().getString(R.string.locate_fail);
         if (mClickStations != null) {
             mView.setSubtitle(mClickStations.stationName);
         }
@@ -73,11 +77,12 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
         mDrawModel.drawBuses(getBaiduMap(), mResultList);
     }
 
-
     private void initMap() {
-        // mBaiduMap.setMapType(BaiduMap.MAP_TYPE_NONE);
+        mBaiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
         // 开启定位图层
         mBaiduMap.setMyLocationEnabled(true);
+        mBaiduMap.setIndoorEnable(true);
+
         mBaiduMap.setOnMapClickListener(new BaiduMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
@@ -107,8 +112,8 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
                     tv.setGravity(Gravity.CENTER);
                     tv.setText(item.getName());
                     LatLng ll = marker.getPosition();
-                    mInfoWindow = new InfoWindow(tv, ll, -(UiUtil.dp2px(25)));
-                    mBaiduMap.showInfoWindow(mInfoWindow);
+                    InfoWindow infoWindow = new InfoWindow(tv, ll, -(UiUtil.dp2px(25)));
+                    mBaiduMap.showInfoWindow(infoWindow);
                     tv.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -124,7 +129,7 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
                 return true;
             }
         });
-        refreshLocation();
+        refreshLocation(true);
     }
 
     private LatLng findClickLocation() {
@@ -141,9 +146,8 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
         super.onDestroy();
     }
 
-
-    @Override
-    public void refreshLocation() {
+    private void refreshLocation(final boolean useClickPosition) {
+        mView.setSubtitle(locating);
         MapUtil.getInstance().getLocation(getContext().getApplicationContext(), new TyLocationListener() {
             @Override
             public void onReceiveLocation(BDLocation location) {
@@ -151,14 +155,14 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
                 LogUtil.d(getDetail(location));
                 int code = location.getLocType();
                 if (!(code == 161 || code == 66 || code == 61)) {
-                    SnackBarUtil.show(mView.getRootView(), "定位失败%>_<%");
+                    SnackBarUtil.show(mView.getRootView(), locateFail);
                 }
-                setLocation(location);
+                setLocation(location, useClickPosition);
             }
         });
     }
 
-    private void setLocation(final BDLocation location) {
+    private void setLocation(final BDLocation location, boolean useClickPosition) {
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         MyLocationData locData = new MyLocationData.Builder()
                 // 此处设置开发者获取到的方向信息，顺时针0-360
@@ -169,12 +173,20 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
         /**
          * 是否是点击进来的，如果是就跳转过去
          */
-        LatLng finalLatLng = findClickLocation();
+        LatLng finalLatLng = null;
+        if (useClickPosition) {
+            finalLatLng = findClickLocation();
+        }
         String subTitle = null;
         if (finalLatLng == null) {
             finalLatLng = latLng;
             Address address = location.getAddress();
-            subTitle = address.district + address.street;
+            if (!TextUtils.isEmpty(address.district)) {
+                subTitle = address.district;
+                if (!TextUtils.isEmpty(address.street)) {
+                    subTitle += address.street;
+                }
+            }
         } else {
             mDrawModel.drawSinglePlace(getBaiduMap(), finalLatLng);
         }
@@ -182,11 +194,10 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
     }
 
     private void setCenterPoint(String subTitle, LatLng latLng) {
-        LogUtil.d("setCenterPoint " + latLng.toString());
         // 设定中心点坐标
         // 定义地图状态
         MapStatus mMapStatus = new MapStatus.Builder().target(latLng)
-                .zoom(16.5f).build();
+                .zoom(17f).build();
         // 定义MapStatusUpdate对象，以便描述地图状态将要发生的变化
         MapStatusUpdate mMapStatusUpdate = MapStatusUpdateFactory
                 .newMapStatus(mMapStatus);
@@ -194,9 +205,10 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
         mBaiduMap.animateMapStatus(mMapStatusUpdate);
 //        MapStatusUpdate update = MapStatusUpdateFactory.newLatLng(latLng);
 //        mBaiduMap.animateMapStatus(update);
-        if (subTitle != null) {
-            mView.setSubtitle(subTitle);
+        if (TextUtils.isEmpty(subTitle)) {
+            subTitle = locateFail;
         }
+        mView.setSubtitle(subTitle);
     }
 
     private BaiduMap getBaiduMap() {
@@ -204,7 +216,38 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
     }
 
     @Override
-    public void drawStations() {
+    public void onMenuItemClick(int itemId) {
+        switch (itemId) {
+            case R.id.action_refresh:
+                refreshLocation(true);
+                break;
+            case R.id.action_draw_station:
+                drawStations();
+                break;
+            case R.id.action_switch_traffic:
+                switchTraffic();
+                break;
+            case R.id.action_switch_heat:
+                if (mBaiduMap.isSupportBaiduHeatMap()) {
+                    //开启热力图
+                    mBaiduMap.setBaiduHeatMapEnabled(!mBaiduMap.isBaiduHeatMapEnabled());
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void switchTraffic() {
+        //开启交通图
+        mBaiduMap.setTrafficEnabled(!mBaiduMap.isTrafficEnabled());
+    }
+
+    private void drawStations() {
         mDrawModel.drawStationsClick(type, getBaiduMap());
+    }
+
+    public void setToMyLocation() {
+        refreshLocation(false);
     }
 }
