@@ -12,9 +12,10 @@ import tysheng.sxbus.presenter.base.RetrofitError;
  */
 
 public interface RunningPresenter extends RetrofitError {
+    void startMap(Stations stations);
+
     void onDataSuccess(List<Stations> stationses);
 
     void refresh();
 
-    void startMap();
 }

@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import java.util.List;
@@ -54,11 +53,11 @@ public class RunningPresenterImpl extends AbstractPresenter<RunningView> impleme
     }
 
     @Override
-    public void startMap() {
+    public void startMap(final Stations stations) {
         if (SPHelper.get(Constant.OFFLINE_MAP, 0) == 0) {
             new AlertDialog.Builder(getContext())
                     .setTitle("提醒")
-                    .setMessage("第一次查看会下载离线地图，是否继续？")
+                    .setMessage("第一次查看会下载离线地图(10+M)，是否继续？")
                     .setNegativeButton("不了", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -68,12 +67,12 @@ public class RunningPresenterImpl extends AbstractPresenter<RunningView> impleme
                     .setPositiveButton("继续查看", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            startMapActivity(null);
+                            startMapActivity(stations);
                         }
                     })
                     .show();
         } else {
-            startMapActivity(null);
+            startMapActivity(stations);
         }
     }
 
@@ -107,7 +106,7 @@ public class RunningPresenterImpl extends AbstractPresenter<RunningView> impleme
             public void onItemClick(View view, int position) {
                 super.onItemClick(view, position);
                 Stations stations = mRunningAdapter.getItem(position);
-                startMapActivity(stations);
+                startMap(stations);
             }
         });
     }
@@ -140,7 +139,7 @@ public class RunningPresenterImpl extends AbstractPresenter<RunningView> impleme
         return title;
     }
 
-    public RecyclerView.Adapter getAdapter() {
+    public RunningAdapter getAdapter() {
         return mRunningAdapter;
     }
 }

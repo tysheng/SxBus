@@ -40,8 +40,8 @@ import tysheng.sxbus.utils.UiUtil;
 
 public class RunningModelImpl extends BaseModelImpl {
     private RunningPresenter mPresenter;
-    private List<SxBusResult> mResults;
-    private List<Stations> stations;
+    private ArrayList<SxBusResult> mSxBusResults;
+    private ArrayList<Stations> mStations;
 
     public RunningModelImpl(RunningPresenter anPresenter) {
         mPresenter = anPresenter;
@@ -62,8 +62,8 @@ public class RunningModelImpl extends BaseModelImpl {
                 .compose(RxHelper.<List<Stations>>flowableIoToMain())
                 .doOnNext(new Consumer<List<Stations>>() {
                     @Override
-                    public void accept(List<Stations> stationses) throws Exception {
-                        mPresenter.onDataSuccess(stationses);
+                    public void accept(List<Stations> stationsList) throws Exception {
+                        mPresenter.onDataSuccess(stationsList);
                     }
                 })
                 .doOnError(new Consumer<Throwable>() {
@@ -89,50 +89,48 @@ public class RunningModelImpl extends BaseModelImpl {
 
     private double countDistance(double[] i1, double[] i2) {
         return DistanceUtil.getDistance(new LatLng(i1[0], i1[1]), new LatLng(i2[0], i2[1]));
-//        return (i1[0] - i2[0]) * (i1[0] - i2[0])
-//                + (i1[1] - i2[1]) * (i1[1] - i2[1]);
     }
 
     private List<Stations> zip(CallBack busLines, CallBack busLine) {
         BusLinesResult finalResult = JsonUtil.parse(busLines.result, BusLinesResult.class);
-        stations = JsonUtil.parseArray(finalResult.stations, Stations.class);
+        mStations = (ArrayList<Stations>) JsonUtil.parseArray(finalResult.stations, Stations.class);
         //running
         Status status = JsonUtil.parse(busLine.status, Status.class);
-        if (status.code == 0 && !ListUtil.isEmpty(stations)) {
-            mResults = JsonUtil.parseArray(busLine.result, SxBusResult.class);
+        if (status.code == 0 && !ListUtil.isEmpty(mStations)) {
+            mSxBusResults = (ArrayList<SxBusResult>) JsonUtil.parseArray(busLine.result, SxBusResult.class);
             if (TextUtils.equals("市公交集团公司", finalResult.owner) && byStation()) {
-                for (SxBusResult result : mResults) {
+                for (SxBusResult result : mSxBusResults) {
                     int station = result.stationSeqNum - 1;
-                    if (station < stations.size()) {
-                        stations.get(station).arriveState = Stations.ArriveState.Arriving;
+                    if (station < mStations.size()) {
+                        mStations.get(station).arriveState = Stations.ArriveState.Arriving;
                     }
                 }
             } else {//县汽运巴士
-                for (SxBusResult result : mResults) {
+                for (SxBusResult result : mSxBusResults) {
                     double[] i1 = new double[]{result.lng, result.lat};
                     double distance = 2;
                     int station = 0;
-                    for (int i = 0; i < stations.size(); i++) {
-                        double[] i2 = new double[]{stations.get(i).lng, stations.get(i).lat};
+                    for (int i = 0; i < mStations.size(); i++) {
+                        double[] i2 = new double[]{mStations.get(i).lng, mStations.get(i).lat};
                         double temp = countDistance(MapUtil.gpsToBdLatLng(CoordinateConverter.CoordType.GPS, i1), i2);
                         if (temp < distance) {
                             station = i;
                             distance = temp;
                         }
                     }
-                    stations.get(station).arriveState = Stations.ArriveState.Arriving;
+                    mStations.get(station).arriveState = Stations.ArriveState.Arriving;
                 }
             }
         }
-        return stations;
+        return mStations;
     }
 
     public ArrayList<Stations> getStations() {
-        return (ArrayList<Stations>) stations;
+        return mStations;
     }
 
     public ArrayList<SxBusResult> getResults() {
-        return (ArrayList<SxBusResult>) mResults;
+        return mSxBusResults;
     }
 
     public void popupFab(final FloatingActionButton floatingActionButton) {

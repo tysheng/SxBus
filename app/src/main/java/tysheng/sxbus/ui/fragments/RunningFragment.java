@@ -49,7 +49,7 @@ public class RunningFragment extends BaseFragmentV2<RunningPresenterImpl, Fragme
         runningError = getString(R.string.running_error);
         binding.title.setText(mPresenter.geTitle());
         mPresenter.initData();
-        binding.recyclerView.setAdapter(mPresenter.getAdapter());
+        mPresenter.getAdapter().bindToRecyclerView(binding.recyclerView);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.swipeRefreshLayout.setOnRefreshListener(this);
         binding.swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
@@ -70,8 +70,9 @@ public class RunningFragment extends BaseFragmentV2<RunningPresenterImpl, Fragme
 
     @Override
     public void onNetworkTerminate() {
-        if (binding.swipeRefreshLayout.isRefreshing())
+        if (binding.swipeRefreshLayout.isRefreshing()) {
             binding.swipeRefreshLayout.setRefreshing(false);
+        }
         binding.swipeRefreshLayout.setEnabled(false);
     }
 
@@ -88,7 +89,7 @@ public class RunningFragment extends BaseFragmentV2<RunningPresenterImpl, Fragme
                 }, 100);
                 break;
             case R.id.forMap:
-                mPresenter.startMap();
+                mPresenter.startMap(null);
                 break;
             default:
                 break;
