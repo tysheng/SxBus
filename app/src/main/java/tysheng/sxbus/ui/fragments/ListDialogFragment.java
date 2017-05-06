@@ -82,7 +82,7 @@ public class ListDialogFragment extends DialogFragment {
             @Override
             public void onSimpleItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 if (view.getId() == R.id.textView) {
-                    Toast.makeText(App.get(), "功能暂未开放", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(App.get(), R.string.function_not_achieve, Toast.LENGTH_SHORT).show();
                     dismissAllowingStateLoss();
                 }
             }

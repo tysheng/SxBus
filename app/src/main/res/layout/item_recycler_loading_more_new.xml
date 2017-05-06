@@ -20,7 +20,7 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:padding="5dp"
-        android:text="出错了~点击重试"
+        android:text="@string/list_error"
         android:textColor="@color/grey_88"
         android:textSize="@dimen/sp_16"
         tools:visibility="visible" />
@@ -32,7 +32,7 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:padding="5dp"
-        android:text="已经没有了~"
+        android:text="@string/list_end"
         android:textColor="@color/grey_88"
         android:textSize="@dimen/sp_16"
         tools:visibility="gone" />

@@ -20,8 +20,9 @@ public class PermissionUtil {
                 .subscribe(new Consumer<Boolean>() {
                     @Override
                     public void accept(Boolean aBoolean) throws Exception {
-                        if (callback != null)
+                        if (callback != null) {
                             callback.call(aBoolean);
+                        }
                     }
                 });
     }

@@ -3,6 +3,7 @@ package tysheng.sxbus.presenter.base;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.StringRes;
 import android.support.v4.app.FragmentManager;
 
 import com.trello.rxlifecycle2.LifecycleTransformer;
@@ -33,6 +34,9 @@ public abstract class AbstractPresenter<T extends BaseView> implements BaseFragm
         return ((BaseActivity) getActivity()).getUniverseComponent();
     }
 
+    public final String getString(@StringRes int resId) {
+        return getContext().getResources().getString(resId);
+    }
     @Override
     public void onDestroy() {
         mView = null;

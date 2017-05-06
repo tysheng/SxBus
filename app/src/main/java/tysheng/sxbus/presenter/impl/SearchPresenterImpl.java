@@ -68,7 +68,7 @@ public class SearchPresenterImpl extends AbstractPresenter<SearchView> implement
             case R.id.number:
             case R.id.textView:
                 ((BaseFragmentV2.FragmentCallback) getActivity()).handleCallbackNew(new FragCallback(Constant.WHAT_SEARCH, mAdapter.getItem(i).id,
-                        mAdapter.getItem(i).lineName + " 前往 " + mAdapter.getItem(i).endStationName));
+                        mAdapter.getItem(i).lineName + getString(R.string.go_to) + mAdapter.getItem(i).endStationName));
                 onItemClick(mAdapter.getItem(i));
                 break;
             case R.id.star:

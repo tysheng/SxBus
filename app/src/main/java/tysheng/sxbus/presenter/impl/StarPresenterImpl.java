@@ -78,7 +78,7 @@ public class StarPresenterImpl extends AbstractPresenter<StarView> implements St
             case R.id.textView:
                 ((BaseFragmentV2.FragmentCallback) getActivity())
                         .handleCallbackNew(new FragCallback(
-                                Constant.WHAT_STAR, star.id, star.lineName + " 前往 " + star.endStationName
+                                Constant.WHAT_STAR, star.id, star.lineName + getString(R.string.go_to) + star.endStationName
                         ));
                 break;
             case R.id.star:

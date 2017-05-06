@@ -23,7 +23,7 @@
         android:layout_height="match_parent"
         android:layout_weight="2"
         android:gravity="center"
-        tools:text="对旗山" />
+        tools:text="@string/shaoxing" />
 
     <android.support.v4.widget.Space
         android:layout_width="0dp"

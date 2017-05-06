@@ -19,7 +19,6 @@
             android:background="@color/colorPrimary"
             app:elevation="5dp"
             app:subtitleTextColor="@color/white"
-            app:title="版本"
             app:titleTextColor="@color/white">
 
         </android.support.v7.widget.Toolbar>

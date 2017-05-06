@@ -16,5 +16,6 @@ public interface Constant {
     String OFFLINE_MAP = "OFFLINE_MAP";
     String DRAW_STATION = "DRAW_STATION";
     int BUS = 0, BIKE = 1;
+    String BIKE_URL = "http://www.sxbicycle.com/sxmap/ibikestation.asp";//?id=
 
 }

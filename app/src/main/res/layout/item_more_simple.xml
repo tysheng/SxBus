@@ -8,7 +8,7 @@
     <TextView
         android:id="@+id/mainTitle"
         style="@style/MoreTextView"
-        tools:text="公共自行车" />
+        tools:text="@string/public_bike" />
 
     <View
         android:id="@+id/divider"

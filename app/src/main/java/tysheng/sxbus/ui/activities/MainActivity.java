@@ -44,8 +44,8 @@ public class MainActivity extends BaseActivityV2<MainPresenterImpl, ActivityMain
             ShortcutManager shortcutManager;
             shortcutManager = getSystemService(ShortcutManager.class);
             try {
-                ShortcutInfo shortcutInfo = getShortcutInfo(1, "shortcut_query", R.mipmap.shortcut_search, "查询");
-                ShortcutInfo shortcutInfo2 = getShortcutInfo(2, "shortcut_more", R.mipmap.shortcut_menu, "更多");
+                ShortcutInfo shortcutInfo = getShortcutInfo(1, "shortcut_query", R.mipmap.shortcut_search, getString(R.string.menu_search));
+                ShortcutInfo shortcutInfo2 = getShortcutInfo(2, "shortcut_more", R.mipmap.shortcut_menu, getString(R.string.menu_more));
                 shortcutManager.removeAllDynamicShortcuts();
                 shortcutManager.setDynamicShortcuts(Arrays.asList(shortcutInfo, shortcutInfo2));
             } catch (IllegalStateException ignored) {

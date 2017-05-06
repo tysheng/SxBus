@@ -8,12 +8,12 @@
     <TextView
         android:id="@+id/topSub"
         style="@style/MoreTextViewSub"
-        tools:text="当前城市" />
+        tools:text="@string/current_city" />
 
     <TextView
         android:id="@+id/mainTitle"
         style="@style/MoreTextView"
-        tools:text="绍兴" />
+        tools:text="@string/shaoxing" />
 
     <View
         android:id="@+id/divider"

@@ -37,6 +37,12 @@ public class MapActivity extends ToolbarActivity<AbstractPresenter> implements M
     private MKOfflineMap mOffline;
     private ProgressDialog progressBar;
 
+    /**
+     * @param type          bus or bike
+     * @param runningList   running bus list
+     * @param totalStations total stations
+     * @param latLng        click latLng if has
+     */
     public static void startMap(Context context, int type, ArrayList<? extends MapInfo> runningList, ArrayList<? extends MapInfo> totalStations, Stations latLng) {
         if (totalStations != null) {
             Intent intent = new Intent(context, MapActivity.class);
@@ -55,9 +61,9 @@ public class MapActivity extends ToolbarActivity<AbstractPresenter> implements M
                 intent.getParcelableArrayListExtra("1"),
                 intent.getParcelableExtra("2"));
         if (type == BUS) {
-            setTitle("查看定位");
+            setTitle(getString(R.string.location_view));
         } else if (type == BIKE) {
-            setTitle("公共自行车");
+            setTitle(getString(R.string.public_bike));
         }
         setSubtitle(getString(R.string.locating));
         replaceFragment(mMapFragment);
@@ -74,7 +80,7 @@ public class MapActivity extends ToolbarActivity<AbstractPresenter> implements M
             // 开始下载离线地图，传入参数为cityID, cityID表示城市的数字标识。
             mOffline.start(293);
             progressBar = new ProgressDialog(this);
-            progressBar.setTitle("正在下载离线地图");
+            progressBar.setTitle(getString(R.string.offline_map_downloading));
             progressBar.show();
         } else {
             showFragment();

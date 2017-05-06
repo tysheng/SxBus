@@ -11,6 +11,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import tysheng.sxbus.Constant;
+import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.RunningAdapter;
 import tysheng.sxbus.base.BaseRecyclerViewAdapter;
 import tysheng.sxbus.bean.Stations;
@@ -56,15 +57,15 @@ public class RunningPresenterImpl extends AbstractPresenter<RunningView> impleme
     public void startMap(final Stations stations) {
         if (SPHelper.get(Constant.OFFLINE_MAP, 0) == 0) {
             new AlertDialog.Builder(getContext())
-                    .setTitle("提醒")
-                    .setMessage("第一次查看会下载离线地图(10+M)，是否继续？")
-                    .setNegativeButton("不了", new DialogInterface.OnClickListener() {
+                    .setTitle(R.string.notice)
+                    .setMessage(R.string.map_notice_msg)
+                    .setNegativeButton(R.string.nope, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
                         }
                     })
-                    .setPositiveButton("继续查看", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.forward_view, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             startMapActivity(stations);
@@ -84,10 +85,10 @@ public class RunningPresenterImpl extends AbstractPresenter<RunningView> impleme
                     if (mRunningModel.getResults() != null && mRunningModel.getStations() != null) {
                         MapActivity.startMap(getContext(), Constant.BUS, mRunningModel.getResults(), mRunningModel.getStations(), stations);
                     } else {
-                        SnackBarUtil.show(mView.getRootView(), "数据还未加载完全，请等等");
+                        SnackBarUtil.show(mView.getRootView(), getString(R.string.wait_for_data));
                     }
                 } else {
-                    SnackBarUtil.show(mView.getRootView(), "请开启定位权限");
+                    SnackBarUtil.show(mView.getRootView(), getString(R.string.ask_for_location_permission));
                 }
             }
         });

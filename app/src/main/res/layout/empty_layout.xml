@@ -8,6 +8,6 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:lineSpacingExtra="10dp"
-        android:text="收藏夹空空如也:(\n快去查询页面收藏吧!"
+        android:text="@string/collect_empty"
         android:textSize="18sp" />
 </RelativeLayout>
