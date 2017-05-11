@@ -16,7 +16,7 @@ import android.view.MenuItem;
 
 public class PositionBottomNavigationView extends BottomNavigationView implements BottomNavigationView.OnNavigationItemSelectedListener {
     private SparseIntArray mMenuIds;
-    private int prePosition = -1;
+    private int mPrePosition = -1;
     private onPositionSelectedListener mListener;
 
     public PositionBottomNavigationView(Context context) {
@@ -45,29 +45,42 @@ public class PositionBottomNavigationView extends BottomNavigationView implement
         }
     }
 
+    /**
+     * 模拟选中
+     *
+     * @param position
+     */
+    public void setSelected(int position) {
+        int id = mMenuIds.get(position);
+        setSelectedItemId(id);
+    }
+
     public void setOnPositionSelectedListener(onPositionSelectedListener listener) {
         mListener = listener;
     }
 
     public int getCurrentPosition() {
-        return prePosition;
+        return mPrePosition;
     }
 
     public void setCurrentPosition(int current) {
-        if (prePosition == current) {
-            if (mListener != null)
+        if (mPrePosition == current) {
+            if (mListener != null) {
                 mListener.onPositionReselected(current);
+            }
             return;
         }
         Menu menu = getMenu();
         for (int i = 0; i < mMenuIds.size(); i++) {
-            if (prePosition >= 0)
-                menu.getItem(prePosition).setChecked(false);
+            if (mPrePosition >= 0) {
+                menu.getItem(mPrePosition).setChecked(false);
+            }
             menu.getItem(current).setChecked(true);
         }
-        prePosition = current;
-        if (mListener != null)
+        mPrePosition = current;
+        if (mListener != null) {
             mListener.onPositionSelected(current);
+        }
     }
 
     @Override

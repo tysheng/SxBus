@@ -29,10 +29,8 @@ import tysheng.sxbus.di.module.NetModule;
  */
 
 public class AppLike extends DefaultApplicationLike {
-
-
     @SuppressLint("StaticFieldLeak")
-    private static AppLike mContext;
+    private static AppLike sAppLike;
     private ApplicationComponent mApplicationComponent;
 
     public AppLike(Application application, int tinkerFlags,
@@ -43,7 +41,7 @@ public class AppLike extends DefaultApplicationLike {
     }
 
     public static AppLike getAppLike() {
-        return mContext;
+        return sAppLike;
     }
 
     public static Application get() {
@@ -61,7 +59,6 @@ public class AppLike extends DefaultApplicationLike {
         Beta.canAutoPatch = true;
         // 设置是否提示用户重启，默认为false
         Beta.canNotifyUserRestart = false;
-        // 补丁回调接口
 
         CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(getApplication());
         strategy.setAppChannel("coolapk");
@@ -72,7 +69,7 @@ public class AppLike extends DefaultApplicationLike {
             strategy.setAppVersion(BuildConfig.VERSION_NAME);
         }
         // Bugly sdk
-        Bugly.init(getApplication(), "66733354ef", BuildConfig.DEBUG, strategy);
+        Bugly.init(getApplication(), Constant.BUGLY_KEY, BuildConfig.DEBUG, strategy);
         // 设置开发设备，默认为false，上传补丁如果下发范围指定为“开发设备”，需要调用此接口来标识开发设备
         Bugly.setIsDevelopmentDevice(getApplication(), BuildConfig.DEBUG);
         if (BuildConfig.DEBUG) {
@@ -95,16 +92,13 @@ public class AppLike extends DefaultApplicationLike {
     @Override
     public void onBaseContextAttached(Context base) {
         super.onBaseContextAttached(base);
-        // you must install multiDex whatever tinker is installed!
         MultiDex.install(base);
-        mContext = this;
+        sAppLike = this;
         mApplicationComponent = DaggerApplicationComponent.builder()
                 .applicationModule(new ApplicationModule(getApplication()))
                 .daoModule(new DaoModule())
                 .netModule(new NetModule())
                 .build();
-//        mApplicationComponent.inject(this);
-        // TODO: 安装tinker
         Beta.installTinker(this);
     }
 }

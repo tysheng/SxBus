@@ -82,12 +82,7 @@ public class MainActivity extends BaseActivityV2<MainPresenterImpl, ActivityMain
         binding.bottom.setOnPositionSelectedListener(this);
 
         if (savedInstanceState == null) {
-            int pos = getIntent().getIntExtra("shortcut", 0);
-            if (pos == 1) {
-                shortcutId = R.id.menu_search;
-            } else if (pos == 2) {
-                shortcutId = R.id.menu_more;
-            }
+            shortcutId = getIntent().getIntExtra("shortcut", 0);
         }
 
     }
@@ -96,7 +91,7 @@ public class MainActivity extends BaseActivityV2<MainPresenterImpl, ActivityMain
     protected void onResume() {
         super.onResume();
         if (shortcutId != 0) {
-            binding.bottom.setSelectedItemId(shortcutId);
+            binding.bottom.setSelected(shortcutId);
             shortcutId = 0;
         }
     }
