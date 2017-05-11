@@ -1,9 +1,11 @@
 package tysheng.sxbus.di.component;
 
+import android.app.Application;
+
 import javax.inject.Singleton;
 
 import dagger.Component;
-import tysheng.sxbus.App;
+import tysheng.sxbus.AppLike;
 import tysheng.sxbus.db.StarHelper;
 import tysheng.sxbus.di.module.ApplicationModule;
 import tysheng.sxbus.di.module.DaoModule;
@@ -19,13 +21,13 @@ import tysheng.sxbus.net.BusService;
 @Singleton
 @Component(modules = {ApplicationModule.class, DaoModule.class, NetModule.class})
 public interface ApplicationComponent {
-    App getApp();
+    Application getApp();
 
     BusService getBusService();
 
     StarHelper getStarHelper();
 
-    void inject(App app);
+    void inject(AppLike app);
 
     void inject(BaseModelImpl model);
 }

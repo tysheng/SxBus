@@ -189,6 +189,7 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
             }
         } else {
             mDrawModel.drawSinglePlace(getBaiduMap(), finalLatLng);
+            subTitle = mClickStations.stationName;
         }
         setCenterPoint(subTitle, finalLatLng);
     }

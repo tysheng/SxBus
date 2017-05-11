@@ -22,7 +22,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.functions.Function;
-import tysheng.sxbus.App;
+import tysheng.sxbus.AppLike;
 import tysheng.sxbus.BuildConfig;
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
@@ -58,7 +58,7 @@ public class MorePresenterImpl extends AbstractPresenter<MoreView> {
     public MorePresenterImpl(MoreView view) {
         super(view);
         DaggerUniverseComponent.builder()
-                .applicationComponent(((App) getActivity().getApplication()).getApplicationComponent())
+                .applicationComponent((AppLike.getAppLike()).getApplicationComponent())
                 .build()
                 .inject(this);
     }

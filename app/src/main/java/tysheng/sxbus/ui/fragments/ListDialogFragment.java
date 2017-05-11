@@ -18,11 +18,10 @@ import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import tysheng.sxbus.App;
+import tysheng.sxbus.AppLike;
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.ChooseCityAdapter;
 import tysheng.sxbus.adapter.OpenSourceAdapter;
-import tysheng.sxbus.base.BaseRecyclerViewAdapter;
 import tysheng.sxbus.bean.CitySection;
 import tysheng.sxbus.bean.OpenSourceInfo;
 import tysheng.sxbus.databinding.FragmentStarBinding;
@@ -82,7 +81,7 @@ public class ListDialogFragment extends DialogFragment {
             @Override
             public void onSimpleItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 if (view.getId() == R.id.textView) {
-                    Toast.makeText(App.get(), R.string.function_not_achieve, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AppLike.get(), R.string.function_not_achieve, Toast.LENGTH_SHORT).show();
                     dismissAllowingStateLoss();
                 }
             }
@@ -119,12 +118,11 @@ public class ListDialogFragment extends DialogFragment {
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
         adapter.setData(list);
-        adapter.setOnItemClickListener(new BaseRecyclerViewAdapter.SimpleItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                super.onItemClick(view, position);
-                dismissAllowingStateLoss();
-            }
-        });
+//        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+//                dismissAllowingStateLoss();
+//            }
+//        });
     }
 }

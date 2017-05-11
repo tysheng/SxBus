@@ -18,7 +18,8 @@
 -ignorewarnings
 -keep class tysheng.sxbus.bean.** { *; }
 
-
+#tinker
+-keep public class * extends com.tencent.tinker.loader.app.DefaultApplicationLike
 #rxjava
 -dontwarn rx.**
 -keep class rx.** { *; }

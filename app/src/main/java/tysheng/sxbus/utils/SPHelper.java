@@ -3,7 +3,7 @@ package tysheng.sxbus.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import tysheng.sxbus.App;
+import tysheng.sxbus.AppLike;
 
 
 /**
@@ -44,7 +44,7 @@ public class SPHelper {
 
     private static SharedPreferences getInstance() {
         if (mSharedPreferences == null) {
-            mSharedPreferences = App.get().getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
+            mSharedPreferences = AppLike.get().getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
         }
         return mSharedPreferences;
     }

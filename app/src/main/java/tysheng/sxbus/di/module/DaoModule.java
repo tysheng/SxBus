@@ -1,10 +1,11 @@
 package tysheng.sxbus.di.module;
 
+import android.app.Application;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import tysheng.sxbus.App;
 import tysheng.sxbus.dao.DaoMaster;
 import tysheng.sxbus.dao.DaoSession;
 import tysheng.sxbus.dao.StarDao;
@@ -22,7 +23,7 @@ public class DaoModule {
 
     @Singleton
     @Provides
-    DaoMaster provideDaoMaster(App app) {
+    DaoMaster provideDaoMaster(Application app) {
         //此处不可用 DaoMaster.DevOpenHelper, 那是开发辅助类，我们要自定义一个，方便升级
         DaoMaster.OpenHelper helper = new MyOpenHelper(app, DEFAULT_DB_NAME);
         return new DaoMaster(helper.getWritableDatabase());

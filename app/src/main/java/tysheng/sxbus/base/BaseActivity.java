@@ -13,7 +13,7 @@ import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
 import java.util.List;
 
-import tysheng.sxbus.App;
+import tysheng.sxbus.AppLike;
 import tysheng.sxbus.R;
 import tysheng.sxbus.di.component.DaggerUniverseComponent;
 import tysheng.sxbus.di.component.UniverseComponent;
@@ -37,7 +37,7 @@ public abstract class BaseActivity extends RxAppCompatActivity {
 
     public UniverseComponent getUniverseComponent() {
         return DaggerUniverseComponent.builder()
-                .applicationComponent(((App) getApplication()).getApplicationComponent())
+                .applicationComponent((AppLike.getAppLike().getApplicationComponent()))
                 .build();
     }
 

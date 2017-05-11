@@ -2,7 +2,7 @@ package tysheng.sxbus.model.base;
 
 import javax.inject.Inject;
 
-import tysheng.sxbus.App;
+import tysheng.sxbus.AppLike;
 import tysheng.sxbus.db.StarHelper;
 import tysheng.sxbus.di.component.DaggerUniverseComponent;
 import tysheng.sxbus.net.BusService;
@@ -22,7 +22,7 @@ public class BaseModelImpl {
 
     public BaseModelImpl() {
         DaggerUniverseComponent.builder()
-                .applicationComponent(App.get().getApplicationComponent())
+                .applicationComponent(AppLike.getAppLike().getApplicationComponent())
                 .build()
                 .inject(this);
     }

@@ -1,10 +1,11 @@
 package tysheng.sxbus.di.module;
 
+import android.app.Application;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import tysheng.sxbus.App;
 
 /**
  * Created by tysheng
@@ -13,15 +14,15 @@ import tysheng.sxbus.App;
  */
 @Module
 public class ApplicationModule {
-    private App mApp;
+    private Application mApp;
 
-    public ApplicationModule(App app) {
+    public ApplicationModule(Application app) {
         mApp = app;
     }
 
     @Singleton
     @Provides
-    public App provideApp() {
+    public Application provideApp() {
         return mApp;
     }
 }
