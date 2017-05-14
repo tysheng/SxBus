@@ -21,9 +21,9 @@ import tysheng.sxbus.bean.FragCallback;
 import tysheng.sxbus.databinding.ActivityMainBinding;
 import tysheng.sxbus.presenter.impl.MainPresenterImpl;
 import tysheng.sxbus.ui.inter.MainView;
-import tysheng.sxbus.view.PositionBottomNavigationView;
+import tysheng.sxbus.view.TyBottomNavigationView;
 
-public class MainActivity extends BaseActivityV2<MainPresenterImpl, ActivityMainBinding> implements MainView, PositionBottomNavigationView.onPositionSelectedListener, BaseFragmentV2.FragmentCallback {
+public class MainActivity extends BaseActivityV2<MainPresenterImpl, ActivityMainBinding> implements MainView, TyBottomNavigationView.onPositionSelectedListener, BaseFragmentV2.FragmentCallback {
     private int shortcutId;
 
     @Override

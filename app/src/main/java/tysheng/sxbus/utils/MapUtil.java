@@ -6,13 +6,8 @@ import android.content.Context;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
-import com.baidu.mapapi.map.offline.MKOLSearchRecord;
-import com.baidu.mapapi.map.offline.MKOfflineMap;
-import com.baidu.mapapi.map.offline.MKOfflineMapListener;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.utils.CoordinateConverter;
-
-import java.util.ArrayList;
 
 /**
  * Created by tysheng
@@ -20,10 +15,9 @@ import java.util.ArrayList;
  * Email: tyshengsx@gmail.com
  */
 
-public class MapUtil implements MKOfflineMapListener {
+public class MapUtil {
     private static MapUtil sUtil;
     private LocationClient client;
-    private MKOfflineMap mOffline;
 
     private MapUtil() {
     }
@@ -52,8 +46,7 @@ public class MapUtil implements MKOfflineMapListener {
         converter.from(CoordinateConverter.CoordType.GPS);
         // sourceLatLng待转换坐标
         converter.coord(latLng);
-        LatLng desLatLng = converter.convert();
-        return desLatLng;
+        return converter.convert();
     }
 
     LocationClient getClient() {
@@ -82,27 +75,26 @@ public class MapUtil implements MKOfflineMapListener {
         client.start();
     }
 
-    public void offlineDownload() {
-        mOffline = new MKOfflineMap();
-// 传入接口事件，离线地图更新会触发该回调
-        mOffline.init(this);
-
-// 获取城市可更新列表
-        ArrayList<MKOLSearchRecord> records = mOffline.searchCity("绍兴");
-        for (MKOLSearchRecord re : records
-                ) {
-            LogUtil.d(re.cityID);
-        }
-// 开始下载离线地图，传入参数为cityID, cityID表示城市的数字标识。
-//        mOffline.start(cityid);
-//// 暂停下载
-//        mOffline.pause(cityid);
-//// 删除下载
-//        mOffline.remove(cityid);
-    }
-
-    @Override
-    public void onGetOfflineMapState(int i, int i1) {
-
-    }
+//    public void offlineDownload() {
+//        MKOfflineMap offline = new MKOfflineMap();
+//// 传入接口事件，离线地图更新会触发该回调
+//        offline.init(this);
+//
+//// 获取城市可更新列表
+//        ArrayList<MKOLSearchRecord> records = offline.searchCity("绍兴");
+//        for (MKOLSearchRecord re : records) {
+//            LogUtil.d(re.cityID);
+//        }
+//// 开始下载离线地图，传入参数为cityID, cityID表示城市的数字标识。
+////        mOffline.start(cityid);
+////// 暂停下载
+////        mOffline.pause(cityid);
+////// 删除下载
+////        mOffline.remove(cityid);
+//    }
+//
+//    @Override
+//    public void onGetOfflineMapState(int i, int i1) {
+//
+//    }
 }

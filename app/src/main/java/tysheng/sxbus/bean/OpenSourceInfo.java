@@ -9,4 +9,5 @@ package tysheng.sxbus.bean;
 public class OpenSourceInfo {
     public String name;
     public String intro;
+    public String url;
 }

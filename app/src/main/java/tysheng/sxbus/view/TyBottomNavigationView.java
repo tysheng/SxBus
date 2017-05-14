@@ -14,20 +14,20 @@ import android.view.MenuItem;
  * Email: tyshengsx@gmail.com
  */
 
-public class PositionBottomNavigationView extends BottomNavigationView implements BottomNavigationView.OnNavigationItemSelectedListener {
+public class TyBottomNavigationView extends BottomNavigationView implements BottomNavigationView.OnNavigationItemSelectedListener {
     private SparseIntArray mMenuIds;
     private int mPrePosition = -1;
     private onPositionSelectedListener mListener;
 
-    public PositionBottomNavigationView(Context context) {
+    public TyBottomNavigationView(Context context) {
         this(context, null, 0);
     }
 
-    public PositionBottomNavigationView(Context context, AttributeSet attrs) {
+    public TyBottomNavigationView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public PositionBottomNavigationView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public TyBottomNavigationView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mMenuIds = new SparseIntArray();
         setOnNavigationItemSelectedListener(this);
