@@ -21,7 +21,6 @@ import tysheng.sxbus.utils.SnackBarUtil;
 
 public class RunningFragment extends BaseFragmentV2<RunningPresenterImpl, FragmentRunningBinding> implements RunningView, SwipeRefreshLayout.OnRefreshListener {
 
-    private String runningError;
 
     public static RunningFragment newFragment(String id, String title) {
         RunningFragment fragment = new RunningFragment();
@@ -46,7 +45,6 @@ public class RunningFragment extends BaseFragmentV2<RunningPresenterImpl, Fragme
     protected void initData() {
         binding.setHost(this);
         mPresenter.setArgs(getArguments());
-        runningError = getString(R.string.running_error);
         binding.title.setText(mPresenter.geTitle());
         mPresenter.initData();
         mPresenter.getAdapter().bindToRecyclerView(binding.recyclerView);
@@ -65,7 +63,7 @@ public class RunningFragment extends BaseFragmentV2<RunningPresenterImpl, Fragme
 
     @Override
     public void onNetworkError(Throwable t) {
-        SnackBarUtil.show(binding.getRoot(), runningError, Snackbar.LENGTH_LONG);
+        SnackBarUtil.show(binding.getRoot(), t.getMessage(), Snackbar.LENGTH_LONG);
     }
 
     @Override

@@ -108,6 +108,7 @@ public class MorePresenterImpl extends AbstractPresenter<MoreView> {
         list.add(createMore(More.SIMPLE, true, getString(R.string.public_bike), null, 1));
         list.add(createMore(More.SIMPLE, true, getString(R.string.feedback), null, 2));
         list.add(createMore(More.SIMPLE, true, getString(R.string.appreciate_author), null, 3));
+        list.add(createMore(More.SIMPLE, true, getString(R.string.launch_tab), null, 8));
         list.add(createMore(More.SIMPLE, true, getString(R.string.check_update), null, 4));
         list.add(createMore(More.SIMPLE, false, getString(R.string.open_source_lib), null, 7));
         list.add(createMore(More.HAS_SUB, true, getString(R.string.station_mode_intro), getString(R.string.station_mode), 5));
@@ -256,8 +257,23 @@ public class MorePresenterImpl extends AbstractPresenter<MoreView> {
             case 7:
                 chooseCity(ListDialogFragment.OPEN_SOURCE);
                 break;
+            case 8:
+                setLaunchTab();
+                break;
             default:
                 break;
         }
+    }
+
+    private void setLaunchTab() {
+        new AlertDialog.Builder(getContext())
+                .setItems(new String[]{getString(R.string.menu_collect), getString(R.string.menu_search)},
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                SPHelper.put(Constant.LAUNCH_TAB, which);
+                            }
+                        })
+                .show();
     }
 }

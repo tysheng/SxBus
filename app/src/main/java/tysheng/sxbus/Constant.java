@@ -8,6 +8,7 @@ public interface Constant {
     String STAR = "STAR";
     String RECENT = "Search";
     String STATION_MODE = "STATION_MODE";//0根据站点，1根据距离
+    String LAUNCH_TAB = "LAUNCH_TAB";//0
     int BY_STATION = 0;
     int BY_DISTANCE = 1;
 

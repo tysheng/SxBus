@@ -14,6 +14,7 @@ import android.support.v4.app.Fragment;
 
 import java.util.Arrays;
 
+import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
 import tysheng.sxbus.base.BaseActivityV2;
 import tysheng.sxbus.base.BaseFragmentV2;
@@ -21,6 +22,7 @@ import tysheng.sxbus.bean.FragCallback;
 import tysheng.sxbus.databinding.ActivityMainBinding;
 import tysheng.sxbus.presenter.impl.MainPresenterImpl;
 import tysheng.sxbus.ui.inter.MainView;
+import tysheng.sxbus.utils.SPHelper;
 import tysheng.sxbus.view.TyBottomNavigationView;
 
 public class MainActivity extends BaseActivityV2<MainPresenterImpl, ActivityMainBinding> implements MainView, TyBottomNavigationView.onPositionSelectedListener, BaseFragmentV2.FragmentCallback {
@@ -82,15 +84,18 @@ public class MainActivity extends BaseActivityV2<MainPresenterImpl, ActivityMain
         binding.bottom.setOnPositionSelectedListener(this);
 
         if (savedInstanceState == null) {
-            shortcutId = getIntent().getIntExtra("shortcut", 0);
+            shortcutId = SPHelper.get(Constant.LAUNCH_TAB, 0);
+            Intent intent = getIntent();
+            if (intent.hasExtra("shortcut")) {
+                shortcutId = getIntent().getIntExtra("shortcut", 0);
+            }
         }
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (shortcutId != 0) {
+        if (shortcutId > 0) {
             binding.bottom.setSelected(shortcutId);
             shortcutId = 0;
         }

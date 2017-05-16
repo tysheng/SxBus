@@ -82,8 +82,8 @@ public class RunningPresenterImpl extends AbstractPresenter<RunningView> impleme
             @Override
             public void call(boolean b) {
                 if (b) {
-                    if (mRunningModel.getResults() != null && mRunningModel.getStations() != null) {
-                        MapActivity.startMap(getContext(), Constant.BUS, mRunningModel.getResults(), mRunningModel.getStations(), stations);
+                    if (mRunningModel.getStations() != null) {
+                        MapActivity.startMap(getContext(), Constant.BUS, mRunningModel.getRunningResults(), mRunningModel.getStations(), stations);
                     } else {
                         SnackBarUtil.show(mView.getRootView(), getString(R.string.wait_for_data));
                     }

@@ -26,6 +26,7 @@
     <string name="current_city">当前城市</string>
     <string name="feedback">反馈</string>
     <string name="appreciate_author">赞赏作者</string>
+    <string name="launch_tab">启动页</string>
     <string name="check_update">检查更新</string>
     <string name="open_source_lib">开源库</string>
     <string name="station_mode">到站模式</string>
@@ -48,5 +49,6 @@
     <string name="collect_empty">_(:з」∠)_ 收藏夹空空如也\n 快去查询页面收藏吧!</string>
     <string name="list_error">(╯︵╰) 出错了,点击重试</string>
     <string name="list_end">(╯︵╰) 已经没有了</string>
+    <string name="no_running_bus">无法获取运行车辆</string>
 
 </resources>

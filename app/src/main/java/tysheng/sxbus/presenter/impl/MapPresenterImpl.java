@@ -121,11 +121,6 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
                         }
                     });
                 }
-//                else if (position >= 1000 && position < 2000) {
-//                    final int realPosition = position - 1000;
-//                    SxBusResult result = mResultList.get(realPosition);
-//                    LogUtil.d(result.stationSeqNum);
-//                }
                 return true;
             }
         });

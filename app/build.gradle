@@ -25,8 +25,8 @@ android {
         applicationId "tysheng.sxbus"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 34
-        versionName "3.4"
+        versionCode 35
+        versionName "3.5"
         resConfigs "zh"
         ndk {
             //设置支持的SO库架构
@@ -100,7 +100,7 @@ dependencies {
     compile 'com.squareup.retrofit2:adapter-rxjava2:2.2.0'
     compile 'com.squareup.retrofit2:retrofit:2.2.0'
     compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.15'
-    compile 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.1@aar'
+    compile 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.4@aar'
     compile 'com.trello.rxlifecycle2:rxlifecycle:2.0.1'
     compile 'com.trello.rxlifecycle2:rxlifecycle-android:2.0.1'
     compile 'com.trello.rxlifecycle2:rxlifecycle-components:2.0.1'

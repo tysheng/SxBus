@@ -1,5 +1,7 @@
 package tysheng.sxbus.model.base;
 
+import android.app.Application;
+
 import javax.inject.Inject;
 
 import tysheng.sxbus.AppLike;
@@ -20,10 +22,14 @@ public class BaseModelImpl {
     @Inject
     protected BusService mBusService;
 
+    @Inject
+    protected Application mApplication;
+
     public BaseModelImpl() {
         DaggerUniverseComponent.builder()
                 .applicationComponent(AppLike.getAppLike().getApplicationComponent())
                 .build()
                 .inject(this);
     }
+
 }
