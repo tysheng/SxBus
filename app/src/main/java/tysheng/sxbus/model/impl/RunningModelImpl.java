@@ -41,14 +41,14 @@ import tysheng.sxbus.utils.UiUtil;
 
 public class RunningModelImpl extends BaseModelImpl {
     private RunningPresenter mPresenter;
-    private ArrayList<SxBusResult> runningResult;
-    private ArrayList<Stations> mStations;
-    private String runningError, noRunningBus;
+    private ArrayList<SxBusResult> mRunningResult;
+    private ArrayList<Stations> mTotalStations;
+    private String mRunningError, mNoRunningBus;
 
     public RunningModelImpl(RunningPresenter anPresenter) {
         mPresenter = anPresenter;
-        runningError = mApplication.getString(R.string.running_error);
-        noRunningBus = mApplication.getString(R.string.no_running_bus);
+        mRunningError = mApplication.getString(R.string.running_error);
+        mNoRunningBus = mApplication.getString(R.string.no_running_bus);
     }
 
     public void refresh(String id) {
@@ -68,15 +68,15 @@ public class RunningModelImpl extends BaseModelImpl {
                     @Override
                     public void accept(List<Stations> stationsList) throws Exception {
                         mPresenter.onDataSuccess(stationsList);
-                        if (runningResult == null) {
-                            mPresenter.onNetworkError(new Throwable(noRunningBus));
+                        if (mRunningResult == null) {
+                            mPresenter.onNetworkError(new Throwable(mNoRunningBus));
                         }
                     }
                 })
                 .doOnError(new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
-                        mPresenter.onNetworkError(new Throwable(runningError));
+                        mPresenter.onNetworkError(new Throwable(mRunningError));
                     }
                 })
                 .subscribe(new TyObserver<List<Stations>>() {
@@ -100,46 +100,46 @@ public class RunningModelImpl extends BaseModelImpl {
 
     private List<Stations> zip(CallBack busLines, CallBack busLine) {
         BusLinesResult finalResult = JsonUtil.parse(busLines.result, BusLinesResult.class);
-        mStations = (ArrayList<Stations>) JsonUtil.parseArray(finalResult.stations, Stations.class);
+        mTotalStations = (ArrayList<Stations>) JsonUtil.parseArray(finalResult.stations, Stations.class);
         //running
         Status status = JsonUtil.parse(busLine.status, Status.class);
-        if (status.code == 0 && !ListUtil.isEmpty(mStations)) {
-            runningResult = (ArrayList<SxBusResult>) JsonUtil.parseArray(busLine.result, SxBusResult.class);
-            if (!ListUtil.isEmpty(runningResult)) {
+        if (status.code == 0 && !ListUtil.isEmpty(mTotalStations)) {
+            mRunningResult = (ArrayList<SxBusResult>) JsonUtil.parseArray(busLine.result, SxBusResult.class);
+            if (!ListUtil.isEmpty(mRunningResult)) {
                 if (TextUtils.equals("市公交集团公司", finalResult.owner) && byStation()) {
-                    for (SxBusResult result : runningResult) {
+                    for (SxBusResult result : mRunningResult) {
                         int station = result.stationSeqNum - 1;
-                        if (station < mStations.size()) {
-                            mStations.get(station).arriveState = Stations.ArriveState.Arriving;
+                        if (station < mTotalStations.size()) {
+                            mTotalStations.get(station).arriveState = Stations.ArriveState.Arriving;
                         }
                     }
                 } else {//县汽运巴士
-                    for (SxBusResult result : runningResult) {
+                    for (SxBusResult result : mRunningResult) {
                         double[] i1 = new double[]{result.lng, result.lat};
                         double distance = 2;
                         int station = 0;
-                        for (int i = 0; i < mStations.size(); i++) {
-                            double[] i2 = new double[]{mStations.get(i).lng, mStations.get(i).lat};
+                        for (int i = 0; i < mTotalStations.size(); i++) {
+                            double[] i2 = new double[]{mTotalStations.get(i).lng, mTotalStations.get(i).lat};
                             double temp = countDistance(MapUtil.gpsToBdLatLng(CoordinateConverter.CoordType.GPS, i1), i2);
                             if (temp < distance) {
                                 station = i;
                                 distance = temp;
                             }
                         }
-                        mStations.get(station).arriveState = Stations.ArriveState.Arriving;
+                        mTotalStations.get(station).arriveState = Stations.ArriveState.Arriving;
                     }
                 }
             }
         }
-        return mStations;
+        return mTotalStations;
     }
 
-    public ArrayList<Stations> getStations() {
-        return mStations;
+    public ArrayList<Stations> getTotalStations() {
+        return mTotalStations;
     }
 
     public ArrayList<SxBusResult> getRunningResults() {
-        return runningResult;
+        return mRunningResult;
     }
 
     public void popupFab(final FloatingActionButton floatingActionButton) {
