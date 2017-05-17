@@ -3,15 +3,18 @@ package tysheng.sxbus.ui.fragments;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
-import android.view.View;
 
 import com.baidu.mapapi.map.BaiduMap;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 import tysheng.sxbus.R;
 import tysheng.sxbus.base.BaseFragmentV2;
 import tysheng.sxbus.databinding.FragmentMapBinding;
+import tysheng.sxbus.di.component.DaggerMapComponent;
+import tysheng.sxbus.di.module.MapModule;
 import tysheng.sxbus.presenter.impl.MapPresenterImpl;
 import tysheng.sxbus.ui.activities.ToolbarActivity;
 import tysheng.sxbus.ui.inter.MapView;
@@ -22,7 +25,10 @@ import tysheng.sxbus.ui.inter.MapView;
  * Email: tyshengsx@gmail.com
  */
 
-public class MapFragment extends BaseFragmentV2<MapPresenterImpl, FragmentMapBinding> implements MapView {
+public class MapFragment extends BaseFragmentV2<FragmentMapBinding> implements MapView {
+
+    @Inject
+    MapPresenterImpl mPresenter;
 
     /**
      * @param type       bus or bike
@@ -48,11 +54,6 @@ public class MapFragment extends BaseFragmentV2<MapPresenterImpl, FragmentMapBin
     }
 
     @Override
-    protected MapPresenterImpl initPresenter() {
-        return new MapPresenterImpl(this);
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         binding.mapView.onResume();
@@ -62,6 +63,15 @@ public class MapFragment extends BaseFragmentV2<MapPresenterImpl, FragmentMapBin
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPresenter.setArgs(getArguments());
+    }
+
+    @Override
+    protected void initDagger() {
+        DaggerMapComponent.builder()
+                .universeComponent(getUniverseComponent())
+                .mapModule(new MapModule(this))
+                .build()
+                .inject(this);
     }
 
     @Override
@@ -84,12 +94,7 @@ public class MapFragment extends BaseFragmentV2<MapPresenterImpl, FragmentMapBin
     @Override
     protected void initData() {
         mPresenter.initData();
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.setToMyLocation();
-            }
-        });
+        binding.setPresenter(mPresenter);
     }
 
     @Override

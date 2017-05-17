@@ -2,6 +2,13 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <data>
+
+        <variable
+            name="presenter"
+            type="tysheng.sxbus.presenter.impl.MapPresenterImpl" />
+    </data>
+
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -17,6 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="36dp"
             android:layout_marginLeft="16dp"
+            android:onClick="@{()-> presenter.setToMyLocation()}"
             android:src="@drawable/ic_my_location_black_24dp"
             android:tint="#444444"
             app:backgroundTint="@color/white"

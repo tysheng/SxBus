@@ -22,6 +22,8 @@ import com.baidu.mapapi.model.LatLngBounds;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 import tysheng.sxbus.R;
 import tysheng.sxbus.bean.MapInfo;
 import tysheng.sxbus.bean.Stations;
@@ -51,6 +53,7 @@ public class MapPresenterImpl extends AbstractPresenter<MapView> implements MapP
     private int type;
     private String locating, locateFail;
 
+    @Inject
     public MapPresenterImpl(MapView view) {
         super(view);
         mDrawModel = new DrawModelImpl();

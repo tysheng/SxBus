@@ -15,23 +15,20 @@ import com.trello.rxlifecycle2.android.FragmentEvent;
 import com.trello.rxlifecycle2.components.support.RxFragment;
 
 import tysheng.sxbus.bean.FragCallback;
-import tysheng.sxbus.presenter.base.AbstractPresenter;
+import tysheng.sxbus.di.component.UniverseComponent;
 import tysheng.sxbus.utils.LogUtil;
 
 /**
  * Created by shengtianyang on 16/2/22.
  */
-public abstract class BaseFragment<T extends AbstractPresenter> extends RxFragment {
+public abstract class BaseFragment extends RxFragment {
     private static final String STATE_SAVE_IS_HIDDEN = "STATE_SAVE_IS_HIDDEN";
-    protected T mPresenter;
-
-    protected abstract T initPresenter();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LogUtil.d(getTag() + "onCreate");
-        mPresenter = initPresenter();
+        initDagger();
         if (savedInstanceState != null) {
             boolean isSupportHidden = savedInstanceState.getBoolean(STATE_SAVE_IS_HIDDEN);
 
@@ -43,6 +40,12 @@ public abstract class BaseFragment<T extends AbstractPresenter> extends RxFragme
             }
             ft.commit();
         }
+    }
+
+    protected abstract void initDagger();
+
+    public UniverseComponent getUniverseComponent() {
+        return ((BaseActivity) getActivity()).getUniverseComponent();
     }
 
     @Override
@@ -74,7 +77,6 @@ public abstract class BaseFragment<T extends AbstractPresenter> extends RxFragme
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mPresenter.onDestroy();
         LogUtil.d("onDestroyView " + toString());
     }
 

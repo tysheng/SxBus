@@ -8,15 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import tysheng.sxbus.presenter.base.AbstractPresenter;
-
 /**
  * Created by tysheng
  * Date: 2017/5/3 09:52.
  * Email: tyshengsx@gmail.com
  */
 
-public abstract class BaseFragmentV2<T extends AbstractPresenter, Binding extends ViewDataBinding> extends BaseFragment<T> {
+public abstract class BaseFragmentV2<Binding extends ViewDataBinding> extends BaseFragment {
     protected Binding binding;
 
     @Nullable

@@ -3,12 +3,14 @@ package tysheng.sxbus.presenter.base;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.StringRes;
 import android.support.v4.app.FragmentManager;
 
 import com.trello.rxlifecycle2.LifecycleTransformer;
 
 import tysheng.sxbus.base.BaseActivity;
+import tysheng.sxbus.bean.FragCallback;
 import tysheng.sxbus.di.component.UniverseComponent;
 import tysheng.sxbus.ui.base.BaseView;
 
@@ -37,6 +39,7 @@ public abstract class AbstractPresenter<T extends BaseView> implements BaseFragm
     public final String getString(@StringRes int resId) {
         return getContext().getResources().getString(resId);
     }
+
     @Override
     public void onDestroy() {
         mView = null;
@@ -45,6 +48,16 @@ public abstract class AbstractPresenter<T extends BaseView> implements BaseFragm
     @Override
     public <R> LifecycleTransformer<R> bindUntilDestroyView() {
         return mView.bindUntilDestroyView();
+    }
+
+    @Override
+    public void setArgs(Bundle bundle) {
+
+    }
+
+    @Override
+    public void initData() {
+
     }
 
     @Override
@@ -68,4 +81,7 @@ public abstract class AbstractPresenter<T extends BaseView> implements BaseFragm
     }
 
 
+    public void handleCallbackNew(FragCallback callback) {
+
+    }
 }

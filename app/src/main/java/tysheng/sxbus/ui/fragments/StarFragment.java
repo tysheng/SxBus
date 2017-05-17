@@ -14,7 +14,14 @@ import tysheng.sxbus.ui.inter.StarView;
  * Date: 16/8/11 21:41.
  */
 
-public class StarFragment extends BaseFragmentV2<StarPresenterImpl, FragmentStarBinding> implements StarView {
+public class StarFragment extends BaseFragmentV2<FragmentStarBinding> implements StarView {
+
+    StarPresenterImpl mPresenter;
+
+    @Override
+    protected void initDagger() {
+        mPresenter = new StarPresenterImpl(this);
+    }
 
     @Override
     protected int getLayoutId() {
@@ -27,11 +34,6 @@ public class StarFragment extends BaseFragmentV2<StarPresenterImpl, FragmentStar
         if (!hidden) {
             mPresenter.setNewDataFromRecent();
         }
-    }
-
-    @Override
-    protected StarPresenterImpl initPresenter() {
-        return new StarPresenterImpl(this);
     }
 
     @Override

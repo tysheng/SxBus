@@ -15,7 +15,7 @@ import tysheng.sxbus.net.BusService;
  * Email: tyshengsx@gmail.com
  */
 
-public class BaseModelImpl {
+public class BaseModelImpl implements BaseModel {
     @Inject
     protected StarHelper mHelper;
 
@@ -32,4 +32,8 @@ public class BaseModelImpl {
                 .inject(this);
     }
 
+    @Override
+    public void onDestroy() {
+
+    }
 }

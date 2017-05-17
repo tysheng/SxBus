@@ -7,7 +7,6 @@ import java.util.List;
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.bean.Star;
 import tysheng.sxbus.dao.StarDao;
-import tysheng.sxbus.model.base.BaseModel;
 import tysheng.sxbus.model.base.BaseModelImpl;
 
 /**
@@ -16,7 +15,7 @@ import tysheng.sxbus.model.base.BaseModelImpl;
  * Email: tyshengsx@gmail.com
  */
 
-public class DbModelImplImpl extends BaseModelImpl implements BaseModel {
+public class DbModelImplImpl extends BaseModelImpl {
     private QueryBuilder<Star> mQueryBuilder;
 
     public List<Star> getStarList() {
@@ -26,10 +25,6 @@ public class DbModelImplImpl extends BaseModelImpl implements BaseModel {
                     .orderAsc(StarDao.Properties.SortId);
         return mQueryBuilder
                 .list();
-    }
-
-    @Override
-    public void onDestroy() {
     }
 
     public void deleteByKey(Long mainId) {

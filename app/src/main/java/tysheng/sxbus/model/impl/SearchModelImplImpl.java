@@ -22,6 +22,7 @@ public class SearchModelImplImpl extends BaseModelImpl {
     private SearchPresenter mPresenter;
 
     public SearchModelImplImpl(SearchPresenter anPresenter) {
+        super();
         mPresenter = anPresenter;
     }
 

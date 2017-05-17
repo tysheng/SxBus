@@ -23,22 +23,12 @@ import tysheng.sxbus.ui.inter.MainView;
 public class MainPresenterImpl extends AbstractPresenter<MainView> {
     private static final String POSITION = "POSITION";
     private FragmentManager mFragmentManager;
-    private int pre;// 0 ,1 ,2 ,3(0跳到running),4(1跳到running)
+    private int mPrePosition;// 0 ,1 ,2 ,3(0跳到running),4(1跳到running)
 
     @Inject
-    public MainPresenterImpl(MainView mainView, FragmentManager manager) {
+    MainPresenterImpl(MainView mainView, FragmentManager manager) {
         super(mainView);
         mFragmentManager = manager;
-    }
-
-    @Override
-    public void setArgs(Bundle bundle) {
-
-    }
-
-    @Override
-    public void initData() {
-
     }
 
     public void onDestroy() {
@@ -61,38 +51,38 @@ public class MainPresenterImpl extends AbstractPresenter<MainView> {
     }
 
     public void restorePosition(Bundle savedInstanceState) {
-        preToCur(savedInstanceState != null ? savedInstanceState.getInt(POSITION) : 0, null);
+        jumpFromPreToCurrent(savedInstanceState != null ? savedInstanceState.getInt(POSITION) : 0, null);
     }
 
     /**
      * fragment 的跳转
      *
-     * @param cur      现在要跳转的 position
+     * @param current  现在要跳转的 position
      * @param callback
      */
-    public void preToCur(int cur, FragCallback callback) {
-        Fragment preFrag = mFragmentManager.findFragmentByTag(String.valueOf(pre));
-        Fragment to = mFragmentManager.findFragmentByTag(String.valueOf(cur));
+    private void jumpFromPreToCurrent(int current, FragCallback callback) {
+        Fragment preFrag = mFragmentManager.findFragmentByTag(String.valueOf(mPrePosition));
+        Fragment to = mFragmentManager.findFragmentByTag(String.valueOf(current));
         if (to == null) {
-            to = getFragmentInstance(cur, callback);
+            to = getFragmentInstance(current, callback);
         }
-        mView.jumpFragment(preFrag, to, String.valueOf(cur));
-        pre = cur;
+        mView.jumpFragment(preFrag, to, String.valueOf(current));
+        mPrePosition = current;
     }
 
     public void onSaveInstanceState(Bundle outState) {
-        outState.putInt(POSITION, pre);
+        outState.putInt(POSITION, mPrePosition);
     }
 
     public boolean onBackPressed() {
         boolean dispatch = true;
-        if (pre == 3 || pre == 4) {
+        if (mPrePosition == 3 || mPrePosition == 4) {
             mFragmentManager.beginTransaction()
-                    .remove(mFragmentManager.findFragmentByTag(String.valueOf(pre)))
-                    .show(mFragmentManager.findFragmentByTag(String.valueOf(pre -= 3)))
+                    .remove(mFragmentManager.findFragmentByTag(String.valueOf(mPrePosition)))
+                    .show(mFragmentManager.findFragmentByTag(String.valueOf(mPrePosition -= 3)))
                     .commit();
             dispatch = false;
-        } else if (pre != 0) {
+        } else if (mPrePosition != 0) {
             mView.setCurrentPosition(0);
             dispatch = false;
         }
@@ -106,8 +96,12 @@ public class MainPresenterImpl extends AbstractPresenter<MainView> {
                 finalPos += 3;
             }
         }
-        preToCur(finalPos, null);
+        jumpFromPreToCurrent(finalPos, null);
     }
 
 
+    @Override
+    public void handleCallbackNew(FragCallback callback) {
+        jumpFromPreToCurrent(callback.what, callback);
+    }
 }

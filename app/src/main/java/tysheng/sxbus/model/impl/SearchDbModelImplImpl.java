@@ -24,11 +24,6 @@ public class SearchDbModelImplImpl extends BaseModelImpl implements BaseModel {
                 .list();
     }
 
-    @Override
-    public void onDestroy() {
-
-    }
-
     public void onItemClick(Star star) {
         star.setTableName(Constant.RECENT);
         mHelper.saveOrUpdate(star);

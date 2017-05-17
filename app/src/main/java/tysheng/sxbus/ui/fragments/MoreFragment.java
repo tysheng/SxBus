@@ -6,12 +6,16 @@ import android.view.View;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import tysheng.sxbus.R;
 import tysheng.sxbus.adapter.MoreAdapter;
 import tysheng.sxbus.base.BaseFragmentV2;
 import tysheng.sxbus.base.BaseRecyclerViewAdapter;
 import tysheng.sxbus.bean.More;
 import tysheng.sxbus.databinding.FragmentMoreBinding;
+import tysheng.sxbus.di.component.DaggerMoreComponent;
+import tysheng.sxbus.di.module.MoreModule;
 import tysheng.sxbus.presenter.impl.MorePresenterImpl;
 import tysheng.sxbus.ui.inter.MoreView;
 import tysheng.sxbus.utils.SnackBarUtil;
@@ -20,11 +24,18 @@ import tysheng.sxbus.utils.SnackBarUtil;
  * Created by Sty
  * Date: 16/9/11 20:23.
  */
-public class MoreFragment extends BaseFragmentV2<MorePresenterImpl, FragmentMoreBinding> implements MoreView {
+public class MoreFragment extends BaseFragmentV2<FragmentMoreBinding> implements MoreView {
+
+    @Inject
+    MorePresenterImpl mPresenter;
 
     @Override
-    protected MorePresenterImpl initPresenter() {
-        return new MorePresenterImpl(this);
+    protected void initDagger() {
+        DaggerMoreComponent.builder()
+                .universeComponent(getUniverseComponent())
+                .moreModule(new MoreModule(this))
+                .build()
+                .inject(this);
     }
 
     @Override

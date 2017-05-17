@@ -141,6 +141,6 @@ public class MainActivity extends BaseActivityV2<ActivityMainBinding> implements
 
     @Override
     public void handleCallbackNew(FragCallback callback) {
-        mPresenter.preToCur(callback.what, callback);
+        mPresenter.handleCallbackNew(callback);
     }
 }

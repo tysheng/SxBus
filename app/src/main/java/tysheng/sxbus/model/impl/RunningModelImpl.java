@@ -46,6 +46,7 @@ public class RunningModelImpl extends BaseModelImpl {
     private String mRunningError, mNoRunningBus;
 
     public RunningModelImpl(RunningPresenter anPresenter) {
+        super();
         mPresenter = anPresenter;
         mRunningError = mApplication.getString(R.string.running_error);
         mNoRunningBus = mApplication.getString(R.string.no_running_bus);

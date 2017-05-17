@@ -28,4 +28,5 @@ public interface BaseView {
     FragmentManager getChildFragmentManager();
 
     View getRootView();
+
 }

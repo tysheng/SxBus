@@ -19,8 +19,9 @@ import tysheng.sxbus.utils.SnackBarUtil;
  * Email: tyshengsx@gmail.com
  */
 
-public class RunningFragment extends BaseFragmentV2<RunningPresenterImpl, FragmentRunningBinding> implements RunningView, SwipeRefreshLayout.OnRefreshListener {
+public class RunningFragment extends BaseFragmentV2<FragmentRunningBinding> implements RunningView, SwipeRefreshLayout.OnRefreshListener {
 
+    RunningPresenterImpl mPresenter;
 
     public static RunningFragment newFragment(String id, String title) {
         RunningFragment fragment = new RunningFragment();
@@ -32,8 +33,8 @@ public class RunningFragment extends BaseFragmentV2<RunningPresenterImpl, Fragme
     }
 
     @Override
-    protected RunningPresenterImpl initPresenter() {
-        return new RunningPresenterImpl(this);
+    protected void initDagger() {
+        mPresenter = new RunningPresenterImpl(this);
     }
 
     @Override

@@ -139,7 +139,6 @@ public class MapActivity extends ToolbarActivity implements MKOfflineMapListener
         if (mMapFragment != null) {
             mMapFragment.onMenuItemClick(item.getItemId());
         }
-
         return false;
     }
 }

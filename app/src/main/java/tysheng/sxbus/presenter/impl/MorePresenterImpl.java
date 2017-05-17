@@ -1,48 +1,37 @@
 package tysheng.sxbus.presenter.impl;
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
-
-import com.baidu.mapapi.utils.CoordinateConverter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.functions.Function;
-import tysheng.sxbus.AppLike;
 import tysheng.sxbus.BuildConfig;
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
-import tysheng.sxbus.bean.AllBike;
-import tysheng.sxbus.bean.BikeStation;
 import tysheng.sxbus.bean.More;
-import tysheng.sxbus.di.component.DaggerUniverseComponent;
-import tysheng.sxbus.net.BusService;
+import tysheng.sxbus.di.component.DaggerBikeComponent;
+import tysheng.sxbus.di.module.BikeModule;
+import tysheng.sxbus.model.impl.BikeModelImpl;
 import tysheng.sxbus.presenter.base.AbstractPresenter;
-import tysheng.sxbus.ui.activities.MapActivity;
+import tysheng.sxbus.presenter.inter.BikePresenter;
 import tysheng.sxbus.ui.fragments.ListDialogFragment;
 import tysheng.sxbus.ui.inter.MoreView;
 import tysheng.sxbus.utils.AlipayZeroSdk;
-import tysheng.sxbus.utils.JsonUtil;
-import tysheng.sxbus.utils.MapUtil;
 import tysheng.sxbus.utils.PermissionUtil;
-import tysheng.sxbus.utils.RxHelper;
 import tysheng.sxbus.utils.SPHelper;
 import tysheng.sxbus.utils.SystemUtil;
-import tysheng.sxbus.utils.TyObserver;
 
 /**
  * Created by tysheng
@@ -50,15 +39,17 @@ import tysheng.sxbus.utils.TyObserver;
  * Email: tyshengsx@gmail.com
  */
 
-public class MorePresenterImpl extends AbstractPresenter<MoreView> {
+public class MorePresenterImpl extends AbstractPresenter<MoreView> implements BikePresenter {
 
     @Inject
-    BusService mBusService;
+    BikeModelImpl mBikeModel;
 
+    @Inject
     public MorePresenterImpl(MoreView view) {
         super(view);
-        DaggerUniverseComponent.builder()
-                .applicationComponent((AppLike.getAppLike()).getApplicationComponent())
+        DaggerBikeComponent.builder()
+                .universeComponent(getUniverseComponent())
+                .bikeModule(new BikeModule(this))
                 .build()
                 .inject(this);
     }
@@ -93,11 +84,6 @@ public class MorePresenterImpl extends AbstractPresenter<MoreView> {
         RelativeSizeSpan sizeSpan = new RelativeSizeSpan(0.75f);
         string.setSpan(sizeSpan, 3, 6, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         return string;
-    }
-
-    @Override
-    public void setArgs(Bundle bundle) {
-
     }
 
     @Override
@@ -180,56 +166,6 @@ public class MorePresenterImpl extends AbstractPresenter<MoreView> {
         SystemUtil.sendEmail(getContext());
     }
 
-    private void bikeInfo() {
-        mBusService
-                .url(Constant.BIKE_URL)
-                .map(new Function<String, ArrayList<BikeStation>>() {
-                    @Override
-                    public ArrayList<BikeStation> apply(String callBack) throws Exception {
-                        int start = "var ibike =".length();
-                        String string = callBack.substring(start).trim();
-                        AllBike bike = JsonUtil.parse(string, AllBike.class);
-                        for (BikeStation station : bike.station) {
-                            double[] latLng =
-                                    MapUtil.gpsToBdLatLng(CoordinateConverter.CoordType.COMMON, new double[]{station.getLat(), station.getLng()});
-                            station.lat = latLng[0];
-                            station.lng = latLng[1];
-                        }
-                        return bike.station;
-                    }
-                })
-                .compose(RxHelper.<ArrayList<BikeStation>>flowableIoToMain())
-                .compose(this.<ArrayList<BikeStation>>bindUntilDestroyView())
-                .subscribe(new TyObserver<ArrayList<BikeStation>>() {
-                    ProgressDialog dialog;
-
-                    @Override
-                    protected void onStart() {
-                        super.onStart();
-                        dialog = new ProgressDialog(getContext());
-                        dialog.setMessage(getString(R.string.loading));
-                        dialog.show();
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-                        super.onError(t);
-                        if (dialog != null) {
-                            dialog.dismiss();
-                        }
-                    }
-
-                    @Override
-                    public void next(ArrayList<BikeStation> s) {
-                        super.next(s);
-                        if (dialog != null) {
-                            dialog.dismiss();
-                        }
-                        MapActivity.startMap(getContext(), Constant.BIKE, null, s, null);
-                    }
-                });
-    }
-
 
     public void onItemClick(int internalPosition) {
         switch (internalPosition) {
@@ -237,7 +173,7 @@ public class MorePresenterImpl extends AbstractPresenter<MoreView> {
                 chooseCity(ListDialogFragment.CHOOSE_CITY);
                 break;
             case 1:
-                bikeInfo();
+                mBikeModel.bikeInfo();
                 break;
             case 2:
                 feedback();

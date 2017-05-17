@@ -17,7 +17,9 @@ import tysheng.sxbus.presenter.impl.SearchPresenterImpl;
  * Created by Sty
  * Date: 16/8/10 22:52.
  */
-public class SearchFragment extends BaseFragmentV2<SearchPresenterImpl, FragmentSearchBinding> implements tysheng.sxbus.ui.inter.SearchView {
+public class SearchFragment extends BaseFragmentV2<FragmentSearchBinding> implements tysheng.sxbus.ui.inter.SearchView {
+
+    SearchPresenterImpl mPresenter;
 
     @Override
     protected int getLayoutId() {
@@ -79,8 +81,8 @@ public class SearchFragment extends BaseFragmentV2<SearchPresenterImpl, Fragment
     }
 
     @Override
-    protected SearchPresenterImpl initPresenter() {
-        return new SearchPresenterImpl(this);
+    protected void initDagger() {
+        mPresenter = new SearchPresenterImpl(this);
     }
 
     @Override
