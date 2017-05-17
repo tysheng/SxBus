@@ -14,28 +14,29 @@ import android.support.v4.app.Fragment;
 
 import java.util.Arrays;
 
+import javax.inject.Inject;
+
 import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
 import tysheng.sxbus.base.BaseActivityV2;
 import tysheng.sxbus.base.BaseFragmentV2;
 import tysheng.sxbus.bean.FragCallback;
 import tysheng.sxbus.databinding.ActivityMainBinding;
+import tysheng.sxbus.di.component.DaggerMainComponent;
+import tysheng.sxbus.di.module.MainModule;
 import tysheng.sxbus.presenter.impl.MainPresenterImpl;
 import tysheng.sxbus.ui.inter.MainView;
 import tysheng.sxbus.utils.SPHelper;
 import tysheng.sxbus.view.TyBottomNavigationView;
 
-public class MainActivity extends BaseActivityV2<MainPresenterImpl, ActivityMainBinding> implements MainView, TyBottomNavigationView.onPositionSelectedListener, BaseFragmentV2.FragmentCallback {
+public class MainActivity extends BaseActivityV2<ActivityMainBinding> implements MainView, TyBottomNavigationView.onPositionSelectedListener, BaseFragmentV2.FragmentCallback {
+    @Inject
+    MainPresenterImpl mPresenter;
     private int shortcutId;
 
     @Override
     public int getLayoutId() {
         return R.layout.activity_main;
-    }
-
-    @Override
-    protected MainPresenterImpl initPresenter() {
-        return new MainPresenterImpl(this, getSupportFragmentManager());
     }
 
     @Override
@@ -54,6 +55,7 @@ public class MainActivity extends BaseActivityV2<MainPresenterImpl, ActivityMain
 
             }
         }
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N_MR1)
@@ -78,11 +80,14 @@ public class MainActivity extends BaseActivityV2<MainPresenterImpl, ActivityMain
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        super.initData(savedInstanceState);
+        DaggerMainComponent.builder()
+                .universeComponent(getUniverseComponent())
+                .mainModule(new MainModule(this, getSupportFragmentManager()))
+                .build()
+                .inject(this);
         mPresenter.restorePosition(savedInstanceState);
         binding.bottom.registerIds(R.id.menu_star, R.id.menu_search, R.id.menu_more);
         binding.bottom.setOnPositionSelectedListener(this);
-
         if (savedInstanceState == null) {
             shortcutId = SPHelper.get(Constant.LAUNCH_TAB, 0);
             Intent intent = getIntent();

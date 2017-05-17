@@ -12,7 +12,6 @@ import android.view.View;
 import com.trello.rxlifecycle2.LifecycleTransformer;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 
-import tysheng.sxbus.presenter.base.AbstractPresenter;
 import tysheng.sxbus.ui.base.BaseView;
 
 /**
@@ -21,11 +20,8 @@ import tysheng.sxbus.ui.base.BaseView;
  * Email: tyshengsx@gmail.com
  */
 
-public abstract class BaseActivityV2<T extends AbstractPresenter, Binding extends ViewDataBinding> extends BaseActivity implements BaseView {
-    protected T mPresenter;
+public abstract class BaseActivityV2<Binding extends ViewDataBinding> extends BaseActivity implements BaseView {
     protected Binding binding;
-
-    protected abstract T initPresenter();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,11 +33,6 @@ public abstract class BaseActivityV2<T extends AbstractPresenter, Binding extend
     @Override
     protected void normalCreate(@Nullable Bundle savedInstanceState) {
 
-    }
-
-    @Override
-    public void initData(@Nullable Bundle savedInstanceState) {
-        mPresenter = initPresenter();
     }
 
     @Override

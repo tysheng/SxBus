@@ -19,7 +19,6 @@ import tysheng.sxbus.Constant;
 import tysheng.sxbus.R;
 import tysheng.sxbus.bean.MapInfo;
 import tysheng.sxbus.bean.Stations;
-import tysheng.sxbus.presenter.base.AbstractPresenter;
 import tysheng.sxbus.ui.fragments.MapFragment;
 import tysheng.sxbus.utils.SPHelper;
 
@@ -32,7 +31,7 @@ import static tysheng.sxbus.Constant.BUS;
  * Email: tyshengsx@gmail.com
  */
 
-public class MapActivity extends ToolbarActivity<AbstractPresenter> implements MKOfflineMapListener {
+public class MapActivity extends ToolbarActivity implements MKOfflineMapListener {
     private MapFragment mMapFragment;
     private MKOfflineMap mOffline;
     private ProgressDialog progressBar;
@@ -142,10 +141,5 @@ public class MapActivity extends ToolbarActivity<AbstractPresenter> implements M
         }
 
         return false;
-    }
-
-    @Override
-    protected AbstractPresenter initPresenter() {
-        return null;
     }
 }

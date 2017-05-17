@@ -10,7 +10,6 @@ import android.view.View;
 import tysheng.sxbus.R;
 import tysheng.sxbus.base.BaseActivityV2;
 import tysheng.sxbus.databinding.ActivityToolbarBinding;
-import tysheng.sxbus.presenter.base.AbstractPresenter;
 
 /**
  * Created by tysheng
@@ -18,10 +17,9 @@ import tysheng.sxbus.presenter.base.AbstractPresenter;
  * Email: tyshengsx@gmail.com
  */
 
-public abstract class ToolbarActivity<P extends AbstractPresenter> extends BaseActivityV2<P, ActivityToolbarBinding> implements Toolbar.OnMenuItemClickListener {
+public abstract class ToolbarActivity extends BaseActivityV2<ActivityToolbarBinding> implements Toolbar.OnMenuItemClickListener {
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        super.initData(savedInstanceState);
         binding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

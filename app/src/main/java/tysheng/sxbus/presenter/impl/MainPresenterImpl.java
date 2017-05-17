@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
+import javax.inject.Inject;
+
 import tysheng.sxbus.bean.FragCallback;
 import tysheng.sxbus.presenter.base.AbstractPresenter;
 import tysheng.sxbus.ui.fragments.MoreFragment;
@@ -23,6 +25,7 @@ public class MainPresenterImpl extends AbstractPresenter<MainView> {
     private FragmentManager mFragmentManager;
     private int pre;// 0 ,1 ,2 ,3(0跳到running),4(1跳到running)
 
+    @Inject
     public MainPresenterImpl(MainView mainView, FragmentManager manager) {
         super(mainView);
         mFragmentManager = manager;
