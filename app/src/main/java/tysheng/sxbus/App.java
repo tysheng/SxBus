@@ -9,4 +9,5 @@ public class App extends TinkerApplication {
         super(ShareConstants.TINKER_ENABLE_ALL, "tysheng.sxbus.AppLike",
                 "com.tencent.tinker.loader.TinkerLoader", false);
     }
+
 }

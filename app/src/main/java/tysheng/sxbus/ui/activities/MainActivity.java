@@ -32,7 +32,7 @@ import tysheng.sxbus.view.TyBottomNavigationView;
 public class MainActivity extends BaseActivityV2<ActivityMainBinding> implements MainView, TyBottomNavigationView.onPositionSelectedListener, BaseFragmentV2.FragmentCallback {
     @Inject
     MainPresenterImpl mPresenter;
-    private int shortcutId;
+    private int mShortcutPosition;
 
     @Override
     public int getLayoutId() {
@@ -55,7 +55,6 @@ public class MainActivity extends BaseActivityV2<ActivityMainBinding> implements
 
             }
         }
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N_MR1)
@@ -89,10 +88,10 @@ public class MainActivity extends BaseActivityV2<ActivityMainBinding> implements
         binding.bottom.registerIds(R.id.menu_star, R.id.menu_search, R.id.menu_more);
         binding.bottom.setOnPositionSelectedListener(this);
         if (savedInstanceState == null) {
-            shortcutId = SPHelper.get(Constant.LAUNCH_TAB, 0);
+            mShortcutPosition = SPHelper.get(Constant.LAUNCH_TAB, 0);
             Intent intent = getIntent();
             if (intent.hasExtra("shortcut")) {
-                shortcutId = getIntent().getIntExtra("shortcut", 0);
+                mShortcutPosition = getIntent().getIntExtra("shortcut", 0);
             }
         }
     }
@@ -100,9 +99,9 @@ public class MainActivity extends BaseActivityV2<ActivityMainBinding> implements
     @Override
     protected void onResume() {
         super.onResume();
-        if (shortcutId > 0) {
-            binding.bottom.setSelected(shortcutId);
-            shortcutId = 0;
+        if (mShortcutPosition > 0) {
+            binding.bottom.setSelected(mShortcutPosition);
+            mShortcutPosition = 0;
         }
     }
 

@@ -18,7 +18,5 @@ public class OpenSourceAdapter extends BaseDataBindingAdapter<OpenSourceInfo, It
     @Override
     protected void convert(ItemOpenSourceBinding binding, OpenSourceInfo item) {
         binding.setInfo(item);
-
     }
-
 }
