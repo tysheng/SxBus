@@ -69,7 +69,7 @@ public class AppLike extends DefaultApplicationLike {
             strategy.setAppVersion(BuildConfig.VERSION_NAME);
         }
         // Bugly sdk
-        Bugly.init(getApplication(), Constant.BUGLY_KEY, BuildConfig.DEBUG, strategy);
+        Bugly.init(getApplication(), BuildConfig.BUGLY_KEY, BuildConfig.DEBUG, strategy);
         // 设置开发设备，默认为false，上传补丁如果下发范围指定为“开发设备”，需要调用此接口来标识开发设备
         Bugly.setIsDevelopmentDevice(getApplication(), BuildConfig.DEBUG);
         if (BuildConfig.DEBUG) {
