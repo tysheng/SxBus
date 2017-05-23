@@ -46,7 +46,7 @@
         <!--百度地图-->
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="dReiwsMG8S0emok8OmDia1t1japfMzWs" />
+            android:value="${BD_MAP_KEY}" />
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
@@ -54,16 +54,16 @@
         <!--百度更新-->
         <meta-data
             android:name="BDAPPID"
-            android:value="8620005" />
+            android:value="${BD_UPDATE_ID}" />
         <meta-data
             android:name="BDAPPKEY"
-            android:value="Mrujsko6nD11OX7XixGmRfE50fBrTmgG" />
+            android:value="${BD_UPDATE_KEY}" />
 
         <!--百度更新-->
 
         <meta-data
             android:name="BaiduMobAd_STAT_ID"
-            android:value="298b176693" />
+            android:value="${BD_STAT_ID}" />
         <!-- ↓↓↓ 百度移动统计SDK ↓↓↓ -->
         <!-- 是否开启错误日志统计，默认为false -->
         <meta-data

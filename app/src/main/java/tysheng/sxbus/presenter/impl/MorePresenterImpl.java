@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.customtabs.CustomTabsIntent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -96,7 +98,8 @@ public class MorePresenterImpl extends AbstractPresenter<MoreView> implements Bi
         list.add(createMore(More.SIMPLE, true, getString(R.string.appreciate_author), null, 3));
         list.add(createMore(More.SIMPLE, true, getString(R.string.launch_tab), null, 8));
         list.add(createMore(More.SIMPLE, true, getString(R.string.check_update), null, 4));
-        list.add(createMore(More.SIMPLE, false, getString(R.string.open_source_lib), null, 7));
+        list.add(createMore(More.SIMPLE, true, getString(R.string.open_source_lib), null, 7));
+        list.add(createMore(More.SIMPLE, false, getString(R.string.open_source_url), null, 9));
         list.add(createMore(More.HAS_SUB, true, getString(R.string.station_mode_intro), getString(R.string.station_mode), 5));
         list.add(createMore(More.HAS_SUB, true, getString(R.string.colloct_log_intro), getString(R.string.colloct_log), 6));
         mView.setMoreList(list);
@@ -196,9 +199,20 @@ public class MorePresenterImpl extends AbstractPresenter<MoreView> implements Bi
             case 8:
                 setLaunchTab();
                 break;
+            case 9:
+                startWebView("https://github.com/tysheng/SxBus");
+                break;
             default:
                 break;
         }
+    }
+
+    private void startWebView(String url) {
+        CustomTabsIntent.Builder intentBuilder = new CustomTabsIntent.Builder();
+        intentBuilder.setToolbarColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
+        intentBuilder.setShowTitle(true);
+        intentBuilder.addDefaultShareMenuItem();
+        intentBuilder.build().launchUrl(getContext(), Uri.parse(url));
     }
 
     private void setLaunchTab() {

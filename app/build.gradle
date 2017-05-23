@@ -19,6 +19,11 @@ if (keystoreFilepath) {
 }
 
 def buglyKey = properties.getProperty("buglyKey")
+def bdMapKey = properties.getProperty("bdMapKey")
+def bdUpdateKey = properties.getProperty("bdUpdateKey")
+def bdUpdateId = properties.getProperty("bdUpdateId")
+def bdStatId = properties.getProperty("bdStatId")
+
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
@@ -27,8 +32,8 @@ android {
         applicationId "tysheng.sxbus"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 37
-        versionName "3.7"
+        versionCode 38
+        versionName "3.8"
         resConfigs "zh"
         ndk {
             //设置支持的SO库架构
@@ -37,6 +42,10 @@ android {
         multiDexEnabled = true
 
         buildConfigField "String", "BUGLY_KEY", buglyKey
+        manifestPlaceholders = [BD_MAP_KEY   : bdMapKey,
+                                BD_UPDATE_ID : bdUpdateId,
+                                BD_UPDATE_KEY: bdUpdateKey,
+                                BD_STAT_ID   : bdStatId]
     }
     signingConfigs {
         config {
