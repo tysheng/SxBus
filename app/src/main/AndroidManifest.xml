@@ -51,15 +51,6 @@
             android:name="com.baidu.location.f"
             android:enabled="true"
             android:process=":remote" />
-        <!--百度更新-->
-        <meta-data
-            android:name="BDAPPID"
-            android:value="${BD_UPDATE_ID}" />
-        <meta-data
-            android:name="BDAPPKEY"
-            android:value="${BD_UPDATE_KEY}" />
-
-        <!--百度更新-->
 
         <meta-data
             android:name="BaiduMobAd_STAT_ID"

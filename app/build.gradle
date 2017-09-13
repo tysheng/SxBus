@@ -20,13 +20,13 @@ if (keystoreFilepath) {
 
 def buglyKey = properties.getProperty("buglyKey")
 def bdMapKey = properties.getProperty("bdMapKey")
-def bdUpdateKey = properties.getProperty("bdUpdateKey")
-def bdUpdateId = properties.getProperty("bdUpdateId")
 def bdStatId = properties.getProperty("bdStatId")
-
+buglyKey = '\"66733354ef\"'
+bdMapKey = '\" \"'
+bdStatId = '\" \"'
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    buildToolsVersion "25.0.3"
 
     defaultConfig {
         applicationId "tysheng.sxbus"
@@ -43,8 +43,6 @@ android {
 
         buildConfigField "String", "BUGLY_KEY", buglyKey
         manifestPlaceholders = [BD_MAP_KEY   : bdMapKey,
-                                BD_UPDATE_ID : bdUpdateId,
-                                BD_UPDATE_KEY: bdUpdateKey,
                                 BD_STAT_ID   : bdStatId]
     }
     signingConfigs {
@@ -65,7 +63,7 @@ android {
         }
         debug {
             minifyEnabled false
-            signingConfig signingConfigs.config
+//            signingConfig signingConfigs.config
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
